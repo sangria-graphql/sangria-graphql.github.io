@@ -25,3 +25,4 @@ You can use following dependency in your SBT build:
 {% highlight scala %}
 libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria}}"
 {% endhighlight %}
+
