@@ -4,4 +4,6 @@ animateHeader: false
 title: Getting Started with Sangria
 ---
 
-## TODO
+## Getting Started with Sangria
+
+{% include caution.html %}
