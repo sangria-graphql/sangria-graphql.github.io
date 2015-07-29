@@ -14,18 +14,18 @@ groupId: com.github.olegilyenko
 link:
   sangria-github: https://github.com/sangria-graphql
   sangria-maven: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.olegilyenko%22
-  sangria-releases: https://github.com/OlegIlyenko/sangria/releases
+  sangria-releases: https://github.com/sangria-graphql/sangria/releases
   twitter: https://twitter.com/easyangel
   stack-overflow: http://stackoverflow.com/questions/tagged/sangria
   stack-overflow-ask: http://stackoverflow.com/questions/ask?tags=scala,graphql,sangria
   google-groups: https://groups.google.com/forum/#!forum/sangria-graphql
-  sangria-changelog: https://github.com/OlegIlyenko/sangria/blob/master/CHANGELOG.md
+  sangria-changelog: https://github.com/sangria-graphql/sangria/blob/master/CHANGELOG.md
   repo:
-    sangria: https://github.com/OlegIlyenko/sangria
+    sangria: https://github.com/sangria-graphql/sangria
   maven:
     sangria: http://search.maven.org/#artifactdetails%7Ccom.github..olegilyenko%7Csangria_
   issues:
-    sangria: https://github.com/OlegIlyenko/sangria/issues
+    sangria: https://github.com/sangria-graphql/sangria/issues
   website: https://github.com/sangria-graphql/sangria-website
   jekyll: http://jekyllrb.com/
   ghpages: https://pages.github.com/
