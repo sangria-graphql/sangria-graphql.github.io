@@ -29,6 +29,10 @@ link:
   website: https://github.com/sangria-graphql/sangria-website
   jekyll: http://jekyllrb.com/
   ghpages: https://pages.github.com/
+  graphql: http://facebook.github.io/graphql/
+  akka-http-example:
+    github: https://github.com/sangria-graphql/sangria-akka-http-example
+    activator: https://www.typesafe.com/activator/template/sangria-akka-http-example
 
 markdown: kramdown
 permalink: pretty
