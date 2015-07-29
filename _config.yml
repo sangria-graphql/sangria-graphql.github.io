@@ -4,7 +4,7 @@ baseurl: ""
 url: "http://sangria-graphql.org"
 theme: flatly
 ga-code: UA-65759630-1
-domain: scaldi.org
+domain: sangria-graphql.org
 
 version:
   sangria: 0.1.0
