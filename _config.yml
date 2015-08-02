@@ -7,13 +7,13 @@ ga-code: UA-65759630-1
 domain: sangria-graphql.org
 
 version:
-  sangria: 0.1.0
+  sangria: 0.2.0
 
-groupId: com.github.olegilyenko
+groupId: org.sangria-graphql
 
 link:
   sangria-github: https://github.com/sangria-graphql
-  sangria-maven: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.olegilyenko%22
+  sangria-maven: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.sangria-graphql%22
   sangria-releases: https://github.com/sangria-graphql/sangria/releases
   twitter: https://twitter.com/easyangel
   stack-overflow: http://stackoverflow.com/questions/tagged/sangria
@@ -23,7 +23,7 @@ link:
   repo:
     sangria: https://github.com/sangria-graphql/sangria
   maven:
-    sangria: http://search.maven.org/#artifactdetails%7Ccom.github..olegilyenko%7Csangria_
+    sangria: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria_
   issues:
     sangria: https://github.com/sangria-graphql/sangria/issues
   website: https://github.com/sangria-graphql/sangria-website
