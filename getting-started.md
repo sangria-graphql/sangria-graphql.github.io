@@ -20,6 +20,10 @@ You can find an example application that uses akka-http with _sangria_ here (it 
 
 [{{site.link.akka-http-example.github}}]({{site.link.akka-http-example.github}})
 
+I would also would recommend you to check out [{{site.link.try}}]({{site.link.try}}).
+It is an example of GraphQL server written with Play framework and Sangria. It also serves as a playground,
+where you can interactively execute GraphQL queries and play with some examples.
+
 ## Define GraphQL Schema
 
 In order to execute queries, you first need to define the schema for your data. It contains description of objects, interfaces, fields, enums, etc.
