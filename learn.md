@@ -26,6 +26,12 @@ I would also would recommend you to check out [{{site.link.try}}]({{site.link.tr
 It is an example of GraphQL server written with Play framework and Sangria. It also serves as a playground,
 where you can interactively execute GraphQL queries and play with some examples.
 
+If you want to use sangria with react-relay framework, they you also need to include [sangria-relay]({{site.link.repo.sangria-relay}}):
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
+{% endhighlight %}
+
 ## Query Parser and Renderer
 
 Example usage:

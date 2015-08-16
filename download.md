@@ -29,7 +29,7 @@ libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria
 ### sangria-relay
 
 <dl class="dl-horizontal">
-  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-relay}}">sangria</a></dd>
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-relay}}">sangria-relay</a></dd>
   <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.sangria-relay-releases}}">{{site.version.sangria-relay}}</a></dd>
   <dt>Maven central</dt><dd>
     for scala <a target="_blank" href="{{site.link.maven.sangria-relay}}2.11%7C{{site.version.sangria-relay}}%7Cjar">2.11</a>
@@ -39,6 +39,6 @@ libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria
 You can use following dependency in your SBT build:
 
 {% highlight scala %}
-libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria-relay}}"
+libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
 {% endhighlight %}
 
