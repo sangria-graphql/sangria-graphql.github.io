@@ -7,7 +7,8 @@ ga-code: UA-65759630-1
 domain: sangria-graphql.org
 
 version:
-  sangria: 0.2.2
+  sangria: 0.3.0
+  sangria-relay: 0.3.0
 
 groupId: org.sangria-graphql
 
@@ -15,6 +16,7 @@ link:
   sangria-github: https://github.com/sangria-graphql
   sangria-maven: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.sangria-graphql%22
   sangria-releases: https://github.com/sangria-graphql/sangria/releases
+  sangria-relay-releases: https://github.com/sangria-graphql/sangria-relay/releases
   twitter: https://twitter.com/easyangel
   stack-overflow: http://stackoverflow.com/questions/tagged/sangria
   stack-overflow-ask: http://stackoverflow.com/questions/ask?tags=scala,graphql,sangria
@@ -22,10 +24,13 @@ link:
   sangria-changelog: https://github.com/sangria-graphql/sangria/blob/master/CHANGELOG.md
   repo:
     sangria: https://github.com/sangria-graphql/sangria
+    sangria-relay: https://github.com/sangria-graphql/sangria-relay
   maven:
     sangria: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria_
+    sangria: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-relay_
   issues:
     sangria: https://github.com/sangria-graphql/sangria/issues
+    sangria: https://github.com/sangria-graphql/sangria-relay/issues
   website: https://github.com/sangria-graphql/sangria-website
   jekyll: http://jekyllrb.com/
   ghpages: https://pages.github.com/
