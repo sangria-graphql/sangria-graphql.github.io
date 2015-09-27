@@ -142,5 +142,5 @@ This will provide an executor with different marshalling mechanism and produce a
 
 ## Next steps
 
-I would recommend you to play with [the example project]({{site.link.akka-http-example.github}}) mentioned above. You can also look
+This page highlights only a small subset of sangria capabilities and features. I would recommend you to play with [sangria-playground]({{site.link.try}}) mentioned above. You can also look
 into a more [in-depth sangria documentation]({{"/learn/" | prepend: site.baseurl}}).
