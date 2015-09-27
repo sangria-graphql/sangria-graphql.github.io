@@ -256,6 +256,19 @@ Executor(TestSchema.StarWarsSchema, userContext = new CharacterRepo, deferredRes
 
 The result of the execution is a `Future` of marshaled GraphQL result (see next section)
 
+### Limiting Query Depth
+
+If you are using recursive GraphQL types, it can be dangerous to expose them since query can be infinitely nested and potentially can be
+abused. In order to prevent this, `Executor` allows you to restrict max query depth via `maxQueryDepth` argument:
+
+{% highlight scala %}
+val executor = Executor(
+  schema = SchemaDefinition.StarWarsSchema,
+  userContext = new CharacterRepo,
+  deferredResolver = new FriendsResolver,
+  maxQueryDepth = Some(7))
+{% endhighlight %}
+
 ## Result Marshalling and Input Unmarshalling
 
 GraphQL query execution needs to know how to serialize the result of execution and how to deserialize arguments/variables.
