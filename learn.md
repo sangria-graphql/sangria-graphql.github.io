@@ -211,7 +211,7 @@ which can take different shapes. Here is the list of supported actions:
 * `FutureValue` - a `Future` result
 * `DeferredValue` - used to return a `Deferred` result (see [Deferred Values and Resolver](#deferred-values-and-resolver) section for more details)
 * `DeferredFutureValue` - the same as `DeferredValue` but allows to return `Deferred` inside of a `Future`
-* `UpdateCtx` - allows you to transform `Ctx` object. The transformed context object wold be available for nested sub-objects and subsequent sabling fields in case of mutation (since execution of mutation queries is strictly sequential)
+* `UpdateCtx` - allows you to transform `Ctx` object. The transformed context object wold be available for nested sub-objects and subsequent sabling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of it's usage in [Authentication and Authorisation](#authentication-and-authorisation) section
 
 Normally library is able to automatically infer the `Action` type, so that you don't need to specify it explicitly.
 
@@ -304,6 +304,33 @@ val executor = Executor(
   maxQueryDepth = Some(7))
 {% endhighlight %}
 
+## Error Handling
+
+When some unexpected error happens in `resolve` function, sangria handles it according to the [rules defined in the spec]({{site.link.spec.errors}}).
+If an exception implements `UserFacingError` trait, then error message would be visible in the response. Otherwise error message is obfuscated and response will contain `"Internal server error"`.
+
+In order to define custom error handling mechanism, you need to provide an `exceptionHandler` to `Executor`. Here is an example:
+
+{% highlight scala %}
+val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
+  case (m, e: IllegalStateException) => HandledException(e.getMessage)
+}
+
+Executor(schema, exceptionHandler = exceptionHandler).execute(doc)
+{% endhighlight %}
+
+In this example it provides an error `message` (which would be shown instead of "Internal server error").
+
+You can also add additional fields in the error object like this:
+
+{% highlight scala %}
+val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
+  case (m, e: IllegalStateException) =>
+    HandledException(e.getMessage,
+      Map("foo" -> m.arrayNode(Seq(m.stringNode("bar"), m.intNode(1234))), "baz" -> m.stringNode("Test")))
+}
+{% endhighlight %}
+
 ## Result Marshalling and Input Unmarshalling
 
 GraphQL query execution needs to know how to serialize the result of execution and how to deserialize arguments/variables.
@@ -357,6 +384,55 @@ In order to use one of these, just import it and the result of execution will be
 }
 {% endhighlight %}
 
+## Middleware
+
+Sangria support generic middleware that can be used for different purposes, like performance measurement, metrics collection, security enforcement, etc. on a field and query level.
+Moreover it makes it much easier for people to share standard middleware in a libraries. Middleware allows you to define callbacks before/after query and field.
+
+Here is a small example of it's usage:
+
+{% highlight scala %}
+class FieldMetrics extends Middleware with MiddlewareAfterField with MiddlewareErrorField {
+  type QueryVal = MutableMap[String, List[Long]]
+  type FieldVal = Long
+
+  def beforeQuery(context: MiddlewareQueryContext[_, _]) = MutableMap()
+  def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[_, _]) =
+    reportQueryMetrics(queryVal)
+
+  def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) =
+    System.currentTimeMillis()
+
+  def afterField(queryVal: QueryVal, fieldVal: FieldVal, value: Any, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) = {
+    val key = ctx.parentType.name + "." + ctx.field.name
+    val list = queryVal.getOrElse(key, Nil)
+
+    queryVal.update(key, list :+ (System.currentTimeMillis() - fieldVal))
+    None
+  }
+
+  def fieldError(queryVal: QueryVal, fieldVal: FieldVal, error: Throwable, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) = {
+    val key = ctx.parentType.name + "." + ctx.field.name
+    val list = queryVal.getOrElse(key, Nil)
+    val errors = queryVal.getOrElse("ERROR", Nil)
+
+    queryVal.update(key, list :+ (System.currentTimeMillis() - fieldVal))
+    queryVal.update("ERROR", errors :+ 1L)
+  }
+}
+
+val result = Executor.execute(schema, query, middleware = new FieldMetrics :: Nil)
+{% endhighlight %}
+
+It will record execution time of all fields in a query and then report it in some way.
+
+`afterField` also allows you to transform field value by returning `Some` with a transformed value. You can also throw an exception from `beforeField` or `afterField`
+in order to indicate a field error.
+
+In order to ensure generic classification of fields, every field contains a generic list or `FieldTag`s which provides a user-defined
+meta-information about this field (just to highlight a few examples: `Permission("ViewOrders")`, `Authorized`, `Measured`, etc.).
+You can find another example of `FieldTag` and `Middleware` usage in [Authentication and Authorisation](#authentication-and-authorisation) section.
+
 ## Built-in Scalars
 
 Sangria support all standard GraphQL scalars like `String`, `Int`, `ID`, etc. In addition, sangria introduces following built-in scalar types:
@@ -376,3 +452,5 @@ trait DeprecationTracker {
   def deprecatedEnumValueUsed[T, Ctx](enum: EnumType[T], value: T, userContext: Ctx): Unit
 }
 {% endhighlight %}
+
+## Authentication and Authorisation

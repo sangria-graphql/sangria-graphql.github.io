@@ -39,6 +39,8 @@ link:
     github: https://github.com/sangria-graphql/sangria-akka-http-example
     activator: https://www.typesafe.com/activator/template/sangria-akka-http-example
   try: http://try.sangria-graphql.org
+  spec:
+    errors: https://facebook.github.io/graphql/#sec-Errors
 
 markdown: kramdown
 permalink: pretty
