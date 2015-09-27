@@ -430,7 +430,7 @@ It will record execution time of all fields in a query and then report it in som
 in order to indicate a field error.
 
 In order to ensure generic classification of fields, every field contains a generic list or `FieldTag`s which provides a user-defined
-meta-information about this field (just to highlight a few examples: `Permission("ViewOrders")`, `Authorized`, `Measured`, etc.).
+meta-information about this field (just to highlight a few examples: `Permission("ViewOrders")`, `Authorized`, `Measured`, `Cached`, etc.).
 You can find another example of `FieldTag` and `Middleware` usage in [Authentication and Authorisation](#authentication-and-authorisation) section.
 
 ## Built-in Scalars
@@ -454,3 +454,233 @@ trait DeprecationTracker {
 {% endhighlight %}
 
 ## Authentication and Authorisation
+
+Even though sangria does not provide security primitives explicitly, it's pretty straightforward to implement it in different ways. It's pretty common
+requirement of modern web-application so this section was written to demonstrate several possible approaches of handling authentication and authorisation.
+
+First let's define some basic infrastructure for this example:
+
+{% highlight scala %}
+case class User(userName: String, permissions: List[String])
+
+trait UserRepo {
+  /** Gives back a token or sessionId or anything else that identifies the user session  */
+  def authenticate(userName: String, password: String): Option[String]
+
+  /** Gives `User` object with his/her permissions */
+  def authorise(token: String): Option[User]
+}
+
+class ColorRepo {
+  def colors: List[String]
+  def addColor(color: String): Unit
+}
+{% endhighlight %}
+
+In order to indicate an auth error, we need to define some exception:
+
+{% highlight scala %}
+case class AuthenticationException(message: String) extends Exception(message)
+case class AuthorisationException(message: String) extends Exception(message)
+{% endhighlight %}
+
+We also want user to see proper error messages in a response, so let's define an error handler for this:
+
+{% highlight scala %}
+val errorHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
+  case (m, AuthenticationException(message)) => HandledException(message)
+  case (m, AuthorisationException(message)) => HandledException(message)
+}
+{% endhighlight %}
+
+Now that we defined base for secure application, let's create a context class, which will provide GraphQL schema with all necessary helper functions:
+
+{% highlight scala %}
+case class SecureContext(token: Option[String], userRepo: UserRepo, colorRepo: ColorRepo) {
+  def login(userName: String, password: String) = userRepo.authenticate(userName, password) getOrElse (
+      throw new AuthenticationException("UserName or password is incorrect"))
+
+  def authorised[T](permissions: String*)(fn: User => T) =
+    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user =>
+      if (permissions.forall(user.permissions.contains)) fn(user)
+      else throw AuthorisationException("You do not have permission to do this operation")
+    }
+
+  def ensurePermissions(permissions: List[String]): Unit =
+    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user =>
+      if (!permissions.forall(user.permissions.contains))
+        throw AuthorisationException("You do not have permission to do this operation")
+    }
+
+  def user = token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token"))(identity)
+}
+{% endhighlight %}
+
+Now we should be able to execute queries:
+
+{% highlight scala %}
+Executor.execute(schema, queryAst,
+  userContext = new SecureContext(token, userRepo, colorRepo),
+  exceptionHandler = errorHandler)
+{% endhighlight %}
+
+As a last step we need to define a schema. You can do it in two different ways:
+
+* Auth can be enforced in the `resolve` function itself
+* You can use `Middleware` and `FieldTag`s to ensure that user has permissions to access fields
+
+### Resolve-Based Auth
+
+{% highlight scala %}
+val UserNameArg = Argument("userName", StringType)
+val PasswordArg = Argument("password", StringType)
+val ColorArg = Argument("color", StringType)
+
+val UserType = ObjectType("User", fields[SecureContext, User](
+  Field("userName", StringType, resolve = _.value.userName),
+  Field("permissions", OptionType(ListType(StringType)),
+    resolve = ctx => ctx.ctx.authorised("VIEW_PERMISSIONS") { _ =>
+      ctx.value.permissions
+    })
+))
+
+val QueryType = ObjectType("Query", fields[SecureContext, Unit](
+  Field("me", OptionType(UserType), resolve = ctx => ctx.ctx.authorised()(user => user)),
+  Field("colors", OptionType(ListType(StringType)),
+    resolve = ctx => ctx.ctx.authorised("VIEW_COLORS") { _ =>
+      ctx.ctx.colorRepo.colors
+    })
+))
+
+val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
+  Field("login", OptionType(StringType),
+    arguments = UserNameArg :: PasswordArg :: Nil,
+    resolve = ctx => UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token =>
+      ctx.ctx.copy(token = Some(token))
+    }),
+  Field("addColor", OptionType(ListType(StringType)),
+    arguments = ColorArg :: Nil,
+    resolve = ctx => ctx.ctx.authorised("EDIT_COLORS") { _ =>
+      ctx.ctx.colorRepo.addColor(ctx.arg(ColorArg))
+      ctx.ctx.colorRepo.colors
+    })
+))
+
+def schema = Schema(QueryType, Some(MutationType))
+{% endhighlight %}
+
+As you can see on this example, we are using context object to authorise user with the `authorised` function. Interesting thing to notice
+here is that `login` field uses `UpdateCtx` action in order make login information available for sabling mutation fields. This makes queries
+like this possible:
+
+{% highlight js %}
+mutation LoginAndMutate {
+  login(userName: "admin", password: "secret")
+
+  withMagenta: addColor(color: "magenta")
+  withOrange: addColor(color: "orange")
+}
+{% endhighlight %}
+
+here we login and adding colors in the same GraphQL query. It will produce result like this one:
+
+{% highlight json %}
+{
+  "data":{
+   "login":"a4d7fc91-e490-446e-9d4c-90b5bb22e51d",
+   "withMagenta":["red","green","blue","magenta"],
+   "withOrange":["red","green","blue","magenta","orange"]
+  }
+}
+{% endhighlight %}
+
+If user does not have sufficient permissions, he will see result like this:
+
+{% highlight json %}
+{
+  "data":{
+    "me":{
+      "userName":"john",
+      "permissions":null
+    },
+    "colors":["red","green","blue"]
+  },
+  "errors":[{
+    "message":"You do not have permission to do this operation",
+    "field":"me.permissions",
+    "locations":[{
+      "line":3,
+      "column":25
+    }]
+  }]
+}
+{% endhighlight %}
+
+### Middleware-Based Auth
+
+An alternative approach is to use middleware. This can provide more declarative way to define field permissions.
+
+First let's define `FieldTag`s:
+
+{% highlight scala %}
+case object Authorised extends FieldTag
+case class Permission(name: String) extends FieldTag
+{% endhighlight %}
+
+This allows us to define schema like this:
+
+{% highlight scala %}
+val UserType = ObjectType("User", fields[SecureContext, User](
+  Field("userName", StringType, resolve = _.value.userName),
+  Field("permissions", OptionType(ListType(StringType)),
+    tags = Permission("VIEW_PERMISSIONS") :: Nil,
+    resolve = _.value.permissions)
+))
+
+val QueryType = ObjectType("Query", fields[SecureContext, Unit](
+  Field("me", OptionType(UserType), tags = Authorised :: Nil,resolve = _.ctx.user),
+  Field("colors", OptionType(ListType(StringType)),
+    tags = Permission("VIEW_COLORS") :: Nil, resolve = _.ctx.colorRepo.colors)
+))
+
+val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
+  Field("login", OptionType(StringType),
+    arguments = UserNameArg :: PasswordArg :: Nil,
+    resolve = ctx => UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token =>
+      ctx.ctx.copy(token = Some(token))
+    }),
+  Field("addColor", OptionType(ListType(StringType)),
+    arguments = ColorArg :: Nil,
+    tags = Permission("EDIT_COLORS") :: Nil,
+    resolve = ctx => {
+      ctx.ctx.colorRepo.addColor(ctx.arg(ColorArg))
+      ctx.ctx.colorRepo.colors
+    })
+))
+
+def schema = Schema(QueryType, Some(MutationType))
+{% endhighlight %}
+
+As you can see, security constraints are now defined as field's `tags`. In order to enforce these security constraints we need implement `Middleware` like this:
+
+{% highlight scala %}
+object SecurityEnforcer extends Middleware with MiddlewareBeforeField {
+  type QueryVal = Unit
+  type FieldVal = Unit
+
+  def beforeQuery(context: MiddlewareQueryContext[_, _]) = ()
+  def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[_, _]) = ()
+
+  def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) = {
+    val permissions = ctx.field.tags.collect {case Permission(p) => p}
+    val requireAuth = ctx.field.tags contains Authorised
+    val securityCtx = ctx.ctx.asInstanceOf[SecureContext]
+
+    if (requireAuth)
+      securityCtx.user
+
+    if (permissions.nonEmpty)
+      securityCtx.ensurePermissions(permissions)
+  }
+}
+{% endhighlight %}
