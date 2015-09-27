@@ -38,12 +38,12 @@ Here is a small example of the schema for a blog application:
 {% highlight scala %}
 import sangria.schema._
 
-val BlogImageType = ObjectType("Image", List[Field[Unit, Image]](
+val BlogImageType = ObjectType("Image", fields[Unit, Image](
   Field("url", OptionType(StringType), resolve = _.value.url),
   Field("width", OptionType(IntType), resolve = _.value.width),
   Field("height", OptionType(IntType), resolve = _.value.height)))
 
-val BlogAuthorType = ObjectType("Author", () => List[Field[Unit, Author]](
+val BlogAuthorType = ObjectType("Author", () => fields[Unit, Author](
   Field("id", OptionType(StringType), resolve = _.value.id),
   Field("name", OptionType(StringType), resolve = _.value.name),
   Field("pic", OptionType(BlogImageType),
@@ -53,14 +53,18 @@ val BlogAuthorType = ObjectType("Author", () => List[Field[Unit, Author]](
       Nil,
     resolve = ctx =>
       for {
-        w <- ctx.argOpt[Int]("width");
-        h <- ctx.argOpt[Int]("height"); pic <- ctx.value.pic(w, h)}
-      yield pic),
+        w <- ctx.argOpt[Int]("width")
+        h <- ctx.argOpt[Int]("height")
+        pic <- ctx.value.pic(w, h)
+      } yield pic),
   Field("recentArticle", OptionType(BlogArticleType),
-    resolve = ctx => ctx.value.recentArticle)))
+    resolve = ctx =>
+      ctx.value.recentArticle
+        .map(ra => DeferredValue(ArticleDeferred(ra)))
+        .getOrElse(Value(None)))))
 
 val BlogArticleType: ObjectType[Unit, Article] =
-  ObjectType("Article", List[Field[Unit, Article]](
+  ObjectType("Article", fields[Unit, Article](
     Field("id", StringType, resolve = _.value.id),
     Field("isPublished", OptionType(BooleanType), resolve = _.value.isPublished),
     Field("author", OptionType(BlogAuthorType), resolve = _.value.author),
@@ -69,7 +73,7 @@ val BlogArticleType: ObjectType[Unit, Article] =
     Field("keywords", OptionType(ListType(OptionType(StringType))),
       resolve = _.value.keywords)))
 
-val BlogQueryType = ObjectType("Query", List[Field[Unit, Unit]](
+val BlogQueryType = ObjectType("Query", fields[Unit, Unit](
   Field("article", OptionType(BlogArticleType),
     arguments = Argument("id", OptionInputType(IDType)) :: Nil,
     resolve = ctx => ctx.argOpt[String]("id") flatMap (id => article(id.toInt))),
@@ -96,6 +100,23 @@ val Success(queryAst: Document) = QueryParser.parse(query)
 
 `parse` object gives back a `Try` object indicating that parsing can fail (you can customise this behaviour by importing different `DeliveryScheme`)
 
+Alternatively you can use `graphql` macro, which will ensure that you query is syntactically correct at compile time:
+
+{% highlight scala %}
+import sangria.macros._
+
+val queryAst: Document =
+  graphql"""
+    {
+      name
+      friends {
+        id
+        name
+      }
+    }
+  """
+{% endhighlight %}
+
 ## Execution
 
 Here is an example of how you can execute the example schema:
@@ -104,7 +125,7 @@ Here is an example of how you can execute the example schema:
 import sangria.execution.Executor
 import scala.concurrent.ExecutionContext.Implicits.global
 
-Executor(BlogSchema).execute(queryAst)
+Executor.execute(BlogSchema, queryAst)
 {% endhighlight %}
 
 By default, the result of the execution is a JSON-like structure of scala `Map` and `List` objects. It can be very helpful for testing or experimentation.
@@ -112,9 +133,10 @@ But as soon as you want to integrate it with some web framework, like Play or ak
 
 Sangria allows you to do this by importing one of the following objects:
 
-* `sangria.integration.Json4sSupport` - json4s serialization/deserialization
-* `sangria.integration.SprayJsonSupport` - spray-json serialization/deserialization
-* `sangria.integration.PlayJsonSupport` - play-json serialization/deserialization
+* `sangria.integration.json4s._` - json4s serialization/deserialization
+* `sangria.integration.sprayJson._` - spray-json serialization/deserialization
+* `sangria.integration.playJson._` - play-json serialization/deserialization
+* `sangria.integration.circe._` - circe serialization/deserialization
 
 This will provide an executor with different marshalling mechanism and produce a `Future` with a JSON AST of your choice.
 
