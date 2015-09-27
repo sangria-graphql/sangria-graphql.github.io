@@ -203,8 +203,17 @@ val StarWarsSchema = Schema(Query)
 
 ### Actions
 
-// todo
-`resolve` function expects a function of type `resolve: Context[Ctx, Val] => Action[Ctx, Res]`
+`resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] => Action[Ctx, Res]`. As you can see, the result of the `resolve` is `Action` type
+which can take different shapes. Here is the list of supported actions:
+
+* `Value` - a simple value result. If you want to indicate an error, you need throw an exception
+* `TryValue` - a `scala.util.Try` result
+* `FutureValue` - a `Future` result
+* `DeferredValue` - used to return a `Deferred` result (see [Deferred Values and Resolver](#deferred-values-and-resolver) section for more details)
+* `DeferredFutureValue` - the same as `DeferredValue` but allows to return `Deferred` inside of a `Future`
+* `UpdateCtx` - allows you to transform `Ctx` object. The transformed context object wold be available for nested sub-objects and subsequent sabling fields in case of mutation (since execution of mutation queries is strictly sequential)
+
+Normally library is able to automatically infer the `Action` type, so that you don't need to specify it explicitly.
 
 ### Deferred Values and Resolver
 
