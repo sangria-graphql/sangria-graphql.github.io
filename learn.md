@@ -195,11 +195,16 @@ val Query = ObjectType[CharacterRepo, Unit](
       resolve = ctx => ctx.ctx.getHuman(ctx arg ID)),
     Field("droid", Droid,
       arguments = ID :: Nil,
-      resolve = Projector((ctx, f)=> ctx.ctx.getDroid(ctx arg ID).get))
+      resolve = Projector((ctx, f) => ctx.ctx.getDroid(ctx arg ID).get))
   ))
 
 val StarWarsSchema = Schema(Query)
 {% endhighlight %}
+
+### Actions
+
+// todo
+`resolve` function expects a function of type `resolve: Context[Ctx, Val] => Action[Ctx, Res]`
 
 ### Deferred Values and Resolver
 
@@ -242,6 +247,27 @@ Many schema elements, like `ObjectType`, `Field` or `Schema` itself, take two ty
 * `Ctx` - represents some contextual object that flows across the whole execution (and doesn't change in most of the cases). It can be provided to execution by the user
   in order to help fulfill the GraphQL query. A typical example of such context object is as service or repository object that is able to access
   a Database. In example schema some of the fields, like `droid` or `human` make use of it in order to access the character repository.
+
+### Providing Additional Types
+
+After schema is defined, library tries to discover all of the supported GraphQL types by traversing the schema. Sometimes you have a situation, where not all
+GraphQL types are explicitly reachable from the root of the schema. For instance, if the example schema had only the `hero` field in the `Query` type, then
+it would not be possible to automatically discover the `Human` and the `Droid` type, since only the `Character` interface type is referenced inside of the schema.
+
+If you have similar situation, then you need to provide additional types like this:
+
+{% highlight scala %}
+val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
+  "HeroOnlyQuery", fields[CharacterRepo, Unit](
+    Field("hero", TestSchema.Character,
+      arguments = TestSchema.EpisodeArg :: Nil,
+      resolve = (ctx) => ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
+  ))
+
+val heroOnlySchema = Schema(HeroOnlyQuery, additionalTypes = TestSchema.Human :: TestSchema.Droid :: Nil)
+{% endhighlight %}
+
+Alternatively you can use `manualPossibleTypes` on the `Field` and `InterfaceType` to achieve the same effect.
 
 ## Query Execution
 
