@@ -278,6 +278,26 @@ val heroOnlySchema = Schema(HeroOnlyQuery, additionalTypes = TestSchema.Human ::
 
 Alternatively you can use `manualPossibleTypes` on the `Field` and `InterfaceType` to achieve the same effect.
 
+### Circular References and Recursive Types
+
+In some cases you need to define a GraphQL schema that contains recursive types or has circular references in the object graph. Sangria supports such schemas
+by allowing you to provide a no-arg function that crates `ObjectType` fields instead of eager list of fields. Here is an example of interdependent types:
+
+{% highlight scala %}
+case class A(b: Option[B], name: String)
+case class B(a: A, size: Int)
+
+lazy val AType: ObjectType[Unit, A] = ObjectType("A", () => fields[Unit, A](
+  Field("name", StringType, resolve = _.value.name),
+  Field("b", OptionType(BType), resolve = _.value.b)))
+
+lazy val BType: ObjectType[Unit, B] = ObjectType("B", () => fields[Unit, B](
+  Field("size", IntType, resolve = _.value.size),
+  Field("a", AType, resolve = _.value.a)))
+{% endhighlight %}
+
+In most cases you also need to define (at least one of) these types with `lazy val`.
+
 ## Query Execution
 
 Here is an example of how you can execute example schema:
