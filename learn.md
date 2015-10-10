@@ -701,6 +701,8 @@ object SecurityEnforcer extends Middleware with MiddlewareBeforeField {
 
     if (permissions.nonEmpty)
       securityCtx.ensurePermissions(permissions)
+
+    continue
   }
 }
 {% endhighlight %}
