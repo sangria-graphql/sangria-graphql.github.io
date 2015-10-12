@@ -363,7 +363,8 @@ Sangria does not hard-code the serialisation mechanism. Instead it provides two 
 
 At the moment Sangria provides implementations fro these libraries:
 
-* `sangria.integration.json4s._` - json4s serialization/deserialization
+* `sangria.integration.json4s.native._` - json4s-native serialization/deserialization
+* `sangria.integration.json4s.jackson._` - json4s-jackson serialization/deserialization
 * `sangria.integration.sprayJson._` - spray-json serialization/deserialization
 * `sangria.integration.playJson._` - play-json serialization/deserialization
 * `sangria.integration.circe._` - circe serialization/deserialization
@@ -373,7 +374,7 @@ In order to use one of these, just import it and the result of execution will be
 
 {% highlight scala %}
 {
-  import sangria.integration.json4s._
+  import sangria.integration.json4s.native._
   import org.json4s.native.JsonMethods._
 
   println("Json4s marshalling:\n")
@@ -422,7 +423,7 @@ class FieldMetrics extends Middleware with MiddlewareAfterField with MiddlewareE
     reportQueryMetrics(queryVal)
 
   def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) =
-    System.currentTimeMillis()
+    continue(System.currentTimeMillis())
 
   def afterField(queryVal: QueryVal, fieldVal: FieldVal, value: Any, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) = {
     val key = ctx.parentType.name + "." + ctx.field.name

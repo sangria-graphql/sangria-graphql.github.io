@@ -133,6 +133,8 @@ But as soon as you want to integrate it with some web framework, like Play or ak
 
 Sangria allows you to do this by importing one of the following objects:
 
+* `sangria.integration.json4s.native._` - json4s-native serialization/deserialization
+* `sangria.integration.json4s.jackson._` - json4s-jackson serialization/deserialization
 * `sangria.integration.json4s._` - json4s serialization/deserialization
 * `sangria.integration.sprayJson._` - spray-json serialization/deserialization
 * `sangria.integration.playJson._` - play-json serialization/deserialization
