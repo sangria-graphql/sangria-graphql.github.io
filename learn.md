@@ -312,17 +312,78 @@ Executor(TestSchema.StarWarsSchema, userContext = new CharacterRepo, deferredRes
 
 The result of the execution is a `Future` of marshaled GraphQL result (see next section)
 
-### Limiting Query Depth
+## Protection Against Malicious Queries
 
-If you are using recursive GraphQL types, it can be dangerous to expose them since query can be infinitely nested and potentially can be
-abused. In order to prevent this, `Executor` allows you to restrict max query depth via `maxQueryDepth` argument:
+GraphQL is very flexible data query language. Unfortunately with flexibility comes also a danger of misuse by malicious clients.
+Since typical GraphQL schemas contain recursive types and circular dependencies, clients are able to send infinitely deep queries
+which may have high impact on server performance. That's because it's important to analyze query complexity before exciting it.
+Sangria provides two mechanisms to protect your GraphQL server from malicious or too expensive queries which are described in the next sections.
+
+### Query Complexity Analysis
+
+Query complexity analysis makes a rough estimation of the query complexity before it is executed. The complexity is `Double` number that is
+calculated according to the simple rule described below.
+
+Every field in the query gets a default score `1` (including `ObjectType` nodes). The "complexity" of the query is the sum of all field scores.
+
+so for instance query:
+
+{% highlight js %}
+query Test {
+  droid(id: "1000") {
+    id
+    serialNumber
+  }
+
+  pets(limit: 20) {
+    name
+    age
+  }
+}
+{% endhighlight %}
+
+will have complexity `6`. You probably noticed, that score is a bit unfair since `pets` field is actually a list which can contain max 20
+elements in the reponse.
+
+You can customize the field score with `complexity` argument in order to solve this kind of issues:
 
 {% highlight scala %}
-val executor = Executor(
-  schema = SchemaDefinition.StarWarsSchema,
-  userContext = new CharacterRepo,
-  deferredResolver = new FriendsResolver,
-  maxQueryDepth = Some(7))
+Field("pets", OptionType(ListType(PetType)),
+  arguments = Argument("limit", IntType) :: Nil,
+  complexity = Some((args, childScore) ⇒ 25.0D + args.arg[Int]("limit") * childScore),
+  resolve = ctx ⇒ ...)
+{% endhighlight %}
+
+Now query will get score `68` which is much better estimation.
+
+In order to analyze the complexity of a query you need to provide a `measureComplexity` argument to the `Executor`.
+In this example `rejectComplexQueries` will reject all queries with complexity higher than `1000`:
+
+{% highlight scala %}
+val rejectComplexQueries = (c: Double) ⇒
+  if (c > 1000)
+    throw new IllegalArgumentException(
+      s"Too complex query: max allowed complexity is 1000.0, but got $c")
+  else ()
+
+val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
+  case (m, e: IllegalArgumentException) ⇒ HandledException(e.getMessage)
+}
+
+Executor.execute(schema, query,
+  exceptionHandler = exceptionHandler,
+  measureComplexity = Some(rejectComplexQueries))
+{% endhighlight %}
+
+The complexity of full introspection query (used by tools like GraphiQL) is `102`.
+
+### Limiting Query Depth
+
+There is also another simpler mechanism to protect against malicious queries: limiting query depth. It can be done by providing
+the `maxQueryDepth` argument to the `Executor`:
+
+{% highlight scala %}
+val executor = Executor(schema = MySchema, maxQueryDepth = Some(7))
 {% endhighlight %}
 
 ## Error Handling
