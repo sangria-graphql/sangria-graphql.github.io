@@ -165,7 +165,8 @@ val Droid = ObjectType(
   fields[Unit, Droid](
     Field("id", StringType,
       Some("The id of the droid."),
-      resolve = Projection("_id", _.value.id)),
+      tags = ProjectionName("_id") :: Nil,
+      resolve = _.value.id),
     Field("name", OptionType(StringType),
       Some("The name of the droid."),
       resolve = ctx => Future.successful(ctx.value.name)),
@@ -242,10 +243,10 @@ class FriendsResolver extends DeferredResolver[Any] {
 Sangria also introduces the concept of projections. If you are fetching your data from the database (like let's say MongoDB), then it can be
 very helpful to know which fields are needed for the query ahead-of-time in order to make efficient projection in the DB query.
 
-`Projector` and `Projection` allow you to do this. They both can wrap a `resolve` function. `Projector` enhances wrapped `resolve` function
-with the list of projected fields (limited by depth), and `Projection` allows you to customise projected
+`Projector` allows you to do precisely this. It wraps a `resolve` function and enhances it
+with the list of projected fields (limited by depth). `ProjectionName` field tag allows you to customise projected
 field name (this is helpful, if your DB field names are different from the GraphQL field names).
-`NoProjection` on the other hand allows you to exclude a field from the list of projected field names.
+`ProjectionExclude` field tag on the other hand allows you to exclude a field from the list of projected field names.
 
 ### Input and Context Objects
 
