@@ -524,7 +524,7 @@ You can find another example of `FieldTag` and `Middleware` usage in [Authentica
 
 ## Query Reducers
 
-Sometimes in can be helpful to perform some analysis on a query before execution it. An example is complexity analysis: it aggregates the complexity
+Sometimes in can be helpful to perform some analysis on a query before executing it. An example is complexity analysis: it aggregates the complexity
 of all fields in the query and then rejects the query without executing it if complexity is too high. Another example is gathering all `Permission`
 field tags and then fetching extra user auth data from external service if query contains protected fields. This need to be done before query
 started to execute.
