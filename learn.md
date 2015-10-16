@@ -350,32 +350,38 @@ You can customize the field score with `complexity` argument in order to solve t
 {% highlight scala %}
 Field("pets", OptionType(ListType(PetType)),
   arguments = Argument("limit", IntType) :: Nil,
-  complexity = Some((args, childScore) ⇒ 25.0D + args.arg[Int]("limit") * childScore),
+  complexity = Some((ctx, args, childScore) ⇒ 25.0D + args.arg[Int]("limit") * childScore),
   resolve = ctx ⇒ ...)
 {% endhighlight %}
 
 Now query will get score `68` which is much better estimation.
 
-In order to analyze the complexity of a query you need to provide a `measureComplexity` argument to the `Executor`.
+In order to analyze the complexity of a query you need to add correspondent a `QueryReducer` to the `Executor`.
 In this example `rejectComplexQueries` will reject all queries with complexity higher than `1000`:
 
 {% highlight scala %}
-val rejectComplexQueries = (c: Double) ⇒
-  if (c > 1000)
-    throw new IllegalArgumentException(
-      s"Too complex query: max allowed complexity is 1000.0, but got $c")
-  else ()
+val rejectComplexQueries = QueryReducer.rejectComplexQueries[Any](1000, (c, ctx) ⇒
+    new IllegalArgumentException(s"Too complex query: max allowed complexity is 1000.0, but got $c"))
 
 val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
   case (m, e: IllegalArgumentException) ⇒ HandledException(e.getMessage)
 }
 
 Executor.execute(schema, query,
-  exceptionHandler = exceptionHandler,
-  measureComplexity = Some(rejectComplexQueries))
+    exceptionHandler = exceptionHandler,
+    queryReducers = rejectComplexQueries :: Nil)
 {% endhighlight %}
 
-The complexity of full introspection query (used by tools like GraphiQL) is `102`.
+If you just want to estimate the complexity and then perform different kind of action, then there is another helper function for this:
+
+{% highlight scala %}
+val complReducer = QueryReducer.measureComplexity[MyCtx] { (c, ctx) ⇒
+  // do some analysis
+  ctx
+}
+{% endhighlight %}
+
+The complexity of full introspection query (used by tools like GraphiQL) is around `100`.
 
 ### Limiting Query Depth
 
@@ -475,18 +481,18 @@ Moreover it makes it much easier for people to share standard middleware in a li
 Here is a small example of it's usage:
 
 {% highlight scala %}
-class FieldMetrics extends Middleware with MiddlewareAfterField with MiddlewareErrorField {
+class FieldMetrics extends Middleware[Any] with MiddlewareAfterField[Any] with MiddlewareErrorField[Any] {
   type QueryVal = MutableMap[String, List[Long]]
   type FieldVal = Long
 
-  def beforeQuery(context: MiddlewareQueryContext[_, _]) = MutableMap()
-  def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[_, _]) =
+  def beforeQuery(context: MiddlewareQueryContext[Any, _, _]) = MutableMap()
+  def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[Any, _, _]) =
     reportQueryMetrics(queryVal)
 
-  def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) =
+  def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[Any, _, _], ctx: Context[Any, _]) =
     continue(System.currentTimeMillis())
 
-  def afterField(queryVal: QueryVal, fieldVal: FieldVal, value: Any, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) = {
+  def afterField(queryVal: QueryVal, fieldVal: FieldVal, value: Any, mctx: MiddlewareQueryContext[Any, _, _], ctx: Context[Any, _]) = {
     val key = ctx.parentType.name + "." + ctx.field.name
     val list = queryVal.getOrElse(key, Nil)
 
@@ -494,7 +500,7 @@ class FieldMetrics extends Middleware with MiddlewareAfterField with MiddlewareE
     None
   }
 
-  def fieldError(queryVal: QueryVal, fieldVal: FieldVal, error: Throwable, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) = {
+  def fieldError(queryVal: QueryVal, fieldVal: FieldVal, error: Throwable, mctx: MiddlewareQueryContext[Any, _, _], ctx: Context[Any, _]) = {
     val key = ctx.parentType.name + "." + ctx.field.name
     val list = queryVal.getOrElse(key, Nil)
     val errors = queryVal.getOrElse("ERROR", Nil)
@@ -515,6 +521,45 @@ in order to indicate a field error.
 In order to ensure generic classification of fields, every field contains a generic list or `FieldTag`s which provides a user-defined
 meta-information about this field (just to highlight a few examples: `Permission("ViewOrders")`, `Authorized`, `Measured`, `Cached`, etc.).
 You can find another example of `FieldTag` and `Middleware` usage in [Authentication and Authorisation](#authentication-and-authorisation) section.
+
+## Query Reducers
+
+Sometimes in can be helpful to perform some analysis on a query before execution it. An example is complexity analysis: it aggregates the complexity
+of all fields in the query and then rejects the query without executing it if complexity is too high. Another example is gathering all `Permission`
+field tags and then fetching extra user auth data from external service if query contains protected fields. This need to be done before query
+started to execute.
+
+Sangria provides a mechanism for this kind of query analysis with `QueryReducer`. Query reducer implementation will go through all of the fields
+in the query and aggregate them to a single value. `Executor` will then call `reduceCtx` with this aggregated value which gives you an
+opportunity to perform some logic and update the `Ctx` before query is executed.
+
+Out-of-the-box sangria comes with several `QueryReducer`s for common use-cases:
+
+* `QueryReducer.measureComplexity` - measures a complexity of the query
+* `QueryReducer.rejectComplexQueries` - rejects queries with complexity above provided threshold
+* `QueryReducer.collectTags` - collects `FieldTag`s based on partial function
+
+Here is a small example of `QueryReducer.collectTags`:
+
+{% highlight scala %}
+val fetchUserProfile = QueryReducer.collectTags[MyContext, String] {
+  case Permission(name) ⇒ name
+} { (permissionNames, ctx) ⇒
+  if (permissionNames.nonEmpty) {
+    val userProfile: Future[UserProfile] = externalService.getUserProfile()
+
+    userProfile.map(profile ⇒ ctx.copy(profile = Some(profile))
+  } else
+    ctx
+}
+
+Executor.execute(schema, query,
+  userContext = new MyContext,
+  queryReducers = fetchUserProfile :: Nil)
+{% endhighlight %}
+
+This allows you to avoid fetching user profile if it's not needed based on the query fields. You can find more information about the `QueryReducer`
+that analyses a query complexity in the [Query Complexity Analysis](#query-complexity-analysis) section.
 
 ## Built-in Scalars
 
