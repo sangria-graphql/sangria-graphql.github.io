@@ -212,7 +212,7 @@ which can take different shapes. Here is the list of supported actions:
 * `FutureValue` - a `Future` result
 * `DeferredValue` - used to return a `Deferred` result (see [Deferred Values and Resolver](#deferred-values-and-resolver) section for more details)
 * `DeferredFutureValue` - the same as `DeferredValue` but allows to return `Deferred` inside of a `Future`
-* `UpdateCtx` - allows you to transform `Ctx` object. The transformed context object wold be available for nested sub-objects and subsequent sabling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of it's usage in [Authentication and Authorisation](#authentication-and-authorisation) section
+* `UpdateCtx` - allows you to transform `Ctx` object. The transformed context object wold be available for nested sub-objects and subsequent sibling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of it's usage in [Authentication and Authorisation](#authentication-and-authorisation) section
 
 Normally library is able to automatically infer the `Action` type, so that you don't need to specify it explicitly.
 
@@ -698,7 +698,7 @@ def schema = Schema(QueryType, Some(MutationType))
 {% endhighlight %}
 
 As you can see on this example, we are using context object to authorise user with the `authorised` function. Interesting thing to notice
-here is that `login` field uses `UpdateCtx` action in order make login information available for sabling mutation fields. This makes queries
+here is that `login` field uses `UpdateCtx` action in order make login information available for sibling mutation fields. This makes queries
 like this possible:
 
 {% highlight js %}
