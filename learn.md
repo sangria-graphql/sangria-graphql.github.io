@@ -792,17 +792,17 @@ def schema = Schema(QueryType, Some(MutationType))
 As you can see, security constraints are now defined as field's `tags`. In order to enforce these security constraints we need implement `Middleware` like this:
 
 {% highlight scala %}
-object SecurityEnforcer extends Middleware with MiddlewareBeforeField {
+object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeField[SecureContext] {
   type QueryVal = Unit
   type FieldVal = Unit
 
-  def beforeQuery(context: MiddlewareQueryContext[_, _]) = ()
-  def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[_, _]) = ()
+  def beforeQuery(context: MiddlewareQueryContext[SecureContext, _, _]) = ()
+  def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[SecureContext, _, _]) = ()
 
-  def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[_, _], ctx: Context[_, _]) = {
+  def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[SecureContext, _, _], ctx: Context[SecureContext, _]) = {
     val permissions = ctx.field.tags.collect {case Permission(p) => p}
     val requireAuth = ctx.field.tags contains Authorised
-    val securityCtx = ctx.ctx.asInstanceOf[SecureContext]
+    val securityCtx = ctx.ctx
 
     if (requireAuth)
       securityCtx.user
