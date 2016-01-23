@@ -430,47 +430,31 @@ Sangria does not hard-code the serialisation mechanism. Instead it provides two 
 
 At the moment Sangria provides implementations fro these libraries:
 
-* `sangria.integration.json4s.native._` - json4s-native serialization/deserialization
-* `sangria.integration.json4s.jackson._` - json4s-jackson serialization/deserialization
-* `sangria.integration.sprayJson._` - spray-json serialization/deserialization
-* `sangria.integration.playJson._` - play-json serialization/deserialization
-* `sangria.integration.circe._` - circe serialization/deserialization
 * The default one, which serializes/deserializes to scala `Map`/`List`
+* `sangria.marshalling.queryAst._` - native Query Value AST serialization/deserialization
+* `sangria.marshalling.sprayJson._` - spray-json serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"`
+* `sangria.marshalling.playJson._` - play-json serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"`
+* `sangria.marshalling.circe._` - circe serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"`
+* `sangria.marshalling.argonaut._` - argonaut serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"`
+* `sangria.marshalling.json4s.native._` - json4s-native serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
+* `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization/deserialization
+  * extra dependency `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`
 
 In order to use one of these, just import it and the result of execution will be of the correct type:
 
 {% highlight scala %}
-{
-  import sangria.integration.json4s.native._
-  import org.json4s.native.JsonMethods._
+import sangria.marshalling.sprayJson._
 
-  println("Json4s marshalling:\n")
-
-  println(pretty(render(Await.result(
-    Executor(TestSchema.StarWarsSchema, userContext = new CharacterRepo, deferredResolver = new FriendsResolver)
-        .execute(ast, variables = vars), Duration.Inf))))
-}
-
-{
-  import sangria.integration.sprayJson._
-
-  println("\nSprayJson marshalling:\n")
-
-  println(Await.result(
-    Executor(TestSchema.StarWarsSchema, userContext = new CharacterRepo, deferredResolver = new FriendsResolver)
-        .execute(ast, variables = vars), Duration.Inf).prettyPrint)
-}
-
-{
-  import sangria.integration.playJson._
-  import play.api.libs.json._
-
-  println("\nPlayJson marshalling:\n")
-
-  println(Json.prettyPrint(Await.result(
-    Executor(TestSchema.StarWarsSchema, userContext = new CharacterRepo, deferredResolver = new FriendsResolver)
-        .execute(ast, variables = vars), Duration.Inf)))
-}
+println(Await.result(
+  Executor.execute(TestSchema.StarWarsSchema, queryAst,
+    variables = vars
+    userContext = new CharacterRepo, 
+    deferredResolver = new FriendsResolver), Duration.Inf).prettyPrint)
 {% endhighlight %}
 
 ## Middleware
