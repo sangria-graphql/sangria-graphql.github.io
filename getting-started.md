@@ -133,12 +133,19 @@ But as soon as you want to integrate it with some web framework, like Play or ak
 
 Sangria allows you to do this by importing one of the following objects:
 
-* `sangria.integration.json4s.native._` - json4s-native serialization/deserialization
-* `sangria.integration.json4s.jackson._` - json4s-jackson serialization/deserialization
-* `sangria.integration.json4s._` - json4s serialization/deserialization
-* `sangria.integration.sprayJson._` - spray-json serialization/deserialization
-* `sangria.integration.playJson._` - play-json serialization/deserialization
-* `sangria.integration.circe._` - circe serialization/deserialization
+* `sangria.marshalling.queryAst._` - native Query Value AST serialization/deserialization
+* `sangria.marshalling.sprayJson._` - spray-json serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"`
+* `sangria.marshalling.playJson._` - play-json serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"`
+* `sangria.marshalling.circe._` - circe serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"`
+* `sangria.marshalling.argonaut._` - argonaut serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"`
+* `sangria.marshalling.json4s.native._` - json4s-native serialization/deserialization 
+  * extra dependency `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
+* `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization/deserialization
+  * extra dependency `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`  
 
 This will provide an executor with different marshalling mechanism and produce a `Future` with a JSON AST of your choice.
 
