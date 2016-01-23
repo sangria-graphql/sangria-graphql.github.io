@@ -14,7 +14,7 @@ If you want want to download jars, then please do so directly from the [maven ce
 
 <dl class="dl-horizontal">
   <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria}}">sangria</a></dd>
-  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.sangria-releases}}">{{site.version.sangria}}</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria}}">{{site.version.sangria}}</a></dd>
   <dt>Maven central</dt><dd>
     for scala <a target="_blank" href="{{site.link.maven.sangria}}2.11%7C{{site.version.sangria}}%7Cjar">2.11</a>
   </dd>
@@ -30,7 +30,7 @@ libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria
 
 <dl class="dl-horizontal">
   <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-relay}}">sangria-relay</a></dd>
-  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.sangria-relay-releases}}">{{site.version.sangria-relay}}</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-relay}}">{{site.version.sangria-relay}}</a></dd>
   <dt>Maven central</dt><dd>
     for scala <a target="_blank" href="{{site.link.maven.sangria-relay}}2.11%7C{{site.version.sangria-relay}}%7Cjar">2.11</a>
   </dd>
@@ -42,3 +42,130 @@ You can use following dependency in your SBT build:
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
 {% endhighlight %}
 
+### sangria-spray-json
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-spray-json}}">sangria-spray-json</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-spray-json}}">{{site.version.sangria-spray-json}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for scala <a target="_blank" href="{{site.link.maven.sangria-spray-json}}2.11%7C{{site.version.sangria-spray-json}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"
+{% endhighlight %}
+
+### sangria-play-json
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-play-json}}">sangria-play-json</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-play-json}}">{{site.version.sangria-play-json}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for scala <a target="_blank" href="{{site.link.maven.sangria-play-json}}2.11%7C{{site.version.sangria-play-json}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"
+{% endhighlight %}
+
+### sangria-circe
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-circe}}">sangria-circe</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-circe}}">{{site.version.sangria-circe}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for scala <a target="_blank" href="{{site.link.maven.sangria-circe}}2.11%7C{{site.version.sangria-circe}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"
+{% endhighlight %}
+
+### sangria-argonaut
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-argonaut}}">sangria-argonaut</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-argonaut}}">{{site.version.sangria-argonaut}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for scala <a target="_blank" href="{{site.link.maven.sangria-argonaut}}2.11%7C{{site.version.sangria-argonaut}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"
+{% endhighlight %}
+
+### sangria-json4s-native
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-json4s-native}}">sangria-json4s-native</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-json4s-native}}">{{site.version.sangria-json4s-native}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for scala <a target="_blank" href="{{site.link.maven.sangria-json4s-native}}2.11%7C{{site.version.sangria-json4s-native}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"
+{% endhighlight %}
+
+### sangria-json4s-jackson
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-json4s-jackson}}">sangria-json4s-jackson</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-json4s-jackson}}">{{site.version.sangria-json4s-jackson}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for scala <a target="_blank" href="{{site.link.maven.sangria-json4s-jackson}}2.11%7C{{site.version.sangria-json4s-jackson}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"
+{% endhighlight %}
+
+### sangria-marshalling-api
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-marshalling-api}}">sangria-marshalling-api</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-marshalling-api}}">{{site.version.sangria-marshalling-api}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for scala <a target="_blank" href="{{site.link.maven.sangria-marshalling-api}}2.11%7C{{site.version.sangria-marshalling-api}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-marshalling-api" % "{{site.version.sangria-marshalling-api}}"
+{% endhighlight %}
+
+### sangria-marshalling-testkit
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-marshalling-testkit}}">sangria-marshalling-testkit</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-marshalling-testkit}}">{{site.version.sangria-marshalling-testkit}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for scala <a target="_blank" href="{{site.link.maven.sangria-marshalling-testkit}}2.11%7C{{site.version.sangria-marshalling-testkit}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+{% highlight scala %}
+libraryDependencies += "{{site.groupId}}" %% "sangria-marshalling-testkit" % "{{site.version.sangria-marshalling-testkit}}"
+{% endhighlight %}

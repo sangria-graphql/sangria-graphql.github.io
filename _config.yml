@@ -7,16 +7,22 @@ ga-code: UA-65759630-1
 domain: sangria-graphql.org
 
 version:
-  sangria: 0.5.0
-  sangria-relay: 0.5.0
+  sangria: 0.5.1
+  sangria-relay: 0.5.1
+  sangria-spray-json: 0.1.0
+  sangria-play-json: 0.1.0
+  sangria-json4s-native: 0.1.0
+  sangria-json4s-jackson: 0.1.0
+  sangria-circe: 0.1.0
+  sangria-argonaut: 0.1.0
+  sangria-marshalling-api: 0.1.0
+  sangria-marshalling-testkit: 0.1.0
 
 groupId: org.sangria-graphql
 
 link:
   sangria-github: https://github.com/sangria-graphql
   sangria-maven: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.sangria-graphql%22
-  sangria-releases: https://github.com/sangria-graphql/sangria/releases
-  sangria-relay-releases: https://github.com/sangria-graphql/sangria-relay/releases
   twitter: https://twitter.com/easyangel
   stack-overflow: http://stackoverflow.com/questions/tagged/sangria
   stack-overflow-ask: http://stackoverflow.com/questions/ask?tags=scala,graphql,sangria
@@ -25,12 +31,47 @@ link:
   repo:
     sangria: https://github.com/sangria-graphql/sangria
     sangria-relay: https://github.com/sangria-graphql/sangria-relay
+    sangria-spray-json: https://github.com/sangria-graphql/sangria-spray-json
+    sangria-play-json: https://github.com/sangria-graphql/sangria-play-json
+    sangria-json4s-native: https://github.com/sangria-graphql/sangria-json4s-native
+    sangria-json4s-jackson: https://github.com/sangria-graphql/sangria-json4s-jackson
+    sangria-circe: https://github.com/sangria-graphql/sangria-circe
+    sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut
+    sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api
+    sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit
   maven:
     sangria: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria_
-    sangria: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-relay_
+    sangria-relay: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-relay_
+    sangria-spray-json: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-spray-json_
+    sangria-play-json: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-play-json_
+    sangria-json4s-native: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-json4s-native_
+    sangria-json4s-jackson: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-json4s-jackson_
+    sangria-circe: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-circe_
+    sangria-argonaut: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-argonaut_
+    sangria-marshalling-api: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-marshalling-api_
+    sangria-marshalling-testkit: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-marshalling-testkit_
   issues:
     sangria: https://github.com/sangria-graphql/sangria/issues
-    sangria: https://github.com/sangria-graphql/sangria-relay/issues
+    sangria-relay: https://github.com/sangria-graphql/sangria-relay/issues
+    sangria-spray-json: https://github.com/sangria-graphql/sangria-spray-json/issues
+    sangria-play-json: https://github.com/sangria-graphql/sangria-play-json/issues
+    sangria-json4s-native: https://github.com/sangria-graphql/sangria-json4s-native/issues
+    sangria-json4s-jackson: https://github.com/sangria-graphql/sangria-json4s-jackson/issues
+    sangria-circe: https://github.com/sangria-graphql/sangria-circe/issues
+    sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut/issues
+    sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api/issues
+    sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit/issues
+  releases:
+    sangria: https://github.com/sangria-graphql/sangria/releases
+    sangria-relay: https://github.com/sangria-graphql/sangria-relay/releases
+    sangria-spray-json: https://github.com/sangria-graphql/sangria-spray-json/releases
+    sangria-play-json: https://github.com/sangria-graphql/sangria-play-json/releases
+    sangria-json4s-native: https://github.com/sangria-graphql/sangria-json4s-native/releases
+    sangria-json4s-jackson: https://github.com/sangria-graphql/sangria-json4s-jackson/releases
+    sangria-circe: https://github.com/sangria-graphql/sangria-circe/releases
+    sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut/releases
+    sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api/releases
+    sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit/releases
   website: https://github.com/sangria-graphql/sangria-website
   jekyll: http://jekyllrb.com/
   ghpages: https://pages.github.com/
