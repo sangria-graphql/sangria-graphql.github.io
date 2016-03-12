@@ -444,7 +444,9 @@ At the moment Sangria provides implementations fro these libraries:
   * extra dependency `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
 * `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization/deserialization
   * extra dependency `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`
-
+* `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization/deserialization
+  * extra dependency `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`  
+  
 In order to use one of these, just import it and the result of execution will be of the correct type:
 
 {% highlight scala %}

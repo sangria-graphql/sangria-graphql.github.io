@@ -146,6 +146,8 @@ Sangria allows you to do this by importing one of the following objects:
   * extra dependency `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
 * `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization/deserialization
   * extra dependency `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`  
+* `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization/deserialization
+  * extra dependency `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`  
 
 This will provide an executor with different marshalling mechanism and produce a `Future` with a JSON AST of your choice.
 
