@@ -300,6 +300,83 @@ lazy val BType: ObjectType[Unit, B] = ObjectType("B", () => fields[Unit, B](
 
 In most cases you also need to define (at least one of) these types with `lazy val`.
 
+### Schema Rendering
+
+You can render a schema or an introspection results in human-readable form (IDL syntax) with `SchemaRenderer`. Here is an example:
+
+```scala
+SchemaRenderer.renderSchema(SchemaDefinition.StarWarsSchema)
+```
+
+For a StarWars schema it will produce following results:
+
+```
+interface Character {
+  id: String!
+  name: String
+  friends: [Character]
+  appearsIn: [Episode]
+}
+
+type Droid implements Character {
+  id: String!
+  name: String
+  friends: [Character]
+  appearsIn: [Episode]
+  primaryFunction: String
+}
+
+enum Episode {
+  NEWHOPE
+  EMPIRE
+  JEDI
+}
+
+type Human implements Character {
+  id: String!
+  name: String
+  friends: [Character]
+  appearsIn: [Episode]
+  homePlanet: String
+}
+
+type Query {
+  hero(episode: Episode): Character!
+  human(id: String!): Human
+  droid(id: String!): Droid!
+}
+```
+
+## Schema Materialization
+
+If you already got an full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for clint-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
+
+Here is simple example of how you can use this feature (using circe in this particular example):
+
+```scala
+import io.circe._
+import sangria.marshalling.circe._
+
+val introspectionResults: Json = ??? // coming from other server or file
+val clientSchema: Schema[Unit, Unit] = 
+  Schema.buildFromIntrospection(introspectionResults)  
+```
+
+It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of materialization by providing custom `MaterializationLogic` implementation (you can also extend `DefaultMaterializationLogic` class). This means that you can, for instance, plug in some generic field resolution logic (`resolveField` method) or provide generic logic for custom scalars (`coerceScalar*` methods). Without these customisations schema only would be able to execute introspection queries. 
+   
+By default, default values (for input object fields and arguments) would be ignored because it's just a string as far as introspection API is concerned. However you can enable default value support if you know the format of the default values (in many cases it would be JSON). There is even a helper function for this:
+  
+```scala
+import spray.json._
+import sangria.marshalling.sprayJson._
+
+val clientSchema: Schema[Unit, Unit] = 
+  Schema.buildFromIntrospection(introspectionResults,
+    MaterializationLogic.withDefaultValues[Unit, JsValue])
+```
+
+This will inform schema materializer that default values are serialized as JSON and that spray-json should be used to work with them (please note, that circe does not have a built-in JSON parsing support, so it can't be used out-of-the-box here. On the other hand, it's pretty easy to add support for particular circe parser by defining an implicit instance of `InputParser` type class).  
+
 ## Query Execution
 
 Here is an example of how you can execute example schema:
