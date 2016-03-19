@@ -364,6 +364,8 @@ val clientSchema: Schema[Unit, Unit] =
 
 It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of materialization by providing custom `MaterializationLogic` implementation (you can also extend `DefaultMaterializationLogic` class). This means that you can, for instance, plug in some generic field resolution logic (`resolveField` method) or provide generic logic for custom scalars (`coerceScalar*` methods). Without these customisations schema only would be able to execute introspection queries. 
    
+### Default Value Materialization 
+   
 By default, default values (for input object fields and arguments) would be ignored because it's just a string as far as introspection API is concerned. However you can enable default value support if you know the format of the default values (in many cases it would be JSON). There is even a helper function for this:
   
 ```scala
@@ -384,11 +386,30 @@ Here is an example of how you can execute example schema:
 ```scala
 import sangria.execution.Executor
 
-Executor(TestSchema.StarWarsSchema, userContext = new CharacterRepo, deferredResolver = new FriendsResolver)
-  .execute(queryAst, variables = vars)
+Executor.execute(TestSchema.StarWarsSchema, queryAst, 
+  userContext = new CharacterRepo, 
+  deferredResolver = new FriendsResolver, 
+  variables = vars)
 ```
 
-The result of the execution is a `Future` of marshaled GraphQL result (see next section)
+The result of the execution is a `Future` of marshaled GraphQL result (see [Result Marshalling and Input Unmarshalling](#result-marshalling-and-input-unmarshalling) section for more details)
+
+### Prepared Queries
+ 
+In some situations you may need to make a static query analysis and postpone the actual execution of the query. Later on you may need to execute this query several times. Typical example is subscription queries: you first validate and prepare a query, and then you execute it several times for every event. This is precisely what `PreparedQuery` allows you to do.
+
+Let't look at the example:
+
+```scala
+val preparedQueryFuture = Executor.prepare(StarWarsSchema, query, 
+  new CharacterRepo, 
+  deferredResolver = new FriendsResolver)
+
+preparedQueryFuture.map(preparedQuery ⇒ 
+  preparedQuery.execute(userContext = someCustomCtx, root = event))
+```
+
+`Executor.prepare` will return you a `Future` with prepared query which you can execute several times later, possibly providing different `userContext` or `root` value. In addition to `execute`, `PreparedQuery` also gives you a lot of information about the query itself: operation, root `QueryType`, top-level fields with arguments, etc.
 
 ## Protection Against Malicious Queries
 
