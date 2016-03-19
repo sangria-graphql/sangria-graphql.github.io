@@ -431,22 +431,21 @@ Sangria does not hard-code the serialisation mechanism. Instead it provides two 
 
 At the moment Sangria provides implementations fro these libraries:
 
-* The default one, which serializes/deserializes to scala `Map`/`List`
-* `sangria.marshalling.queryAst._` - native Query Value AST serialization/deserialization
-* `sangria.marshalling.sprayJson._` - spray-json serialization/deserialization 
-  * extra dependency `"{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"`
-* `sangria.marshalling.playJson._` - play-json serialization/deserialization 
-  * extra dependency `"{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"`
-* `sangria.marshalling.circe._` - circe serialization/deserialization 
-  * extra dependency `"{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"`
-* `sangria.marshalling.argonaut._` - argonaut serialization/deserialization 
-  * extra dependency `"{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"`
-* `sangria.marshalling.json4s.native._` - json4s-native serialization/deserialization 
-  * extra dependency `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
-* `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization/deserialization
-  * extra dependency `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`
-* `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization/deserialization
-  * extra dependency `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`  
+* `sangria.marshalling.queryAst._` - native Query Value AST serialization
+* `sangria.marshalling.sprayJson._` - spray-json serialization 
+  * `"{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"`
+* `sangria.marshalling.playJson._` - play-json serialization 
+  * `"{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"`
+* `sangria.marshalling.circe._` - circe serialization 
+  * `"{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"`
+* `sangria.marshalling.argonaut._` - argonaut serialization 
+  * `"{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"`
+* `sangria.marshalling.json4s.native._` - json4s-native serialization 
+  * `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
+* `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization
+  * `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`  
+* `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization
+  * `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`   
   
 In order to use one of these, just import it and the result of execution will be of the correct type:
 
