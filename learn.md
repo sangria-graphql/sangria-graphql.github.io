@@ -274,7 +274,8 @@ val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
       resolve = (ctx) => ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
   ))
 
-val heroOnlySchema = Schema(HeroOnlyQuery, additionalTypes = TestSchema.Human :: TestSchema.Droid :: Nil)
+val heroOnlySchema = Schema(HeroOnlyQuery, 
+  additionalTypes = TestSchema.Human :: TestSchema.Droid :: Nil)
 ```
 
 Alternatively you can use `manualPossibleTypes` on the `Field` and `InterfaceType` to achieve the same effect.
