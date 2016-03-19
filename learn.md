@@ -824,3 +824,36 @@ object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeF
   }
 }
 ```
+
+## Helpers
+
+There are quite a few helpers available which you may find useful in different situations.
+
+### Introspection Result Parsing
+
+Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of forking directly with JSON (or other raw representation), you can pars it in a set of case classes that allow you to easily work with the whole schema introspection. 
+
+You can find a parser function in `sangria.introspection.IntrospectionParser`.
+ 
+### Converting Between Input Representations
+
+Sangria provides `ResultMarshaller` and `InputUnmarshaller` abstraction and includes implementation for variety of different formats. As a natural extension of this feature, you can also convert between these formats at will.
+ 
+Here is, for instance, how you can convert circe `Json` into sprayJson `JsValue`:
+ 
+```scala
+import sangria.marshalling.circe._
+import sangria.marshalling.sprayJson._
+import sangria.marshalling.MarshallingUtil._
+
+val circeJson = Json.array(
+  Json.empty, 
+  Json.int(123), 
+  Json.array(Json.obj("foo" → Json.string("bar"))))
+  
+val sprayJson = circeJson.convertMarshaled[JsValue]  
+```
+
+### Determine a Query Operation Type
+
+Sometimes it can be very useful to know the type of query operation. For example you need it if you want to return different response for subscription queries. `ast.Document` exposes `operationType` and `operation` for this.
