@@ -364,7 +364,7 @@ In this example `rejectComplexQueries` will reject all queries with complexity h
 val rejectComplexQueries = QueryReducer.rejectComplexQueries[Any](1000, (c, ctx) ⇒
     new IllegalArgumentException(s"Too complex query: max allowed complexity is 1000.0, but got $c"))
 
-val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
+val exceptionHandler: Executor.ExceptionHandler = {
   case (m, e: IllegalArgumentException) ⇒ HandledException(e.getMessage)
 }
 
@@ -458,6 +458,26 @@ println(Await.result(
     userContext = new CharacterRepo, 
     deferredResolver = new FriendsResolver), Duration.Inf).prettyPrint)
 ```
+
+### Converting Between Input Representations
+
+As a natural extension of `ResultMarshaller` and `InputUnmarshaller` abstraction, sangria allows you to convert between different formats at will.
+ 
+Here is, for instance, how you can convert circe `Json` into sprayJson `JsValue`:
+ 
+```scala
+import sangria.marshalling.circe._
+import sangria.marshalling.sprayJson._
+import sangria.marshalling.MarshallingUtil._
+
+val circeJson = Json.array(
+  Json.empty, 
+  Json.int(123), 
+  Json.array(Json.obj("foo" → Json.string("bar"))))
+  
+val sprayJson = circeJson.convertMarshaled[JsValue]  
+```
+
 
 ## Middleware
 
@@ -835,25 +855,6 @@ Sometimes you would like to work with the results of an introspection query. Thi
 
 You can find a parser function in `sangria.introspection.IntrospectionParser`.
  
-### Converting Between Input Representations
-
-Sangria provides `ResultMarshaller` and `InputUnmarshaller` abstraction and includes implementation for variety of different formats. As a natural extension of this feature, you can also convert between these formats at will.
- 
-Here is, for instance, how you can convert circe `Json` into sprayJson `JsValue`:
- 
-```scala
-import sangria.marshalling.circe._
-import sangria.marshalling.sprayJson._
-import sangria.marshalling.MarshallingUtil._
-
-val circeJson = Json.array(
-  Json.empty, 
-  Json.int(123), 
-  Json.array(Json.obj("foo" → Json.string("bar"))))
-  
-val sprayJson = circeJson.convertMarshaled[JsValue]  
-```
-
 ### Determine a Query Operation Type
 
 Sometimes it can be very useful to know the type of query operation. For example you need it if you want to return different response for subscription queries. `ast.Document` exposes `operationType` and `operation` for this.
