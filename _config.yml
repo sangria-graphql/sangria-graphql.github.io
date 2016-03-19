@@ -90,6 +90,7 @@ link:
 
 markdown: kramdown
 permalink: pretty
+highlighter: rouge
 
 gems:
 - jekyll-redirect-from

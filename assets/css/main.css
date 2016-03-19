@@ -170,7 +170,7 @@ pre code {
   background: none;
 }
 
-.highlight pre {
+.highlight pre, .highlight {
   color: #525e5f;
   border-radius: 0;
   border: none;
