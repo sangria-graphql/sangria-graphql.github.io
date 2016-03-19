@@ -575,11 +575,57 @@ In order to use one of these, just import it and the result of execution will be
 ```scala
 import sangria.marshalling.sprayJson._
 
-println(Await.result(
-  Executor.execute(TestSchema.StarWarsSchema, queryAst,
-    variables = vars
-    userContext = new CharacterRepo, 
-    deferredResolver = new FriendsResolver), Duration.Inf).prettyPrint)
+val result: Future[JsValue] = Executor.execute(TestSchema.StarWarsSchema, queryAst,
+  variables = vars
+  userContext = new CharacterRepo, 
+  deferredResolver = new FriendsResolver)
+```
+
+### Marshalling API & Testkit
+
+If your favorite library is not supported yet, then it's pretty easy to create an integration library yourself. All marshalling libraries depend on and implement `sangria-marshalling-api`. You can include it together with the testkit like this:
+  
+```scala
+libraryDependencies ++= Seq(
+  "{{site.groupId}}" %% "sangria-marshalling-api" % "{{site.version.sangria-marshalling-api}}",
+  "{{site.groupId}}" %% "sangria-marshalling-testkit" % "{{site.version.sangria-marshalling-testkit}}" % "test")
+```
+
+After you implemented the actual integration code, you test whether it's semantically correct with the help of a testkit. Testkit provides a set of ScalaTest-based tests to verify an implementation of marshalling library (so that you don't need to write tests yourself). Here is an example from spray-json integration library that uses a testkit tests:
+
+```scala
+class SprayJsonSupportSpec extends WordSpec 
+                              with Matchers 
+                              with MarshallingBehaviour 
+                              with InputHandlingBehaviour 
+                              with ParsingBehaviour {
+
+  object JsonProtocol extends DefaultJsonProtocol {
+    implicit val commentFormat = jsonFormat2(Comment.apply)
+    implicit val articleFormat = jsonFormat4(Article.apply)
+  }
+
+  "SprayJson integration" should {
+    import JsonProtocol._
+
+    behave like `value (un)marshaller`(SprayJsonResultMarshaller)
+
+    behave like `AST-based input unmarshaller`(sprayJsonFromInput[JsValue])
+    behave like `AST-based input marshaller`(SprayJsonResultMarshaller)
+
+    behave like `case class input unmarshaller`
+    behave like `case class input marshaller`(SprayJsonResultMarshaller)
+
+    behave like `input parser`(ParseTestSubjects(
+      complex = """{"a": [null, 123, [{"foo": "bar"}]], "b": {"c": true, "d": null}}""",
+      simpleString = "\"bar\"",
+      simpleInt = "12345",
+      simpleNull = "null",
+      list = "[\"bar\", 1, null, true, [1, 2, 3]]",
+      syntaxError = List("[123, FOO BAR")
+    ))
+  }
+}
 ```
 
 ### Converting Between Input Representations
