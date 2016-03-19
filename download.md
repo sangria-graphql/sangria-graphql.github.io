@@ -22,9 +22,9 @@ If you want want to download jars, then please do so directly from the [maven ce
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria}}"
-{% endhighlight %}
+```
 
 ### sangria-relay
 
@@ -38,9 +38,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
-{% endhighlight %}
+```
 
 ### sangria-spray-json
 
@@ -54,9 +54,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.s
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"
-{% endhighlight %}
+```
 
 ### sangria-play-json
 
@@ -70,9 +70,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-spray-json" % "{{site.vers
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"
-{% endhighlight %}
+```
 
 ### sangria-circe
 
@@ -86,9 +86,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-play-json" % "{{site.versi
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"
-{% endhighlight %}
+```
 
 ### sangria-msgpack
 
@@ -102,9 +102,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-circe" % "{{site.version.s
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"
-{% endhighlight %}
+```
 
 ### sangria-argonaut
 
@@ -118,9 +118,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-msgpack" % "{{site.version
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"
-{% endhighlight %}
+```
 
 ### sangria-json4s-native
 
@@ -134,9 +134,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-argonaut" % "{{site.versio
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"
-{% endhighlight %}
+```
 
 ### sangria-json4s-jackson
 
@@ -150,9 +150,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-json4s-native" % "{{site.v
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"
-{% endhighlight %}
+```
 
 ### sangria-marshalling-api
 
@@ -166,9 +166,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-marshalling-api" % "{{site.version.sangria-marshalling-api}}"
-{% endhighlight %}
+```
 
 ### sangria-marshalling-testkit
 
@@ -182,6 +182,6 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-marshalling-api" % "{{site
 
 You can use following dependency in your SBT build:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-marshalling-testkit" % "{{site.version.sangria-marshalling-testkit}}"
-{% endhighlight %}
+```

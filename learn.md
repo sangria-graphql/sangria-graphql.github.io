@@ -12,9 +12,9 @@ title: Learn Sangria
 
 Here is how you can add it to your SBT project:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria}}"
-{% endhighlight %}
+```
 
 You can find an example application that uses akka-http with _sangria_ here:
 
@@ -28,15 +28,15 @@ where you can interactively execute GraphQL queries and play with some examples.
 
 If you want to use sangria with react-relay framework, they you also need to include [sangria-relay]({{site.link.repo.sangria-relay}}):
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
-{% endhighlight %}
+```
 
 ## Query Parser and Renderer
 
 Example usage:
 
-{% highlight scala %}
+```scala
 import sangria.ast.Document
 import sangria.parser.QueryParser
 import sangria.renderer.QueryRenderer
@@ -76,11 +76,11 @@ println(QueryRenderer.render(document))
 
 // Compact rendering of GraphQl query as a `String`
 println(QueryRenderer.render(document, QueryRenderer.Compact))
-{% endhighlight %}
+```
 
 Alternatively you can use `graphql` macro, which will ensure that you query is syntactically correct at compile time:
 
-{% highlight scala %}
+```scala
 import sangria.macros._
 
 val queryAst: Document =
@@ -93,13 +93,13 @@ val queryAst: Document =
       }
     }
   """
-{% endhighlight %}
+```
 
 ## Schema Definition
 
 Here is an example of GraphQL schema DSL:
 
-{% highlight scala %}
+```scala
 import sangria.schema._
 
 val EpisodeEnum = EnumType(
@@ -200,7 +200,7 @@ val Query = ObjectType[CharacterRepo, Unit](
   ))
 
 val StarWarsSchema = Schema(Query)
-{% endhighlight %}
+```
 
 ### Actions
 
@@ -220,9 +220,9 @@ Normally library is able to automatically infer the `Action` type, so that you d
 
 In the example schema, you probably noticed, that some of the resolve functions return `DeferFriends`. It is defined like this:
 
-{% highlight scala %}
+```scala
 case class DeferFriends(friends: List[String]) extends Deferred[List[Character]]
-{% endhighlight %}
+```
 
 Defer mechanism allows you to postpone the execution of particular fields and then batch them together in order to optimise object retrieval.
 This can be very useful when you are trying N+1. In this example all of the characters have list of friends, but they only have IDs of them.
@@ -231,12 +231,12 @@ Retrieving evey friend one-by-one would be inefficient, since you potentially ne
 in order to do so. Defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. In order to do it,
 you need to implement a `DeferredResolver`, that will get a list of deferred values:
 
-{% highlight scala %}
+```scala
 class FriendsResolver extends DeferredResolver[Any] {
   def resolve(deferred: List[Deferred[Any]], ctx: Any): List[Future[Any]] =
     // your bulk friends retrieving logic
 }
-{% endhighlight %}
+```
 
 ### Projections
 
@@ -266,7 +266,7 @@ it would not be possible to automatically discover the `Human` and the `Droid` t
 
 If you have similar situation, then you need to provide additional types like this:
 
-{% highlight scala %}
+```scala
 val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
   "HeroOnlyQuery", fields[CharacterRepo, Unit](
     Field("hero", TestSchema.Character,
@@ -275,7 +275,7 @@ val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
   ))
 
 val heroOnlySchema = Schema(HeroOnlyQuery, additionalTypes = TestSchema.Human :: TestSchema.Droid :: Nil)
-{% endhighlight %}
+```
 
 Alternatively you can use `manualPossibleTypes` on the `Field` and `InterfaceType` to achieve the same effect.
 
@@ -284,7 +284,7 @@ Alternatively you can use `manualPossibleTypes` on the `Field` and `InterfaceTyp
 In some cases you need to define a GraphQL schema that contains recursive types or has circular references in the object graph. Sangria supports such schemas
 by allowing you to provide a no-arg function that crates `ObjectType` fields instead of eager list of fields. Here is an example of interdependent types:
 
-{% highlight scala %}
+```scala
 case class A(b: Option[B], name: String)
 case class B(a: A, size: Int)
 
@@ -295,7 +295,7 @@ lazy val AType: ObjectType[Unit, A] = ObjectType("A", () => fields[Unit, A](
 lazy val BType: ObjectType[Unit, B] = ObjectType("B", () => fields[Unit, B](
   Field("size", IntType, resolve = _.value.size),
   Field("a", AType, resolve = _.value.a)))
-{% endhighlight %}
+```
 
 In most cases you also need to define (at least one of) these types with `lazy val`.
 
@@ -303,12 +303,12 @@ In most cases you also need to define (at least one of) these types with `lazy v
 
 Here is an example of how you can execute example schema:
 
-{% highlight scala %}
+```scala
 import sangria.execution.Executor
 
 Executor(TestSchema.StarWarsSchema, userContext = new CharacterRepo, deferredResolver = new FriendsResolver)
   .execute(queryAst, variables = vars)
-{% endhighlight %}
+```
 
 The result of the execution is a `Future` of marshaled GraphQL result (see next section)
 
@@ -328,7 +328,7 @@ Every field in the query gets a default score `1` (including `ObjectType` nodes)
 
 so for instance query:
 
-{% highlight js %}
+```js
 query Test {
   droid(id: "1000") {
     id
@@ -340,26 +340,26 @@ query Test {
     age
   }
 }
-{% endhighlight %}
+```
 
 will have complexity `6`. You probably noticed, that score is a bit unfair since `pets` field is actually a list which can contain max 20
 elements in the reponse.
 
 You can customize the field score with `complexity` argument in order to solve this kind of issues:
 
-{% highlight scala %}
+```scala
 Field("pets", OptionType(ListType(PetType)),
   arguments = Argument("limit", IntType) :: Nil,
   complexity = Some((ctx, args, childScore) ⇒ 25.0D + args.arg[Int]("limit") * childScore),
   resolve = ctx ⇒ ...)
-{% endhighlight %}
+```
 
 Now query will get score `68` which is much better estimation.
 
 In order to analyze the complexity of a query you need to add correspondent a `QueryReducer` to the `Executor`.
 In this example `rejectComplexQueries` will reject all queries with complexity higher than `1000`:
 
-{% highlight scala %}
+```scala
 val rejectComplexQueries = QueryReducer.rejectComplexQueries[Any](1000, (c, ctx) ⇒
     new IllegalArgumentException(s"Too complex query: max allowed complexity is 1000.0, but got $c"))
 
@@ -370,16 +370,16 @@ val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledExce
 Executor.execute(schema, query,
     exceptionHandler = exceptionHandler,
     queryReducers = rejectComplexQueries :: Nil)
-{% endhighlight %}
+```
 
 If you just want to estimate the complexity and then perform different kind of action, then there is another helper function for this:
 
-{% highlight scala %}
+```scala
 val complReducer = QueryReducer.measureComplexity[MyCtx] { (c, ctx) ⇒
   // do some analysis
   ctx
 }
-{% endhighlight %}
+```
 
 The complexity of full introspection query (used by tools like GraphiQL) is around `100`.
 
@@ -388,9 +388,9 @@ The complexity of full introspection query (used by tools like GraphiQL) is arou
 There is also another simpler mechanism to protect against malicious queries: limiting query depth. It can be done by providing
 the `maxQueryDepth` argument to the `Executor`:
 
-{% highlight scala %}
+```scala
 val executor = Executor(schema = MySchema, maxQueryDepth = Some(7))
-{% endhighlight %}
+```
 
 ## Error Handling
 
@@ -399,25 +399,25 @@ If an exception implements `UserFacingError` trait, then error message would be 
 
 In order to define custom error handling mechanism, you need to provide an `exceptionHandler` to `Executor`. Here is an example:
 
-{% highlight scala %}
+```scala
 val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
   case (m, e: IllegalStateException) => HandledException(e.getMessage)
 }
 
 Executor(schema, exceptionHandler = exceptionHandler).execute(doc)
-{% endhighlight %}
+```
 
 In this example it provides an error `message` (which would be shown instead of "Internal server error").
 
 You can also add additional fields in the error object like this:
 
-{% highlight scala %}
+```scala
 val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
   case (m, e: IllegalStateException) =>
     HandledException(e.getMessage,
       Map("foo" -> m.arrayNode(Seq(m.stringNode("bar"), m.intNode(1234))), "baz" -> m.stringNode("Test")))
 }
-{% endhighlight %}
+```
 
 ## Result Marshalling and Input Unmarshalling
 
@@ -449,7 +449,7 @@ At the moment Sangria provides implementations fro these libraries:
   
 In order to use one of these, just import it and the result of execution will be of the correct type:
 
-{% highlight scala %}
+```scala
 import sangria.marshalling.sprayJson._
 
 println(Await.result(
@@ -457,7 +457,7 @@ println(Await.result(
     variables = vars
     userContext = new CharacterRepo, 
     deferredResolver = new FriendsResolver), Duration.Inf).prettyPrint)
-{% endhighlight %}
+```
 
 ## Middleware
 
@@ -466,7 +466,7 @@ Moreover it makes it much easier for people to share standard middleware in a li
 
 Here is a small example of it's usage:
 
-{% highlight scala %}
+```scala
 class FieldMetrics extends Middleware[Any] with MiddlewareAfterField[Any] with MiddlewareErrorField[Any] {
   type QueryVal = MutableMap[String, List[Long]]
   type FieldVal = Long
@@ -497,7 +497,7 @@ class FieldMetrics extends Middleware[Any] with MiddlewareAfterField[Any] with M
 }
 
 val result = Executor.execute(schema, query, middleware = new FieldMetrics :: Nil)
-{% endhighlight %}
+```
 
 It will record execution time of all fields in a query and then report it in some way.
 
@@ -527,7 +527,7 @@ Out-of-the-box sangria comes with several `QueryReducer`s for common use-cases:
 
 Here is a small example of `QueryReducer.collectTags`:
 
-{% highlight scala %}
+```scala
 val fetchUserProfile = QueryReducer.collectTags[MyContext, String] {
   case Permission(name) ⇒ name
 } { (permissionNames, ctx) ⇒
@@ -542,7 +542,7 @@ val fetchUserProfile = QueryReducer.collectTags[MyContext, String] {
 Executor.execute(schema, query,
   userContext = new MyContext,
   queryReducers = fetchUserProfile :: Nil)
-{% endhighlight %}
+```
 
 This allows you to avoid fetching user profile if it's not needed based on the query fields. You can find more information about the `QueryReducer`
 that analyses a query complexity in the [Query Complexity Analysis](#query-complexity-analysis) section.
@@ -560,12 +560,12 @@ Sangria support all standard GraphQL scalars like `String`, `Int`, `ID`, etc. In
 GraphQL schema allows you to declare fields and enum values as deprecated. When you execute a query, you can provide your custom implementation of
 `DeprecationTracker` trait to the `Executor` in order to track deprecated fields and enum values (you can, for instance, log all usages or send metrics to graphite):
 
-{% highlight scala %}
+```scala
 trait DeprecationTracker {
   def deprecatedFieldUsed[Ctx](ctx: Context[Ctx, _]): Unit
   def deprecatedEnumValueUsed[T, Ctx](enum: EnumType[T], value: T, userContext: Ctx): Unit
 }
-{% endhighlight %}
+```
 
 ## Authentication and Authorisation
 
@@ -574,7 +574,7 @@ requirement of modern web-application so this section was written to demonstrate
 
 First let's define some basic infrastructure for this example:
 
-{% highlight scala %}
+```scala
 case class User(userName: String, permissions: List[String])
 
 trait UserRepo {
@@ -589,27 +589,27 @@ class ColorRepo {
   def colors: List[String]
   def addColor(color: String): Unit
 }
-{% endhighlight %}
+```
 
 In order to indicate an auth error, we need to define some exception:
 
-{% highlight scala %}
+```scala
 case class AuthenticationException(message: String) extends Exception(message)
 case class AuthorisationException(message: String) extends Exception(message)
-{% endhighlight %}
+```
 
 We also want user to see proper error messages in a response, so let's define an error handler for this:
 
-{% highlight scala %}
+```scala
 val errorHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
   case (m, AuthenticationException(message)) => HandledException(message)
   case (m, AuthorisationException(message)) => HandledException(message)
 }
-{% endhighlight %}
+```
 
 Now that we defined base for secure application, let's create a context class, which will provide GraphQL schema with all necessary helper functions:
 
-{% highlight scala %}
+```scala
 case class SecureContext(token: Option[String], userRepo: UserRepo, colorRepo: ColorRepo) {
   def login(userName: String, password: String) = userRepo.authenticate(userName, password) getOrElse (
       throw new AuthenticationException("UserName or password is incorrect"))
@@ -628,15 +628,15 @@ case class SecureContext(token: Option[String], userRepo: UserRepo, colorRepo: C
 
   def user = token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token"))(identity)
 }
-{% endhighlight %}
+```
 
 Now we should be able to execute queries:
 
-{% highlight scala %}
+```scala
 Executor.execute(schema, queryAst,
   userContext = new SecureContext(token, userRepo, colorRepo),
   exceptionHandler = errorHandler)
-{% endhighlight %}
+```
 
 As a last step we need to define a schema. You can do it in two different ways:
 
@@ -645,7 +645,7 @@ As a last step we need to define a schema. You can do it in two different ways:
 
 ### Resolve-Based Auth
 
-{% highlight scala %}
+```scala
 val UserNameArg = Argument("userName", StringType)
 val PasswordArg = Argument("password", StringType)
 val ColorArg = Argument("color", StringType)
@@ -681,24 +681,24 @@ val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
 ))
 
 def schema = Schema(QueryType, Some(MutationType))
-{% endhighlight %}
+```
 
 As you can see on this example, we are using context object to authorise user with the `authorised` function. Interesting thing to notice
 here is that `login` field uses `UpdateCtx` action in order make login information available for sibling mutation fields. This makes queries
 like this possible:
 
-{% highlight js %}
+```js
 mutation LoginAndMutate {
   login(userName: "admin", password: "secret")
 
   withMagenta: addColor(color: "magenta")
   withOrange: addColor(color: "orange")
 }
-{% endhighlight %}
+```
 
 here we login and adding colors in the same GraphQL query. It will produce result like this one:
 
-{% highlight json %}
+```json
 {
   "data":{
    "login":"a4d7fc91-e490-446e-9d4c-90b5bb22e51d",
@@ -706,11 +706,11 @@ here we login and adding colors in the same GraphQL query. It will produce resul
    "withOrange":["red","green","blue","magenta","orange"]
   }
 }
-{% endhighlight %}
+```
 
 If user does not have sufficient permissions, he will see result like this:
 
-{% highlight json %}
+```json
 {
   "data":{
     "me":{
@@ -728,7 +728,7 @@ If user does not have sufficient permissions, he will see result like this:
     }]
   }]
 }
-{% endhighlight %}
+```
 
 ### Middleware-Based Auth
 
@@ -736,14 +736,14 @@ An alternative approach is to use middleware. This can provide more declarative 
 
 First let's define `FieldTag`s:
 
-{% highlight scala %}
+```scala
 case object Authorised extends FieldTag
 case class Permission(name: String) extends FieldTag
-{% endhighlight %}
+```
 
 This allows us to define schema like this:
 
-{% highlight scala %}
+```scala
 val UserType = ObjectType("User", fields[SecureContext, User](
   Field("userName", StringType, resolve = _.value.userName),
   Field("permissions", OptionType(ListType(StringType)),
@@ -773,11 +773,11 @@ val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
 ))
 
 def schema = Schema(QueryType, Some(MutationType))
-{% endhighlight %}
+```
 
 As you can see, security constraints are now defined as field's `tags`. In order to enforce these security constraints we need implement `Middleware` like this:
 
-{% highlight scala %}
+```scala
 object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeField[SecureContext] {
   type QueryVal = Unit
   type FieldVal = Unit
@@ -799,4 +799,4 @@ object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeF
     continue
   }
 }
-{% endhighlight %}
+```

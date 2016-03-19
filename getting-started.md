@@ -12,9 +12,9 @@ title: Getting Started with Sangria
 
 Here is how you can add it to your SBT project:
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria}}"
-{% endhighlight %}
+```
 
 You can find an example application that uses akka-http with _sangria_ here (it is also available as an [Activator template]({{site.link.akka-http-example.activator}})):
 
@@ -26,9 +26,9 @@ where you can interactively execute GraphQL queries and play with some examples.
 
 If you want to use sangria with the react-relay framework, then you also need to include [sangria-relay]({{site.link.repo.sangria-relay}}):
 
-{% highlight scala %}
+```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
-{% endhighlight %}
+```
 
 ## Define GraphQL Schema
 
@@ -92,17 +92,17 @@ After you have defined the schema, you are ready to parse and execute GraphQL qu
 
 Query parsing can be done like this:
 
-{% highlight scala %}
+```scala
 import sangria.parser.QueryParser
 
 val Success(queryAst: Document) = QueryParser.parse(query)
-{% endhighlight %}
+```
 
 `parse` object gives back a `Try` object indicating that parsing can fail (you can customise this behaviour by importing different `DeliveryScheme`)
 
 Alternatively you can use `graphql` macro, which will ensure that you query is syntactically correct at compile time:
 
-{% highlight scala %}
+```scala
 import sangria.macros._
 
 val queryAst: Document =
@@ -115,18 +115,18 @@ val queryAst: Document =
       }
     }
   """
-{% endhighlight %}
+```
 
 ## Execution
 
 Here is an example of how you can execute the example schema:
 
-{% highlight scala %}
+```scala
 import sangria.execution.Executor
 import scala.concurrent.ExecutionContext.Implicits.global
 
 Executor.execute(BlogSchema, queryAst)
-{% endhighlight %}
+```
 
 By default, the result of the execution is a JSON-like structure of scala `Map` and `List` objects. It can be very helpful for testing or experimentation.
 But as soon as you want to integrate it with some web framework, like Play or akka-http, you probably want to get some JSON AST as the result of execution.

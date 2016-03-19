@@ -1,5 +1,3 @@
-/*@import url(https://fonts.googleapis.com/css?family=Quicksand:400,700,400italic,700italic);*/
-/*@import url(http://fonts.googleapis.com/css?family=Armata);*/
 @import url(http://fonts.googleapis.com/css?family=Source+Code+Pro);
 
 .jumbotron, .footer-section, .navbar-fixed-top {
@@ -45,8 +43,7 @@ h1, .header-logo {
 }
 
 body {
-  font-family: "brandon-grotesque";
-  /*font-family: "Armata", sans-serif;*/
+  font-family: "fira-sans-2";
 }
 
 .header-logo {
@@ -464,7 +461,7 @@ body {
 .gitter-open-chat-button, .gitter-open-chat-button:visited {
   color: #F9E3D2;
   background-color: #DC7676;
-  font-family: "brandon-grotesque";
+  font-family: "fira-sans-2";
   font-size: 17px;
   padding-top: 9px;
   padding-bottom: 7px;
@@ -486,4 +483,8 @@ body {
 
 .gitter-chat-embed {
   z-index: 10000;
+}
+
+.navbar-nav>li>a {
+  line-height: 22px;
 }
