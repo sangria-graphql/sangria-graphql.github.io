@@ -35,7 +35,7 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.s
 In order to execute queries, you first need to define a schema for your data. It contains description of objects, interfaces, fields, enums, etc.
 Here is a small example of the schema for a blog application:
 
-{% highlight scala %}
+```scala
 import sangria.schema._
 
 val BlogImageType = ObjectType("Image", fields[Unit, Image](
@@ -81,7 +81,7 @@ val BlogQueryType = ObjectType("Query", fields[Unit, Unit](
     resolve = _ => (1 to 10).toList.map(article))))
 
 val BlogSchema = Schema(BlogQueryType)
-{% endhighlight %}
+```
 
 As you can see, every field defines not only meta-information, like name and description, but also a `resolve` function.
 It is needed during the query execution in order to extract actual value from the contextual object.
