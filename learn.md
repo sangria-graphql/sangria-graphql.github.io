@@ -547,13 +547,37 @@ Executor.execute(schema, query,
 This allows you to avoid fetching user profile if it's not needed based on the query fields. You can find more information about the `QueryReducer`
 that analyses a query complexity in the [Query Complexity Analysis](#query-complexity-analysis) section.
 
-## Built-in Scalars
+## Scalar Types
 
 Sangria support all standard GraphQL scalars like `String`, `Int`, `ID`, etc. In addition, sangria introduces following built-in scalar types:
 
 * `Long` - a 64 bit integer value which is represented as a `Long` in scala code
 * `BigInt` - similar to `Int` scalar value, but allows you to transfer big integer values and represents them in code as scala's `BigInt` class
 * `BigDecimal` - similar to `Float` scalar value, but allows you to transfer big decimal values and represents them in code as scala's `BigDecimal` class
+
+### Custom Scalar Types
+
+You can also create your own custom scalar types. An input and output of scala type should always be value that GraphQL grammar supports like string, number, boolean, etc. Here is an example of `DateTime` (from joda-time) scalar type implementation:
+  
+```scala
+case object DateCoercionViolation extends ValueCoercionViolation("Date value expected")
+
+def parseDate(s: String) = Try(new DateTime(s, DateTimeZone.UTC)) match {
+  case Success(date) ⇒ Right(date)
+  case Failure(_) ⇒ Left(DateCoercionViolation)
+}
+
+val DateTimeType = ScalarType[DateTime]("DateTime",
+  coerceOutput = date ⇒ ast.StringValue(ISODateTimeFormat.dateTime().print(date)),
+  coerceUserInput = {
+    case s: String ⇒ parseDate(s)
+    case _ ⇒ Left(DateCoercionViolation)
+  },
+  coerceInput = {
+    case ast.StringValue(s, _) ⇒ parseDate(s)
+    case _ ⇒ Left(DateCoercionViolation)
+  })
+```
 
 ## Deprecation Tracking
 
