@@ -583,6 +583,63 @@ val result: Future[JsValue] = Executor.execute(TestSchema.StarWarsSchema, queryA
   deferredResolver = new FriendsResolver)
 ```
 
+### ToInput Type-Class
+
+Default values should now have an instance of `ToInput` type-class which is defined for all supported input types like scala map-like data structures, different json ASTs, etc. It even supports things like `Writes` from play-json or `JsonFormat` from spray-json by default. This means that you can use your domain objects (like `User` or `Apple`) as a default value for input fields or arguments as long as you have `Writes` or `JsonFormat` defined for them. 
+
+The mechanism is very extensible: you just need to define implicit `ToInput[T]` for a class you want to use as a default value.
+
+### FromInput Type-Class
+
+`FromInput` provides high-level and low-level way to deserialize arbitrary input objects, just like `ToInput`.
+ 
+In order to use this feature, you need to provide a type parameter to the `InputObjectType`:
+ 
+```scala
+case class Article(title: String, text: Option[String])
+
+val ArticleType = InputObjectType[Article]("Article", List(
+  InputField("title", StringType),
+  InputField("text", OptionInputType(StringType))))
+  
+val arg = Argument("article", ArticleType)
+```
+
+This code will not compile unless you define an implicit instance of `FromInput` for `Article` case class:
+
+```scala
+implicit val manual = new FromInput[Article] {
+  val marshaller = CoercedScalaResultMarshaller.default
+  def fromResult(node: marshaller.Node) = {
+    val ad = node.asInstanceOf[Map[String, Any]]
+
+    Article(
+      title = ad("title").asInstanceOf[String],
+      text = ad.get("text").flatMap(_.asInstanceOf[Option[String]])
+  }
+}
+```
+
+As you can see, you need to provide a `ResultMarshaller` for desired format and then use a marshaled value to create a domain object based on it. Many instances of `FromInput` are already provided out-of-the-box. For instance `FromInput[Map[String, Any]]` supports map-like data-structure format. All supported Json libraries also provide `FromInput[JsValue]` so that you can use Json AST instead of working with `Map[String, Any]`.
+
+Moreover, libraries like sangria-play-json and sangria-spray-json already provide support for codecs like `Reads` and `JsonFormat`. This means that your domain objects are automatically supported as long as you have `Reads` or `JsonFormat` defined for them. For instance this example should compile and work just fine without explicit 
+`FromInput` declaration:
+
+```scala
+import sangria.integration.playJson._
+import play.api.libs.json._
+
+case class Article(title: String, text: Option[String])
+
+implicit val articleFormat = Json.format[Article]
+  
+val ArticleType = InputObjectType[Article]("Article", List(
+  InputField("title", StringType),
+  InputField("text", OptionInputType(StringType))))
+  
+val arg = Argument("article", ArticleType)
+```
+
 ### Query AST Marshalling
  
 A subset of GraphQL grammar that handles input object is also available as a standalone feature. You can read more about it in a following blog post:
