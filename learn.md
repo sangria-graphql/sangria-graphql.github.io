@@ -581,6 +581,73 @@ val result: Future[JsValue] = Executor.execute(TestSchema.StarWarsSchema, queryA
   deferredResolver = new FriendsResolver)
 ```
 
+### QueryAst Marshalling
+ 
+A subset of GraphQL grammar that handles input object is also available as a standalone feature. You can read more about it in a following blog post:
+ 
+[GraphQL Object Notation](https://medium.com/@oleg.ilyenko/graphql-object-notation-8f56194556ea)
+
+Feature allows you to parse and render any `ast.Value` independently from GraphQL query. You can also use `graphqlInput` macros for this:
+
+```scala
+import sangria.renderer.QueryRenderer
+import sangria.macros._
+import sangria.ast
+
+val parsed: ast.Value =
+  graphqlInput"""
+    {
+      id: "1234345"
+      version: 2 # changed 2 times
+      deliveries: [
+        {id: 123, received: false, note: null, state: OPEN}
+      ]
+    }
+  """
+
+val rendered: String =
+  QueryRenderer.render(parsed, QueryRenderer.PrettyInput)
+
+println(rendered)
+```
+
+It will produce following output:
+
+```js
+{
+  id: "1234345"
+  version: 2
+  deliveries: [{
+    id: 123
+    received: false
+    note: null
+    state: OPEN
+  }]
+}
+```
+
+Proper `InputUnmarshaller` and `ResultMarshaller` are available for it, so you can use `ast.Value` as a variables or it can be a result 
+of GraphQL query execution.
+
+### Converting Between Formats
+
+As a natural extension of `ResultMarshaller` and `InputUnmarshaller` abstractions, sangria allows you to convert between different formats at will.
+ 
+Here is, for instance, how you can convert circe `Json` into sprayJson `JsValue`:
+ 
+```scala
+import sangria.marshalling.circe._
+import sangria.marshalling.sprayJson._
+import sangria.marshalling.MarshallingUtil._
+
+val circeJson = Json.array(
+  Json.empty, 
+  Json.int(123), 
+  Json.array(Json.obj("foo" → Json.string("bar"))))
+  
+val sprayJson = circeJson.convertMarshaled[JsValue]  
+```
+
 ### Marshalling API & Testkit
 
 If your favorite library is not supported yet, then it's pretty easy to create an integration library yourself. All marshalling libraries depend on and implement `sangria-marshalling-api`. You can include it together with the testkit like this:
@@ -626,25 +693,6 @@ class SprayJsonSupportSpec extends WordSpec
     ))
   }
 }
-```
-
-### Converting Between Input Representations
-
-As a natural extension of `ResultMarshaller` and `InputUnmarshaller` abstraction, sangria allows you to convert between different formats at will.
- 
-Here is, for instance, how you can convert circe `Json` into sprayJson `JsValue`:
- 
-```scala
-import sangria.marshalling.circe._
-import sangria.marshalling.sprayJson._
-import sangria.marshalling.MarshallingUtil._
-
-val circeJson = Json.array(
-  Json.empty, 
-  Json.int(123), 
-  Json.array(Json.obj("foo" → Json.string("bar"))))
-  
-val sprayJson = circeJson.convertMarshaled[JsValue]  
 ```
 
 
