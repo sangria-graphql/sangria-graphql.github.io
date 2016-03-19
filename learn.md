@@ -493,13 +493,36 @@ val executor = Executor(schema = MySchema, maxQueryDepth = Some(7))
 
 ## Error Handling
 
+Bad things can happen during the query execution. When errors happen, then `Future` would be resolved with some exception. Sangria allows you to distinguish between different types of errors that happen before actual query execution:
+ 
+* `QueryReducingError` - an error happened in the query reducer. If you are throwing some exceptions within a custom `QueryReducer`, then they would be wrapped in `QueryReducingError`    
+* `QueryAnalysisError` - signifies issues in the query or variables. This means that client has made some error. If you are exposing GraphQL HTTP endpoint, than you may want to return 400 status code in this case.
+* `ErrorWithResolver` - unexpected errors before query execution
+  
+All mentioned exception classes expose `resolveError` method which you can use to render an error in GraphQL-compliant format.
+
+Let's see how you can handle these error in small example. In most cases it makes a lot of sense to return 400 HTTP status code if query validation failed:
+    
+```scala
+executor.execute(query, ...)
+  .map(Ok(_))
+  .recover {
+    case error: QueryAnalysisError ⇒ BadRequest(error.resolveError)
+    case error: ErrorWithResolver ⇒ InternalServerError(error.resolveError)
+  }
+```
+
+This code will produce status code 400 in case of any error caused by client (query validation, invalid operation name, error in query reducer, etc.).
+
+### Custom ExceptionHandler
+
 When some unexpected error happens in `resolve` function, sangria handles it according to the [rules defined in the spec]({{site.link.spec.errors}}).
 If an exception implements `UserFacingError` trait, then error message would be visible in the response. Otherwise error message is obfuscated and response will contain `"Internal server error"`.
 
 In order to define custom error handling mechanism, you need to provide an `exceptionHandler` to `Executor`. Here is an example:
 
 ```scala
-val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
+val exceptionHandler: Executor.ExceptionHandler = {
   case (m, e: IllegalStateException) => HandledException(e.getMessage)
 }
 
@@ -511,10 +534,12 @@ In this example it provides an error `message` (which would be shown instead of 
 You can also add additional fields in the error object like this:
 
 ```scala
-val exceptionHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
+val exceptionHandler: Executor.ExceptionHandler = {
   case (m, e: IllegalStateException) =>
     HandledException(e.getMessage,
-      Map("foo" -> m.arrayNode(Seq(m.stringNode("bar"), m.intNode(1234))), "baz" -> m.stringNode("Test")))
+      Map(
+      "foo" -> m.arrayNode(Seq(m.stringNode("bar"), m.intNode(1234))), 
+      "baz" -> m.stringNode("Test")))
 }
 ```
 
@@ -743,7 +768,7 @@ case class AuthorisationException(message: String) extends Exception(message)
 We also want user to see proper error messages in a response, so let's define an error handler for this:
 
 ```scala
-val errorHandler: PartialFunction[(ResultMarshaller, Throwable), HandledException] = {
+val errorHandler: Executor.ExceptionHandler = {
   case (m, AuthenticationException(message)) => HandledException(message)
   case (m, AuthorisationException(message)) => HandledException(message)
 }
