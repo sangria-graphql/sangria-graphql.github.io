@@ -349,6 +349,240 @@ type Query {
 }
 ```
 
+## Macro-Based GraphQL Type Derivation 
+
+Defining schema with `ObjectType`, `InputObjectType` and `EnumType` can become quite verbose. They provide maximum flexibility, but sometimes you just have a simple case class which you would like to expose via GraphQL API.
+
+For this sangria provides a set of macros that are able to derive GraphQL types from normal scala classes, case classes and enums:
+
+* `deriveObjectType[Ctx, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Val` class (case class accessors and members annotated with `@GraphQLField`) 
+* `deriveContextObjectType[Ctx, Target, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Target` class (case class accessors and members annotated with `@GraphQLField`). You also need to provide it a function `Ctx ⇒ Target` which macro will use to get an instance of `Target` type from a user context.
+* `deriveInputObjectType[T]` - constructs an `InputObjectType[T]` with fields found in `T` case class (only supports case class accessors)
+* `deriveEnumType[T]` - constructs an `EnumType[T]` with values found in `T` enumeration. It supports scala `Enumeration` as well as sealed hierarchies of case objects.
+
+The use of these macros is completely optional, they just provide a bit of convenience when you need it. [Schema Definition DSL](http://localhost:4000/learn/#schema-definition) is the primary way to define a schema.
+ 
+You can also influence the derivation by either providing a list of settings to the macro or using `@GraphQL*` annotations (these are `StaticAnnotation`s and only used to customize a macro code generation - they are erased at the runtime). This provides a very flexible way to derive GraphQL types based on your domain model - you can customize almost any aspect of the resulting GraphQL type (change names, add descriptions, add fields, deprecate fields, etc.).
+
+In order to discover other GraphQL types, macro uses implicits. So if you derive interdependent types, make sure to make them implicitly available in the scope.
+
+### ObjectType Derivation
+
+`deriveObjectType` and `deriveContextObjectType` support arbitrary case classes as well as normal classes/traits.
+
+Here is an example:
+
+```scala
+case class User(id: String, permissions: List[String], password: String)
+
+val UserType = deriveObjectType[MyCtx, User](
+  ObjectTypeName("AuthUser"),
+  ObjectTypeDescription("A user of the system."),
+  DocumentField("permissions", "User permissions",
+    deprecationReason = Some("Will not be exposed in future")),
+  ExcludeFields("password"))
+```
+
+It will generate an `ObjectType` which is equivalent to this one:
+
+```scala
+ObjectType("AuthUser", "A user of the system.", fields[MyCtx, User](
+  Field("identifier", StringType, resolve = _.value.id),
+  Field("permissions", ListType(StringType),
+    description = Some("User permissions"),
+    deprecationReason = Some("Will not be exposed in future"),
+    resolve = _.value.permissions)))
+```
+
+#### Deriving Methods with Arguments
+
+You can also use class methods as GraphQL fields. This will also correctly generate appropriate `Argument`s. 
+
+Let's look at the example:
+ 
+```scala
+case class User(firstName: String, lastName: Option[String])
+
+trait Mutation {
+  @GraphQLField
+  def addUser(firstName: String, lastName: Option[String]) = {
+    val user = User(firstName, lastName)
+
+    add(user)
+    user
+  }
+  
+  // ...
+}
+
+case class MyCtx(mutation: Mutation)
+
+implicit val UserType = deriveObjectType[MyCtx, User]()
+val MutationType = deriveContextObjectType[MyCtx, Mutation, Unit](_.mutation)
+```
+
+Resulting mutation type would be an equivalent to this one:
+
+```scala
+val FirstNameArg = Argument("firstName", StringType)
+val LastNameArg = Argument("firstName", OptionInputType(StringType))
+
+ObjectType("Mutation", fields[MyCtx, Unit](
+  Field("addUser", UserType,
+    arguments = FirstNameArg :: LastNameArg :: Nil,
+    resolve = c ⇒ c.ctx.mutation.addUser(
+      c.arg(FirstNameArg), c.arg(LastNameArg)))))
+```
+
+You can also define a method argument of type `Context[Ctx, Val]` - it will not be treated as an argument, but instead a field execution context would be provided to a method in this argument.
+
+Default values of method arguments would be ignored. If you would like to provide default value to an `Argument`, please use `@GraphQLDefault` instead.
+
+Instead of using `@GraphQLField` annotation you can also provide `IncludeMethods` setting as an argument to the macro.
+
+### InputObjectType Derivation
+
+`deriveInputObjectType` supports only case classes. Here is an example:
+
+```scala
+case class User(id: String, permissions: List[String], password: String)
+
+val UserType = deriveInputObjectType[User](
+  InputObjectTypeName("AuthUser"),
+  InputObjectTypeDescription("A user of the system."),
+  DocumentInputField("permissions", "User permissions"),
+  ExcludeInputFields("password"))
+```
+
+It will generate an `InputObjectType` which is equivalent to this one:
+
+```scala
+InputObjectType[User]("AuthUser", "A user of the system.", List(
+  InputField("identifier", StringType),
+  InputField("permissions", ListInputType(StringType),
+    description = "User permissions")))
+```
+
+You can use `@GraphQLDefault` as well as normal scala default values to provide a default value for an `InputField`. `@GraphQLDefault` annotation will be used as a default of both are defined. 
+
+### EnumType Derivation
+
+`deriveEnumType` supports scala `Enumeration` as well as sealed hierarchies of case objects. 
+
+First let's look at `Enumeration` example:
+
+```scala
+object Color extends Enumeration {
+  val Red, LightGreen, DarkBlue = Value
+}
+
+val ColorType = deriveEnumType[Color.Value](
+  IncludeValues("Red", "DarkBlue"))
+```
+
+It will generate an `EnumType` which is equivalent to this one:
+
+```scala
+EnumType("Color", values = List(
+  EnumValue("Red", value = Color.Red),
+  EnumValue("DarkBlue", value = Color.DarkBlue)))
+```
+
+And here is an example of sealed hierarchy of case objects:
+
+```scala
+sealed trait Fruit
+
+case object RedApple extends Fruit
+case object SuperBanana extends Fruit
+case object MegaOrange extends Fruit
+
+sealed abstract class ExoticFruit(val score: Int) extends Fruit
+
+case object Guave extends ExoticFruit(123)
+
+val FruitType = deriveEnumType[Fruit](
+  EnumTypeName("Foo"),
+  EnumTypeDescription("It's foo"))
+```
+
+It will generate an `EnumType` which is equivalent to this one:
+
+```scala
+EnumType("Foo", Some("It's foo"), List(
+  EnumValue("RedApple", value = RedApple),
+  EnumValue("SuperBanana", value = SuperBanana),
+  EnumValue("MegaOrange", value = MegaOrange),
+  EnumValue("Guave", value = Guave)))
+```
+
+### Dealing With Recursive Types 
+
+Sometimes you need to model a recursive and interdependent types. Macro needs a little bit of help: you must replace fields that use recursive types and define then manually.
+
+Here is an example of an `ObjectType`:
+
+```scala
+case class A(id: Int, b: B)
+case class B(name: String, a: A, b: B)
+
+implicit lazy val AType = deriveObjectType[Unit, A](
+  ReplaceField("b", Field("b", BType, resolve = _.value.b)))
+
+implicit lazy val BType: ObjectType[Unit, B] = deriveObjectType(
+  ReplaceField("a", Field("a", AType, resolve = _.value.a)),
+  ReplaceField("b", Field("b", BType, resolve = _.value.b)))
+```
+
+And example of `InputObjectType`:
+
+```scala
+case class A(id: Int, b: Option[B])
+case class B(name: String, a: A, b: Option[B])
+  
+implicit lazy val AType: InputObjectType[A] = deriveInputObjectType[A](
+  ReplaceInputField("b", InputField("b", OptionInputType(BType))))
+
+implicit lazy val BType: InputObjectType[B] = deriveInputObjectType[B](
+  ReplaceInputField("a", InputField("a", AType)),
+  ReplaceInputField("b", InputField("b", OptionInputType(BType))))
+```
+
+### Customizing Types With Annotations
+
+You can use following annotations to change different aspects of resulting GraphQL types:
+ 
+* `@GraphQLName` - use different name for a type, field, enum value or an argument
+* `@GraphQLDescription` - provide a description for a type, field, enum value or an argument
+* `@GraphQLDeprecated` - deprecate an `ObjectType` field or an enum value
+* `@GraphQLFieldTags` - provide fields tags or an `ObjectType` field
+* `@GraphQLExclude` - exclude field, enum value or an argument
+* `@GraphQLField` - include member of a class (`val` or `def`) in the resulting `ObjectType`. This will also create appropriate `Argument` list if method takes some arguments
+* `@GraphQLDefault` - provide a default value for an `InputField` or an `Argument` 
+
+Here is an example:
+
+```scala
+@GraphQLName("AuthUser")
+@GraphQLDescription("A user of the system.")
+case class User(
+  @GraphQLDescription("User ID.")
+  id: String,
+
+  @GraphQLName("userPermissions")
+  @GraphQLDeprecated("Will not be exposed in future")
+  permissions: List[String],
+
+  @GraphQLExclude
+  password: String)
+  
+val UserType = deriveObjectType[MyCtx, User]()
+val UserInputType = deriveInputObjectType[User](
+  InputObjectTypeName("UserInput"))
+```
+
+As you can see, `InputObjectTypeName` is also used in this case. Macro settings always take precedence over the annotations.
+
 ## Schema Materialization
 
 If you already got an full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for clint-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
@@ -462,15 +696,9 @@ In this example `rejectComplexQueries` will reject all queries with complexity h
 
 ```scala
 val rejectComplexQueries = QueryReducer.rejectComplexQueries[Any](1000, (c, ctx) ⇒
-    new IllegalArgumentException(s"Too complex query: max allowed complexity is 1000.0, but got $c"))
+  new IllegalArgumentException(s"Too complex query"))
 
-val exceptionHandler: Executor.ExceptionHandler = {
-  case (m, e: IllegalArgumentException) ⇒ HandledException(e.getMessage)
-}
-
-Executor.execute(schema, query,
-    exceptionHandler = exceptionHandler,
-    queryReducers = rejectComplexQueries :: Nil)
+Executor.execute(schema, query, queryReducers = rejectComplexQueries :: Nil)
 ```
 
 If you just want to estimate the complexity and then perform different kind of action, then there is another helper function for this:
