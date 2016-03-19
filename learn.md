@@ -32,6 +32,8 @@ If you want to use sangria with react-relay framework, they you also need to inc
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
 ```
 
+Sangria-repay Playground ([{{site.link.try-relay}}]({{site.link.try-relay}})) is a nice place to start if you would like to see it in action.
+
 ## Query Parser and Renderer
 
 Example usage:
@@ -581,7 +583,7 @@ val result: Future[JsValue] = Executor.execute(TestSchema.StarWarsSchema, queryA
   deferredResolver = new FriendsResolver)
 ```
 
-### QueryAst Marshalling
+### Query AST Marshalling
  
 A subset of GraphQL grammar that handles input object is also available as a standalone feature. You can read more about it in a following blog post:
  

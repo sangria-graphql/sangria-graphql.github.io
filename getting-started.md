@@ -30,6 +30,8 @@ If you want to use sangria with the react-relay framework, then you also need to
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
 ```
 
+Sangria-repay Playground ([{{site.link.try-relay}}]({{site.link.try-relay}})) is a nice place to start if you would like to see it in action.
+
 ## Define GraphQL Schema
 
 In order to execute queries, you first need to define a schema for your data. It contains description of objects, interfaces, fields, enums, etc.
