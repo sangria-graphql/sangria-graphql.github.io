@@ -366,7 +366,7 @@ You need following import to use them:
 import sangria.macros.derive._
 ```
 
-The use of these macros is completely optional, they just provide a bit of convenience when you need it. [Schema Definition DSL](http://localhost:4000/learn/#schema-definition) is the primary way to define a schema.
+The use of these macros is completely optional, they just provide a bit of convenience when you need it. [Schema Definition DSL](#schema-definition) is the primary way to define a schema.
  
 You can also influence the derivation by either providing a list of settings to the macro or using `@GraphQL*` annotations (these are `StaticAnnotation`s and only used to customize a macro code generation - they are erased at the runtime). This provides a very flexible way to derive GraphQL types based on your domain model - you can customize almost any aspect of the resulting GraphQL type (change names, add descriptions, add fields, deprecate fields, etc.).
 
