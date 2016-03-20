@@ -651,7 +651,7 @@ preparedQueryFuture.map(preparedQuery ⇒
 
 GraphQL is very flexible data query language. Unfortunately with flexibility comes also a danger of misuse by malicious clients.
 Since typical GraphQL schemas contain recursive types and circular dependencies, clients are able to send infinitely deep queries
-which may have high impact on server performance. That's because it's important to analyze query complexity before exciting it.
+which may have high impact on server performance. That's because it's important to analyze query complexity before executing it.
 Sangria provides two mechanisms to protect your GraphQL server from malicious or too expensive queries which are described in the next sections.
 
 ### Query Complexity Analysis
