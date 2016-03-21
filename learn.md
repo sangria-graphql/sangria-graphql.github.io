@@ -591,9 +591,9 @@ As you can see, `InputObjectTypeName` is also used in this case. Macro settings 
 
 ## Schema Materialization
 
-If you already got an full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for clint-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
+If you already got a full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for clint-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
 
-Here is simple example of how you can use this feature (using circe in this particular example):
+Here is a simple example of how you can use this feature (using circe in this particular example):
 
 ```scala
 import io.circe._
