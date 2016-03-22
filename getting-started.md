@@ -20,7 +20,7 @@ You can find an example application that uses akka-http with _sangria_ here (it 
 
 [{{site.link.akka-http-example.github}}]({{site.link.akka-http-example.github}})
 
-I would also would recommend you to check out [{{site.link.try}}]({{site.link.try}}).
+I would also recommend you to check out [{{site.link.try}}]({{site.link.try}}).
 It is an example of a GraphQL server written with the Play framework and Sangria. It also serves as a playground,
 where you can interactively execute GraphQL queries and play with some examples.
 
@@ -30,7 +30,7 @@ If you want to use sangria with the react-relay framework, then you also need to
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
 ```
 
-Sangria-repay Playground ([{{site.link.try-relay}}]({{site.link.try-relay}})) is a nice place to start if you would like to see it in action.
+Sangria-relay Playground ([{{site.link.try-relay}}]({{site.link.try-relay}})) is a nice place to start if you would like to see it in action.
 
 ## Define GraphQL Schema
 
