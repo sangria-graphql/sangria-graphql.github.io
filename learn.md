@@ -258,11 +258,11 @@ Many schema elements, like `ObjectType`, `Field` or `Schema` itself, take two ty
   `Val` can be a `Human`, `Droid`, `String`, etc.
 * `Ctx` - represents some contextual object that flows across the whole execution (and doesn't change in most of the cases). It can be provided to execution by the user
   in order to help fulfill the GraphQL query. A typical example of such context object is as service or repository object that is able to access
-  a Database. In example schema some of the fields, like `droid` or `human` make use of it in order to access the character repository.
+  a database. In example schema some of the fields, like `droid` or `human` make use of it in order to access the character repository.
 
 ### Providing Additional Types
 
-After schema is defined, library tries to discover all of the supported GraphQL types by traversing the schema. Sometimes you have a situation, where not all
+After a schema is defined, the library tries to discover all of the supported GraphQL types by traversing the schema. Sometimes you have a situation, where not all
 GraphQL types are explicitly reachable from the root of the schema. For instance, if the example schema had only the `hero` field in the `Query` type, then
 it would not be possible to automatically discover the `Human` and the `Droid` type, since only the `Character` interface type is referenced inside of the schema.
 
@@ -285,7 +285,7 @@ Alternatively you can use `manualPossibleTypes` on the `Field` and `InterfaceTyp
 ### Circular References and Recursive Types
 
 In some cases you need to define a GraphQL schema that contains recursive types or has circular references in the object graph. Sangria supports such schemas
-by allowing you to provide a no-arg function that crates `ObjectType` fields instead of eager list of fields. Here is an example of interdependent types:
+by allowing you to provide a no-arg function that creates `ObjectType` fields instead of eager list of fields. Here is an example of interdependent types:
 
 ```scala
 case class A(b: Option[B], name: String)
@@ -604,7 +604,7 @@ val clientSchema: Schema[Unit, Unit] =
   Schema.buildFromIntrospection(introspectionResults)  
 ```
 
-It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of materialization by providing custom `MaterializationLogic` implementation (you can also extend `DefaultMaterializationLogic` class). This means that you can, for instance, plug in some generic field resolution logic (`resolveField` method) or provide generic logic for custom scalars (`coerceScalar*` methods). Without these customisations schema only would be able to execute introspection queries. 
+It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `MaterializationLogic` implementation (you can also extend `DefaultMaterializationLogic` class). This means that you can, for instance, plug in some generic field resolution logic (`resolveField` method) or provide generic logic for custom scalars (`coerceScalar*` methods). Without these customisations a schema only would be able to execute introspection queries. 
    
 ### Default Value Materialization 
    
@@ -662,7 +662,7 @@ Sangria provides two mechanisms to protect your GraphQL server from malicious or
 
 ### Query Complexity Analysis
 
-Query complexity analysis makes a rough estimation of the query complexity before it is executed. The complexity is `Double` number that is
+Query complexity  analysis makes a rough estimation of the query complexity before it is executed. The complexity is `Double` number that is
 calculated according to the simple rule described below.
 
 Every field in the query gets a default score `1` (including `ObjectType` nodes). The "complexity" of the query is the sum of all field scores.
@@ -683,8 +683,8 @@ query Test {
 }
 ```
 
-will have complexity `6`. You probably noticed, that score is a bit unfair since `pets` field is actually a list which can contain max 20
-elements in the reponse.
+will have complexity `6`. You probably noticed, that score is a bit unfair since `pets` field is actually a list which can contain a max of 20
+elements in the response.
 
 You can customize the field score with `complexity` argument in order to solve this kind of issues:
 
@@ -695,7 +695,7 @@ Field("pets", OptionType(ListType(PetType)),
   resolve = ctx ⇒ ...)
 ```
 
-Now query will get score `68` which is much better estimation.
+Now query will get a score of `68` which is much better estimation.
 
 In order to analyze the complexity of a query you need to add correspondent a `QueryReducer` to the `Executor`.
 In this example `rejectComplexQueries` will reject all queries with complexity higher than `1000`:
@@ -716,7 +716,7 @@ val complReducer = QueryReducer.measureComplexity[MyCtx] { (c, ctx) ⇒
 }
 ```
 
-The complexity of full introspection query (used by tools like GraphiQL) is around `100`.
+The complexity of a full introspection query (used by tools like GraphiQL) is around `100`.
 
 ### Limiting Query Depth
 
@@ -737,7 +737,7 @@ Bad things can happen during the query execution. When errors happen, then `Futu
   
 All mentioned exception classes expose `resolveError` method which you can use to render an error in GraphQL-compliant format.
 
-Let's see how you can handle these error in small example. In most cases it makes a lot of sense to return 400 HTTP status code if query validation failed:
+Let's see how you can handle these error in a small example. In most cases it makes a lot of sense to return 400 HTTP status code if query validation failed:
     
 ```scala
 executor.execute(query, ...)
@@ -765,7 +765,7 @@ val exceptionHandler: Executor.ExceptionHandler = {
 Executor(schema, exceptionHandler = exceptionHandler).execute(doc)
 ```
 
-In this example it provides an error `message` (which would be shown instead of "Internal server error").
+This example provides an error `message` (which would be shown instead of "Internal server error").
 
 You can also add additional fields in the error object like this:
 
@@ -788,7 +788,7 @@ Sangria does not hard-code the serialisation mechanism. Instead it provides two 
 * `ResultMarshaller` - knows how to serialize results of execution
 * `InputUnmarshaller[Node]` - knows how to deserialize the arguments/variables
 
-At the moment Sangria provides implementations fro these libraries:
+At the moment Sangria provides implementations for these libraries:
 
 * `sangria.marshalling.queryAst._` - native Query Value AST serialization
 * `sangria.marshalling.sprayJson._` - spray-json serialization 
@@ -854,7 +854,7 @@ implicit val manual = new FromInput[Article] {
 }
 ```
 
-As you can see, you need to provide a `ResultMarshaller` for desired format and then use a marshaled value to create a domain object based on it. Many instances of `FromInput` are already provided out-of-the-box. For instance `FromInput[Map[String, Any]]` supports map-like data-structure format. All supported Json libraries also provide `FromInput[JsValue]` so that you can use Json AST instead of working with `Map[String, Any]`.
+As you can see, you need to provide a `ResultMarshaller` for the desired format and then use a marshaled value to create a domain object based on it. Many instances of `FromInput` are already provided out-of-the-box. For instance `FromInput[Map[String, Any]]` supports map-like data-structure format. All supported Json libraries also provide `FromInput[JsValue]` so that you can use Json AST instead of working with `Map[String, Any]`.
 
 Moreover, libraries like sangria-play-json and sangria-spray-json already provide support for codecs like `Reads` and `JsonFormat`. This means that your domain objects are automatically supported as long as you have `Reads` or `JsonFormat` defined for them. For instance this example should compile and work just fine without explicit 
 `FromInput` declaration:
@@ -904,7 +904,7 @@ val rendered: String =
 println(rendered)
 ```
 
-It will produce following output:
+It will produce the following output:
 
 ```js
 {
@@ -1042,7 +1042,7 @@ You can find another example of `FieldTag` and `Middleware` usage in [Authentica
 
 Sometimes in can be helpful to perform some analysis on a query before executing it. An example is complexity analysis: it aggregates the complexity
 of all fields in the query and then rejects the query without executing it if complexity is too high. Another example is gathering all `Permission`
-field tags and then fetching extra user auth data from external service if query contains protected fields. This need to be done before query
+field tags and then fetching extra user auth data from external service if query contains protected fields. This need to be done before the query
 started to execute.
 
 Sangria provides a mechanism for this kind of query analysis with `QueryReducer`. Query reducer implementation will go through all of the fields
@@ -1087,7 +1087,8 @@ Sangria support all standard GraphQL scalars like `String`, `Int`, `ID`, etc. In
 
 ### Custom Scalar Types
 
-You can also create your own custom scalar types. An input and output of scala type should always be value that GraphQL grammar supports like string, number, boolean, etc. Here is an example of `DateTime` (from joda-time) scalar type implementation:
+You can also create your own custom scalar types. An input and output of scala type should always be value that GraphQL grammar supports like string, 
+number, boolean, etc. Here is an example of `DateTime` (from joda-time) scalar type implementation:
   
 ```scala
 case object DateCoercionViolation extends ValueCoercionViolation("Date value expected")
@@ -1361,7 +1362,8 @@ There are quite a few helpers available which you may find useful in different s
 
 ### Introspection Result Parsing
 
-Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of forking directly with JSON (or other raw representation), you can pars it in a set of case classes that allow you to easily work with the whole schema introspection. 
+Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of forking
+ directly with JSON (or other raw representation), you can parse it in a set of case classes that allow you to easily work with the whole schema introspection. 
 
 You can find a parser function in `sangria.introspection.IntrospectionParser`.
  
