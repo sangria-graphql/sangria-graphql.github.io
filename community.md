@@ -23,7 +23,7 @@ be sure to add <span class="class-name">scala</span>, <span class="class-name">g
 
 ### Gitter & Mailing List 
 
-For more general, lengthy discussions or pretty much anything else please please join us in the 
+For more general, lengthy discussions or pretty much anything else please join us in the 
 [gitter chat](https://gitter.im/sangria-graphql/sangria) (you also use a button at the bottom right) and [google groups]({{site.link.google-groups}}).
 
 ### Contribute
@@ -37,7 +37,7 @@ Also you can contribute to the documentation or help others by answering questio
 It definitely would be very helpful.
 
 Not to mention the code itself. There is nothing more exciting than hacking some stuff together :)
-So please feel free to materialize you ideas in form of code and send pull requests!
+So please feel free to materialize your ideas in form of code and send pull requests!
 
 ### Contribute to the Website
 

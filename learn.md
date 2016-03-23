@@ -214,7 +214,7 @@ which can take different shapes. Here is the list of supported actions:
 * `FutureValue` - a `Future` result
 * `DeferredValue` - used to return a `Deferred` result (see [Deferred Values and Resolver](#deferred-values-and-resolver) section for more details)
 * `DeferredFutureValue` - the same as `DeferredValue` but allows to return `Deferred` inside of a `Future`
-* `UpdateCtx` - allows you to transform `Ctx` object. The transformed context object wold be available for nested sub-objects and subsequent sibling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of it's usage in [Authentication and Authorisation](#authentication-and-authorisation) section
+* `UpdateCtx` - allows you to transform `Ctx` object. The transformed context object would be available for nested sub-objects and subsequent sibling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of its usage in [Authentication and Authorisation](#authentication-and-authorisation) section
 
 Normally library is able to automatically infer the `Action` type, so that you don't need to specify it explicitly.
 
@@ -229,7 +229,7 @@ case class DeferFriends(friends: List[String]) extends Deferred[List[Character]]
 Defer mechanism allows you to postpone the execution of particular fields and then batch them together in order to optimise object retrieval.
 This can be very useful when you are trying N+1. In this example all of the characters have list of friends, but they only have IDs of them.
 You need to fetch from somewhere in order to progress query execution.
-Retrieving evey friend one-by-one would be inefficient, since you potentially need to access an external database
+Retrieving every friend one-by-one would be inefficient, since you potentially need to access an external database
 in order to do so. Defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. In order to do it,
 you need to implement a `DeferredResolver`, that will get a list of deferred values:
 
@@ -246,7 +246,7 @@ Sangria also introduces the concept of projections. If you are fetching your dat
 very helpful to know which fields are needed for the query ahead-of-time in order to make efficient projection in the DB query.
 
 `Projector` allows you to do precisely this. It wraps a `resolve` function and enhances it
-with the list of projected fields (limited by depth). `ProjectionName` field tag allows you to customise projected
+with the list of projected fields (limited by depth). `ProjectionName` field tag allows you to customize projected
 field name (this is helpful, if your DB field names are different from the GraphQL field names).
 `ProjectionExclude` field tag on the other hand allows you to exclude a field from the list of projected field names.
 
@@ -353,12 +353,12 @@ type Query {
 
 Defining schema with `ObjectType`, `InputObjectType` and `EnumType` can become quite verbose. They provide maximum flexibility, but sometimes you just have a simple case class which you would like to expose via GraphQL API.
 
-For this sangria provides a set of macros that are able to derive GraphQL types from normal scala classes, case classes and enums:
+For this sangria provides a set of macros that are able to derive GraphQL types from normal Scala classes, case classes and enums:
 
 * `deriveObjectType[Ctx, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Val` class (case class accessors and members annotated with `@GraphQLField`) 
 * `deriveContextObjectType[Ctx, Target, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Target` class (case class accessors and members annotated with `@GraphQLField`). You also need to provide it a function `Ctx ⇒ Target` which macro will use to get an instance of `Target` type from a user context.
 * `deriveInputObjectType[T]` - constructs an `InputObjectType[T]` with fields found in `T` case class (only supports case class accessors)
-* `deriveEnumType[T]` - constructs an `EnumType[T]` with values found in `T` enumeration. It supports scala `Enumeration` as well as sealed hierarchies of case objects.
+* `deriveEnumType[T]` - constructs an `EnumType[T]` with values found in `T` enumeration. It supports Scala `Enumeration` as well as sealed hierarchies of case objects.
 
 You need following import to use them:
 
@@ -469,11 +469,11 @@ InputObjectType[User]("AuthUser", "A user of the system.", List(
     description = "User permissions")))
 ```
 
-You can use `@GraphQLDefault` as well as normal scala default values to provide a default value for an `InputField`. `@GraphQLDefault` annotation will be used as a default of both are defined. 
+You can use `@GraphQLDefault` as well as normal Scala default values to provide a default value for an `InputField`. `@GraphQLDefault` annotation will be used as a default of both are defined. 
 
 ### EnumType Derivation
 
-`deriveEnumType` supports scala `Enumeration` as well as sealed hierarchies of case objects. 
+`deriveEnumType` supports Scala `Enumeration` as well as sealed hierarchies of case objects. 
 
 First let's look at `Enumeration` example:
 
@@ -540,7 +540,7 @@ implicit lazy val BType: ObjectType[Unit, B] = deriveObjectType(
   ReplaceField("b", Field("b", BType, resolve = _.value.b)))
 ```
 
-And example of `InputObjectType`:
+An example of `InputObjectType`:
 
 ```scala
 case class A(id: Int, b: Option[B])
@@ -591,7 +591,7 @@ As you can see, `InputObjectTypeName` is also used in this case. Macro settings 
 
 ## Schema Materialization
 
-If you already got a full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for clint-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
+If you already got a full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for client-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
 
 Here is a simple example of how you can use this feature (using circe in this particular example):
 
@@ -604,7 +604,7 @@ val clientSchema: Schema[Unit, Unit] =
   Schema.buildFromIntrospection(introspectionResults)  
 ```
 
-It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `MaterializationLogic` implementation (you can also extend `DefaultMaterializationLogic` class). This means that you can, for instance, plug in some generic field resolution logic (`resolveField` method) or provide generic logic for custom scalars (`coerceScalar*` methods). Without these customisations a schema only would be able to execute introspection queries. 
+It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `MaterializationLogic` implementation (you can also extend `DefaultMaterializationLogic` class). This means that you can, for instance, plug in some generic field resolution logic (`resolveField` method) or provide generic logic for custom scalars (`coerceScalar*` methods). Without these customizations a schema only would be able to execute introspection queries. 
    
 ### Default Value Materialization 
    
@@ -640,7 +640,7 @@ The result of the execution is a `Future` of marshaled GraphQL result (see [Resu
  
 In some situations you may need to make a static query analysis and postpone the actual execution of the query. Later on you may need to execute this query several times. Typical example is subscription queries: you first validate and prepare a query, and then you execute it several times for every event. This is precisely what `PreparedQuery` allows you to do.
 
-Let't look at the example:
+Let's look at the example:
 
 ```scala
 val preparedQueryFuture = Executor.prepare(StarWarsSchema, query, 
@@ -783,7 +783,7 @@ val exceptionHandler: Executor.ExceptionHandler = {
 
 GraphQL query execution needs to know how to serialize the result of execution and how to deserialize arguments/variables.
 Specification itself does not define the data format, instead it uses abstract concepts like map and list.
-Sangria does not hard-code the serialisation mechanism. Instead it provides two traits for this:
+Sangria does not hard-code the serialization mechanism. Instead it provides two traits for this:
 
 * `ResultMarshaller` - knows how to serialize results of execution
 * `InputUnmarshaller[Node]` - knows how to deserialize the arguments/variables
@@ -819,7 +819,7 @@ val result: Future[JsValue] = Executor.execute(TestSchema.StarWarsSchema, queryA
 
 ### ToInput Type-Class
 
-Default values should now have an instance of `ToInput` type-class which is defined for all supported input types like scala map-like data structures, different json ASTs, etc. It even supports things like `Writes` from play-json or `JsonFormat` from spray-json by default. This means that you can use your domain objects (like `User` or `Apple`) as a default value for input fields or arguments as long as you have `Writes` or `JsonFormat` defined for them. 
+Default values should now have an instance of `ToInput` type-class which is defined for all supported input types like Scala map-like data structures, different json ASTs, etc. It even supports things like `Writes` from play-json or `JsonFormat` from spray-json by default. This means that you can use your domain objects (like `User` or `Apple`) as a default value for input fields or arguments as long as you have `Writes` or `JsonFormat` defined for them. 
 
 The mechanism is very extensible: you just need to define implicit `ToInput[T]` for a class you want to use as a default value.
 
@@ -994,7 +994,7 @@ class SprayJsonSupportSpec extends WordSpec
 Sangria support generic middleware that can be used for different purposes, like performance measurement, metrics collection, security enforcement, etc. on a field and query level.
 Moreover it makes it much easier for people to share standard middleware in a libraries. Middleware allows you to define callbacks before/after query and field.
 
-Here is a small example of it's usage:
+Here is a small example of its usage:
 
 ```scala
 class FieldMetrics extends Middleware[Any] with MiddlewareAfterField[Any] with MiddlewareErrorField[Any] {
@@ -1081,13 +1081,13 @@ that analyses a query complexity in the [Query Complexity Analysis](#query-compl
 
 Sangria support all standard GraphQL scalars like `String`, `Int`, `ID`, etc. In addition, sangria introduces following built-in scalar types:
 
-* `Long` - a 64 bit integer value which is represented as a `Long` in scala code
-* `BigInt` - similar to `Int` scalar value, but allows you to transfer big integer values and represents them in code as scala's `BigInt` class
-* `BigDecimal` - similar to `Float` scalar value, but allows you to transfer big decimal values and represents them in code as scala's `BigDecimal` class
+* `Long` - a 64 bit integer value which is represented as a `Long` in Scala code
+* `BigInt` - similar to `Int` scalar value, but allows you to transfer big integer values and represents them in code as Scala's `BigInt` class
+* `BigDecimal` - similar to `Float` scalar value, but allows you to transfer big decimal values and represents them in code as Scala's `BigDecimal` class
 
 ### Custom Scalar Types
 
-You can also create your own custom scalar types. An input and output of scala type should always be value that GraphQL grammar supports like string, 
+You can also create your own custom scalar types. An input and output of Scala type should always be value that GraphQL grammar supports like string, 
 number, boolean, etc. Here is an example of `DateTime` (from joda-time) scalar type implementation:
   
 ```scala
@@ -1251,7 +1251,7 @@ mutation LoginAndMutate {
 }
 ```
 
-here we login and adding colors in the same GraphQL query. It will produce result like this one:
+Here we login and adding colors in the same GraphQL query. It will produce result like this one:
 
 ```json
 {
