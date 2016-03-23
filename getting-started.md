@@ -130,7 +130,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 Executor.execute(BlogSchema, queryAst)
 ```
 
-By default, the result of the execution is a JSON-like structure of scala `Map` and `List` objects. It can be very helpful for testing or experimentation.
+By default, the result of the execution is a JSON-like structure of Scala `Map` and `List` objects. It can be very helpful for testing or experimentation.
 But as soon as you want to integrate it with some web framework, like Play or akka-http, you probably want to get some JSON AST as the result of execution.
 
 Sangria allows you to do this by importing one of the following objects:
