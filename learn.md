@@ -524,7 +524,7 @@ EnumType("Foo", Some("It's foo"), List(
 
 ### Dealing With Recursive Types 
 
-Sometimes you need to model a recursive and interdependent types. Macro needs a little bit of help: you must replace fields that use recursive types and define then manually.
+Sometimes you need to model a recursive and interdependent types. Macro needs a little bit of help: you must replace fields that use recursive types and define them manually.
 
 Here is an example of an `ObjectType`:
 
