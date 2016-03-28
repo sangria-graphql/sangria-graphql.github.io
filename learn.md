@@ -431,9 +431,9 @@ Resulting mutation type would be an equivalent to this one:
 
 ```scala
 val FirstNameArg = Argument("firstName", StringType)
-val LastNameArg = Argument("firstName", OptionInputType(StringType))
+val LastNameArg = Argument("lastName", OptionInputType(StringType))
 
-ObjectType("Mutation", fields[MyCtx, Unit](
+val MutationType = ObjectType("Mutation", fields[MyCtx, Unit](
   Field("addUser", UserType,
     arguments = FirstNameArg :: LastNameArg :: Nil,
     resolve = c ⇒ c.ctx.mutation.addUser(
@@ -524,7 +524,7 @@ EnumType("Foo", Some("It's foo"), List(
 
 ### Dealing With Recursive Types 
 
-Sometimes you need to model a recursive and interdependent types. Macro needs a little bit of help: you must replace fields that use recursive types and define then manually.
+Sometimes you need to model a recursive and interdependent types. Macro needs a little bit of help: you must replace fields that use recursive types and define them manually.
 
 Here is an example of an `ObjectType`:
 
