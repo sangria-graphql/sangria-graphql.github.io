@@ -431,9 +431,9 @@ Resulting mutation type would be an equivalent to this one:
 
 ```scala
 val FirstNameArg = Argument("firstName", StringType)
-val LastNameArg = Argument("firstName", OptionInputType(StringType))
+val LastNameArg = Argument("lastName", OptionInputType(StringType))
 
-ObjectType("Mutation", fields[MyCtx, Unit](
+val MutationType = ObjectType("Mutation", fields[MyCtx, Unit](
   Field("addUser", UserType,
     arguments = FirstNameArg :: LastNameArg :: Nil,
     resolve = c ⇒ c.ctx.mutation.addUser(
