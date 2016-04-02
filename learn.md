@@ -1362,7 +1362,7 @@ There are quite a few helpers available which you may find useful in different s
 
 ### Introspection Result Parsing
 
-Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of forking
+Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of working
  directly with JSON (or other raw representation), you can parse it in a set of case classes that allow you to easily work with the whole schema introspection. 
 
 You can find a parser function in `sangria.introspection.IntrospectionParser`.
