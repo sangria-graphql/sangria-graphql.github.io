@@ -1102,7 +1102,9 @@ def parseDate(s: String) = Try(new DateTime(s, DateTimeZone.UTC)) match {
 }
 
 val DateTimeType = ScalarType[DateTime]("DateTime",
-  coerceOutput = date ⇒ ast.StringValue(ISODateTimeFormat.dateTime().print(date)),
+  coerceOutput = (d, caps) ⇒
+    if (caps.contains(DateSupport)) d.toDate
+    else ISODateTimeFormat.dateTime().print(date),
   coerceUserInput = {
     case s: String ⇒ parseDate(s)
     case _ ⇒ Left(DateCoercionViolation)
@@ -1112,6 +1114,9 @@ val DateTimeType = ScalarType[DateTime]("DateTime",
     case _ ⇒ Left(DateCoercionViolation)
   })
 ```
+
+Some marshalling formats natively support `java.util.Date`, so we check for marshaller capabilities here and either return a `Date` or
+a `String` in ISO format.
 
 ## Deprecation Tracking
 
