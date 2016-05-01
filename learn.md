@@ -804,7 +804,10 @@ At the moment Sangria provides implementations for these libraries:
 * `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization
   * `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`  
 * `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization
-  * `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`   
+  * `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`
+* `sangria.marshalling.ion._` - [Amazon Ion](http://amznlabs.github.io/ion-docs/index.html) serialization
+  * `"{{site.groupId}}" %% "sangria-ion" % "{{site.version.sangria-ion}}"`  
+     
   
 In order to use one of these, just import it and the result of execution will be of the correct type:
 

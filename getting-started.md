@@ -150,6 +150,8 @@ Sangria allows you to do this by importing one of the following objects:
   * `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`  
 * `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization
   * `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`  
+* `sangria.marshalling.ion._` - [Amazon Ion](http://amznlabs.github.io/ion-docs/index.html) serialization
+  * `"{{site.groupId}}" %% "sangria-ion" % "{{site.version.sangria-ion}}"`  
 
 This will provide an executor with different marshalling mechanism and produce a `Future` with a JSON AST of your choice.
 

@@ -15,6 +15,7 @@ version:
   sangria-json4s-jackson: 0.3.1
   sangria-circe: 0.4.4
   sangria-msgpack: 0.2.1
+  sangria-ion: 0.1.0
   sangria-argonaut: 0.3.1
   sangria-marshalling-api: 0.2.1
   sangria-marshalling-testkit: 0.2.1
@@ -38,6 +39,7 @@ link:
     sangria-json4s-jackson: https://github.com/sangria-graphql/sangria-json4s-jackson
     sangria-circe: https://github.com/sangria-graphql/sangria-circe
     sangria-msgpack: https://github.com/sangria-graphql/sangria-msgpack
+    sangria-ion: https://github.com/sangria-graphql/sangria-ion
     sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut
     sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api
     sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit
@@ -50,6 +52,7 @@ link:
     sangria-json4s-jackson: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-json4s-jackson_
     sangria-circe: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-circe_
     sangria-msgpack: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-msgpack_
+    sangria-ion: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-ion_
     sangria-argonaut: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-argonaut_
     sangria-marshalling-api: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-marshalling-api_
     sangria-marshalling-testkit: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-marshalling-testkit_
@@ -62,6 +65,7 @@ link:
     sangria-json4s-jackson: https://github.com/sangria-graphql/sangria-json4s-jackson/issues
     sangria-circe: https://github.com/sangria-graphql/sangria-circe/issues
     sangria-msgpack: https://github.com/sangria-graphql/sangria-msgpack/issues
+    sangria-ion: https://github.com/sangria-graphql/sangria-ion/issues
     sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut/issues
     sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api/issues
     sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit/issues
@@ -74,6 +78,7 @@ link:
     sangria-json4s-jackson: https://github.com/sangria-graphql/sangria-json4s-jackson/releases
     sangria-circe: https://github.com/sangria-graphql/sangria-circe/releases
     sangria-msgpack: https://github.com/sangria-graphql/sangria-msgpack/releases
+    sangria-ion: https://github.com/sangria-graphql/sangria-ion/releases
     sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut/releases
     sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api/releases
     sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit/releases

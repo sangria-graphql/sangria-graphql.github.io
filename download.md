@@ -106,6 +106,22 @@ You can use following dependency in your SBT build:
 libraryDependencies += "{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"
 ```
 
+### sangria-ion
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-msgpack}}">sangria-ion</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-ion}}">{{site.version.sangria-ion}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for Scala <a target="_blank" href="{{site.link.maven.sangria-ion}}2.11%7C{{site.version.sangria-ion}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+```scala
+libraryDependencies += "{{site.groupId}}" %% "sangria-ion" % "{{site.version.sangria-ion}}"
+```
+
 ### sangria-argonaut
 
 <dl class="dl-horizontal">
