@@ -591,6 +591,10 @@ As you can see, `InputObjectTypeName` is also used in this case. Macro settings 
 
 ## Schema Materialization
 
+If you have an introspection results (coming from remote server, for instance) or an IDL-based schema definition, then you can create and executable in-memory schema representation out of it.  
+
+### Based on introspection 
+
 If you already got a full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for client-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
 
 Here is a simple example of how you can use this feature (using circe in this particular example):
@@ -600,26 +604,63 @@ import io.circe._
 import sangria.marshalling.circe._
 
 val introspectionResults: Json = ??? // coming from other server or file
-val clientSchema: Schema[Unit, Unit] = 
+val clientSchema: Schema[Any, Any] = 
   Schema.buildFromIntrospection(introspectionResults)  
 ```
 
-It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `MaterializationLogic` implementation (you can also extend `DefaultMaterializationLogic` class). This means that you can, for instance, plug in some generic field resolution logic (`resolveField` method) or provide generic logic for custom scalars (`coerceScalar*` methods). Without these customizations a schema only would be able to execute introspection queries. 
-   
-### Default Value Materialization 
-   
-By default, default values (for input object fields and arguments) would be ignored because it's just a string as far as introspection API is concerned. However you can enable default value support if you know the format of the default values (in many cases it would be JSON). There is even a helper function for this:
-  
-```scala
-import spray.json._
-import sangria.marshalling.sprayJson._
+It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder` implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations materialized schema only would be able to execute introspection queries. 
 
-val clientSchema: Schema[Unit, Unit] = 
-  Schema.buildFromIntrospection(introspectionResults,
-    MaterializationLogic.withDefaultValues[Unit, JsValue])
+### Based on IDL definitions 
+
+In addition to normal query syntax, GraphQL allows you to define the schema itself. This is how the syntax look like:
+    
+```js
+interface Character {
+  id: Int!
+  name: String!
+}
+
+type Human implements Character {
+  id: Int!
+  name: String!
+  height: Float
+}
+
+type Query {
+  hero: Character
+}
+
+schema {
+  query: Query
+}
 ```
 
-This will inform schema materializer that default values are serialized as JSON and that spray-json should be used to work with them (please note, that circe does not have a built-in JSON parsing support, so it can't be used out-of-the-box here. On the other hand, it's pretty easy to add support for particular circe parser by defining an implicit instance of `InputParser` type class).  
+You can recreate an in-memory representation of the schema with `AstSchemaMaterializer` (just like with introspection-based one). This feature has a lot of potential for client-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
+
+Here is a simple example of how you can use this feature:
+
+```scala
+val ast =
+  graphql"""
+    schema {
+      query: Hello
+      query: Yellow
+    }
+  
+    type Hello {
+      bar: Bar
+    }
+  
+    type Yellow {
+      isColor: Boolean
+    }
+  """
+  
+val clientSchema: Schema[Any, Any] = 
+  Schema.buildFromAst(ast)  
+```
+
+It takes a schema AST (in this example `graphql` macro is used, but you can also use `QueryParser.parse` to parse the schema dynamically) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `AstSchemaBuilder` implementation (you can also extend `DefaultAstSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations materialized schema only would be able to execute introspection queries. 
 
 ## Query Execution
 
