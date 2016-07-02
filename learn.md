@@ -815,8 +815,8 @@ val exceptionHandler: Executor.ExceptionHandler = {
   case (m, e: IllegalStateException) =>
     HandledException(e.getMessage,
       Map(
-      "foo" -> m.arrayNode(Seq(m.stringNode("bar"), m.intNode(1234))), 
-      "baz" -> m.stringNode("Test")))
+      "foo" -> m.arrayNode(Seq(m.scalarNode("bar", "String", Set.empty), m.scalarNode("1234", "Int", Set.empty))), 
+      "baz" -> m.scalarNode("Test", "String", Set.empty)))
 }
 ```
 
@@ -1151,7 +1151,7 @@ val DateTimeType = ScalarType[DateTime]("DateTime",
     case _ ⇒ Left(DateCoercionViolation)
   },
   coerceInput = {
-    case ast.StringValue(s, _) ⇒ parseDate(s)
+    case ast.StringValue(s, _, _) ⇒ parseDate(s)
     case _ ⇒ Left(DateCoercionViolation)
   })
 ```
