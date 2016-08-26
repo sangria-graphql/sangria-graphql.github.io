@@ -2,7 +2,7 @@ title: Sangria
 description: "Sangria - Scala GraphQL Implementation"
 baseurl: ""
 url: "http://sangria-graphql.org"
-theme: flatly
+bootstrap-theme: flatly
 ga-code: UA-65759630-1
 domain: sangria-graphql.org
 
