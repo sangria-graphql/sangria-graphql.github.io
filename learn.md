@@ -644,14 +644,13 @@ val ast =
   graphql"""
     schema {
       query: Hello
-      query: Yellow
     }
   
     type Hello {
       bar: Bar
     }
   
-    type Yellow {
+    type Bar {
       isColor: Boolean
     }
   """
