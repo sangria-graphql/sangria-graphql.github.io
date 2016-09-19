@@ -41,7 +41,8 @@ h1, .header-logo {
 }
 
 body {
-  font-family: "fira-sans-2";
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;;
+  font-weight: 300 !important;
 }
 
 .header-logo {
@@ -157,13 +158,15 @@ section {
 }
 
 code.highlighter-rouge {
-  font-family: "fira-mono";
+  font-family: 'Roboto Mono';
+  font-weight: 400;
   background: none;
   color: #E19F6D;
 }
 
 pre code {
-  font-family: "fira-mono";
+  font-family: 'Roboto Mono';
+  font-weight: 400;
   font-size: 15px;
 }
 
@@ -465,7 +468,8 @@ body {
 .gitter-open-chat-button, .gitter-open-chat-button:visited {
   color: #F9E3D2;
   background-color: #DC7676;
-  font-family: "fira-sans-2";
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 300 !important;
   font-size: 17px;
   padding-top: 9px;
   padding-bottom: 7px;
@@ -507,4 +511,9 @@ body {
 .highlight .err {
   color: #525e5f;
   background: none;
+}
+
+.subtitle {
+  font-weight: 100;
+  font-size: 40px;
 }
