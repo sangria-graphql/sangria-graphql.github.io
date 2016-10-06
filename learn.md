@@ -23,10 +23,10 @@ You can find an example application that uses akka-http with _sangria_ here:
 It is also available as an [Activator template]({{site.link.akka-http-example.activator}}).
 
 I would also would recommend you to check out [{{site.link.try}}]({{site.link.try}}).
-It is an example of GraphQL server written with Play framework and Sangria. It also serves as a playground,
+It is an example of a GraphQL server written with Play framework and Sangria. It also serves as a playground,
 where you can interactively execute GraphQL queries and play with some examples.
 
-If you want to use sangria with react-relay framework, they you also need to include [sangria-relay]({{site.link.repo.sangria-relay}}):
+If you want to use sangria with the react-relay framework, they you also need to include [sangria-relay]({{site.link.repo.sangria-relay}}):
 
 ```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
@@ -80,7 +80,7 @@ println(QueryRenderer.render(document))
 println(QueryRenderer.render(document, QueryRenderer.Compact))
 ```
 
-Alternatively you can use `graphql` macro, which will ensure that you query is syntactically correct at compile time:
+Alternatively you can use `graphql` macro, which will ensure that your query is syntactically correct at compile time:
 
 ```scala
 import sangria.macros._
@@ -206,32 +206,33 @@ val StarWarsSchema = Schema(Query)
 
 ### Actions
 
-`resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] => Action[Ctx, Res]`. As you can see, the result of the `resolve` is `Action` type
-which can take different shapes. Here is the list of supported actions:
+The `resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] => Action[Ctx, Res]`.
+As you can see, the result of the `resolve` is an `Action` type which can take different shapes.
+Here is the list of supported actions:
 
-* `Value` - a simple value result. If you want to indicate an error, you need throw an exception
+* `Value` - a simple value result. If you want to indicate an error, you need to throw an exception
 * `TryValue` - a `scala.util.Try` result
 * `FutureValue` - a `Future` result
-* `DeferredValue` - used to return a `Deferred` result (see [Deferred Values and Resolver](#deferred-values-and-resolver) section for more details)
-* `DeferredFutureValue` - the same as `DeferredValue` but allows to return `Deferred` inside of a `Future`
-* `UpdateCtx` - allows you to transform `Ctx` object. The transformed context object would be available for nested sub-objects and subsequent sibling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of its usage in [Authentication and Authorisation](#authentication-and-authorisation) section
+* `DeferredValue` - used to return a `Deferred` result (see the [Deferred Values and Resolver](#deferred-values-and-resolver) section for more details)
+* `DeferredFutureValue` - the same as `DeferredValue` but allows you to return `Deferred` inside of a `Future`
+* `UpdateCtx` - allows you to transform a `Ctx` object. The transformed context object would be available for nested sub-objects and subsequent sibling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of its usage in the [Authentication and Authorisation](#authentication-and-authorisation) section.
 
-Normally library is able to automatically infer the `Action` type, so that you don't need to specify it explicitly.
+Normally the library is able to automatically infer the `Action` type, so that you don't need to specify it explicitly.
 
 ### Deferred Values and Resolver
 
-In the example schema, you probably noticed, that some of the resolve functions return `DeferFriends`. It is defined like this:
+In the example schema, you probably noticed that some of the resolve functions return `DeferFriends`. It is defined like this:
 
 ```scala
 case class DeferFriends(friends: List[String]) extends Deferred[List[Character]]
 ```
 
-Defer mechanism allows you to postpone the execution of particular fields and then batch them together in order to optimise object retrieval.
-This can be very useful when you are trying N+1. In this example all of the characters have list of friends, but they only have IDs of them.
+The defer mechanism allows you to postpone the execution of particular fields and then batch them together in order to optimise object retrieval.
+This can be very useful when you are trying N+1. In this example all of the characters have list of friends, but they only have their IDs.
 You need to fetch from somewhere in order to progress query execution.
 Retrieving every friend one-by-one would be inefficient, since you potentially need to access an external database
-in order to do so. Defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. In order to do it,
-you need to implement a `DeferredResolver`, that will get a list of deferred values:
+in order to do so. The defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. 
+In order to do it, you need to implement a `DeferredResolver` that will get a list of deferred values:
 
 ```scala
 class FriendsResolver extends DeferredResolver[Any] {
@@ -243,30 +244,30 @@ class FriendsResolver extends DeferredResolver[Any] {
 ### Projections
 
 Sangria also introduces the concept of projections. If you are fetching your data from the database (like let's say MongoDB), then it can be
-very helpful to know which fields are needed for the query ahead-of-time in order to make efficient projection in the DB query.
+very helpful to know which fields are needed for the query ahead-of-time in order to make an efficient projection in the DB query.
 
 `Projector` allows you to do precisely this. It wraps a `resolve` function and enhances it
-with the list of projected fields (limited by depth). `ProjectionName` field tag allows you to customize projected
-field name (this is helpful, if your DB field names are different from the GraphQL field names).
-`ProjectionExclude` field tag on the other hand allows you to exclude a field from the list of projected field names.
+with the list of projected fields (limited by depth). The `ProjectionName` field tag allows you to customize projected
+field names (this is helpful if your DB field names are different from the GraphQL field names).
+The `ProjectionExclude` field tag, on the other hand, allows you to exclude a field from the list of projected field names.
 
 ### Input and Context Objects
 
-Many schema elements, like `ObjectType`, `Field` or `Schema` itself, take two type parameters: `Ctx` and `Val`:
+Many schema elements, like `ObjectType`, `Field` or `Schema` itself, takes two type parameters: `Ctx` and `Val`:
 
-* `Val` - represent values that are returned by `resolve` function and given to resolve function as a part of the `Context`. In the schema example,
+* `Val` - represent values that are returned by the `resolve` function and given to the `resolve` function as a part of the `Context`. In the schema example,
   `Val` can be a `Human`, `Droid`, `String`, etc.
 * `Ctx` - represents some contextual object that flows across the whole execution (and doesn't change in most of the cases). It can be provided to execution by the user
-  in order to help fulfill the GraphQL query. A typical example of such context object is as service or repository object that is able to access
-  a database. In example schema some of the fields, like `droid` or `human` make use of it in order to access the character repository.
+  in order to help fulfill the GraphQL query. A typical example of such a context object is a service or repository object that is able to access
+  a database. In the example schema, some of the fields (like `droid` or `human`) make use of it in order to access the character repository.
 
 ### Providing Additional Types
 
-After a schema is defined, the library tries to discover all of the supported GraphQL types by traversing the schema. Sometimes you have a situation, where not all
+After a schema is defined, the library tries to discover all of the supported GraphQL types by traversing the schema. Sometimes you have a situation where not all
 GraphQL types are explicitly reachable from the root of the schema. For instance, if the example schema had only the `hero` field in the `Query` type, then
 it would not be possible to automatically discover the `Human` and the `Droid` type, since only the `Character` interface type is referenced inside of the schema.
 
-If you have similar situation, then you need to provide additional types like this:
+If you have a similar situation, then you need to provide additional types like this:
 
 ```scala
 val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
@@ -276,7 +277,7 @@ val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
       resolve = (ctx) => ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
   ))
 
-val heroOnlySchema = Schema(HeroOnlyQuery, 
+val heroOnlySchema = Schema(HeroOnlyQuery,
   additionalTypes = TestSchema.Human :: TestSchema.Droid :: Nil)
 ```
 
@@ -285,7 +286,7 @@ Alternatively you can use `manualPossibleTypes` on the `Field` and `InterfaceTyp
 ### Circular References and Recursive Types
 
 In some cases you need to define a GraphQL schema that contains recursive types or has circular references in the object graph. Sangria supports such schemas
-by allowing you to provide a no-arg function that creates `ObjectType` fields instead of eager list of fields. Here is an example of interdependent types:
+by allowing you to provide a no-arg function that creates `ObjectType` fields instead of an eager list of fields. Here is an example of interdependent types:
 
 ```scala
 case class A(b: Option[B], name: String)
@@ -304,7 +305,7 @@ In most cases you also need to define (at least one of) these types with `lazy v
 
 ### Schema Rendering
 
-You can render a schema or an introspection results in human-readable form (IDL syntax) with `SchemaRenderer`. Here is an example:
+You can render a schema or an introspection result in human-readable form (IDL syntax) with `SchemaRenderer`. Here is an example:
 
 ```scala
 SchemaRenderer.renderSchema(SchemaDefinition.StarWarsSchema)
@@ -349,14 +350,14 @@ type Query {
 }
 ```
 
-## Macro-Based GraphQL Type Derivation 
+## Macro-Based GraphQL Type Derivation
 
 Defining schema with `ObjectType`, `InputObjectType` and `EnumType` can become quite verbose. They provide maximum flexibility, but sometimes you just have a simple case class which you would like to expose via GraphQL API.
 
-For this sangria provides a set of macros that are able to derive GraphQL types from normal Scala classes, case classes and enums:
+For this, sangria provides a set of macros that are able to derive GraphQL types from normal Scala classes, case classes and enums:
 
-* `deriveObjectType[Ctx, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Val` class (case class accessors and members annotated with `@GraphQLField`) 
-* `deriveContextObjectType[Ctx, Target, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Target` class (case class accessors and members annotated with `@GraphQLField`). You also need to provide it a function `Ctx ⇒ Target` which macro will use to get an instance of `Target` type from a user context.
+* `deriveObjectType[Ctx, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Val` class (case class accessors and members annotated with `@GraphQLField`)
+* `deriveContextObjectType[Ctx, Target, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Target` class (case class accessors and members annotated with `@GraphQLField`). You also need to provide it a function `Ctx ⇒ Target` which the macro will use to get an instance of `Target` type from a user context.
 * `deriveInputObjectType[T]` - constructs an `InputObjectType[T]` with fields found in `T` case class (only supports case class accessors)
 * `deriveEnumType[T]` - constructs an `EnumType[T]` with values found in `T` enumeration. It supports Scala `Enumeration` as well as sealed hierarchies of case objects.
 
@@ -367,10 +368,10 @@ import sangria.macros.derive._
 ```
 
 The use of these macros is completely optional, they just provide a bit of convenience when you need it. [Schema Definition DSL](#schema-definition) is the primary way to define a schema.
- 
+
 You can also influence the derivation by either providing a list of settings to the macro or using `@GraphQL*` annotations (these are `StaticAnnotation`s and only used to customize a macro code generation - they are erased at the runtime). This provides a very flexible way to derive GraphQL types based on your domain model - you can customize almost any aspect of the resulting GraphQL type (change names, add descriptions, add fields, deprecate fields, etc.).
 
-In order to discover other GraphQL types, macro uses implicits. So if you derive interdependent types, make sure to make them implicitly available in the scope.
+In order to discover other GraphQL types, the macros use implicits. So if you derive interdependent types, make sure to make them implicitly available in the scope.
 
 ### ObjectType Derivation
 
@@ -402,10 +403,10 @@ ObjectType("AuthUser", "A user of the system.", fields[MyCtx, User](
 
 #### Deriving Methods with Arguments
 
-You can also use class methods as GraphQL fields. This will also correctly generate appropriate `Argument`s. 
+You can also use class methods as GraphQL fields. This will also correctly generate appropriate `Argument`s.
 
 Let's look at the example:
- 
+
 ```scala
 case class User(firstName: String, lastName: Option[String])
 
@@ -417,7 +418,7 @@ trait Mutation {
     add(user)
     user
   }
-  
+
   // ...
 }
 
@@ -442,9 +443,9 @@ val MutationType = ObjectType("Mutation", fields[MyCtx, Unit](
 
 You can also define a method argument of type `Context[Ctx, Val]` - it will not be treated as an argument, but instead a field execution context would be provided to a method in this argument.
 
-Default values of method arguments would be ignored. If you would like to provide default value to an `Argument`, please use `@GraphQLDefault` instead.
+Default values of method arguments would be ignored. If you would like to provide a default value to an `Argument`, please use `@GraphQLDefault` instead.
 
-Instead of using `@GraphQLField` annotation you can also provide `IncludeMethods` setting as an argument to the macro.
+Instead of using the `@GraphQLField` annotation, you can also provide the `IncludeMethods` setting as an argument to the macro.
 
 ### InputObjectType Derivation
 
@@ -469,11 +470,12 @@ InputObjectType[User]("AuthUser", "A user of the system.", List(
     description = "User permissions")))
 ```
 
-You can use `@GraphQLDefault` as well as normal Scala default values to provide a default value for an `InputField`. `@GraphQLDefault` annotation will be used as a default of both are defined. 
+You can use `@GraphQLDefault` as well as normal Scala default values to provide a default value for an `InputField`.
+The `@GraphQLDefault` annotation will be used as a default of both are defined.
 
 ### EnumType Derivation
 
-`deriveEnumType` supports Scala `Enumeration` as well as sealed hierarchies of case objects. 
+`deriveEnumType` supports Scala `Enumeration` as well as sealed hierarchies of case objects.
 
 First let's look at `Enumeration` example:
 
@@ -522,9 +524,9 @@ EnumType("Foo", Some("It's foo"), List(
   EnumValue("Guave", value = Guave)))
 ```
 
-### Dealing With Recursive Types 
+### Dealing With Recursive Types
 
-Sometimes you need to model a recursive and interdependent types. Macro needs a little bit of help: you must replace fields that use recursive types and define them manually.
+Sometimes you need to model recursive and interdependent types. The macro needs a little bit of help: you must replace fields that use recursive types and define them manually.
 
 Here is an example of an `ObjectType`:
 
@@ -545,7 +547,7 @@ An example of `InputObjectType`:
 ```scala
 case class A(id: Int, b: Option[B])
 case class B(name: String, a: A, b: Option[B])
-  
+
 implicit lazy val AType: InputObjectType[A] = deriveInputObjectType[A](
   ReplaceInputField("b", InputField("b", OptionInputType(BType))))
 
@@ -556,15 +558,15 @@ implicit lazy val BType: InputObjectType[B] = deriveInputObjectType[B](
 
 ### Customizing Types With Annotations
 
-You can use following annotations to change different aspects of resulting GraphQL types:
- 
-* `@GraphQLName` - use different name for a type, field, enum value or an argument
+You can use the following annotations to change different aspects of the resulting GraphQL types:
+
+* `@GraphQLName` - use a different name for a type, field, enum value or an argument
 * `@GraphQLDescription` - provide a description for a type, field, enum value or an argument
 * `@GraphQLDeprecated` - deprecate an `ObjectType` field or an enum value
-* `@GraphQLFieldTags` - provide fields tags or an `ObjectType` field
-* `@GraphQLExclude` - exclude field, enum value or an argument
-* `@GraphQLField` - include member of a class (`val` or `def`) in the resulting `ObjectType`. This will also create appropriate `Argument` list if method takes some arguments
-* `@GraphQLDefault` - provide a default value for an `InputField` or an `Argument` 
+* `@GraphQLFieldTags` - provide field tags or an `ObjectType` field
+* `@GraphQLExclude` - exclude a field, enum value or an argument
+* `@GraphQLField` - include a member of a class (`val` or `def`) in the resulting `ObjectType`. This will also create the appropriate `Argument` list if the method takes some arguments
+* `@GraphQLDefault` - provide a default value for an `InputField` or an `Argument`
 
 Here is an example:
 
@@ -581,7 +583,7 @@ case class User(
 
   @GraphQLExclude
   password: String)
-  
+
 val UserType = deriveObjectType[MyCtx, User]()
 val UserInputType = deriveInputObjectType[User](
   InputObjectTypeName("UserInput"))
@@ -591,11 +593,11 @@ As you can see, `InputObjectTypeName` is also used in this case. Macro settings 
 
 ## Schema Materialization
 
-If you have an introspection results (coming from remote server, for instance) or an IDL-based schema definition, then you can create and executable in-memory schema representation out of it.  
+If you have an introspection result (coming from remote server, for instance) or an IDL-based schema definition, then you can create an executable in-memory schema representation out of it.
 
-### Based on introspection 
+### Based on introspection
 
-If you already got a full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for client-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
+If you already got a full introspection result from a server, you can recreate an in-memory representation of the schema with `IntrospectionSchemaMaterializer`. This feature has a lot of potential for client-side tools: testing, mocking, creating proxy/facade GraphQL servers, etc.
 
 Here is a simple example of how you can use this feature (using circe in this particular example):
 
@@ -604,16 +606,16 @@ import io.circe._
 import sangria.marshalling.circe._
 
 val introspectionResults: Json = ??? // coming from other server or file
-val clientSchema: Schema[Any, Any] = 
-  Schema.buildFromIntrospection(introspectionResults)  
+val clientSchema: Schema[Any, Any] =
+  Schema.buildFromIntrospection(introspectionResults)
 ```
 
-It takes a results of full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder` implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations materialized schema only would be able to execute introspection queries. 
+It takes a results of a full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder` implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
 
-### Based on IDL definitions 
+### Based on IDL definitions
 
 In addition to normal query syntax, GraphQL allows you to define the schema itself. This is how the syntax look like:
-    
+
 ```js
 interface Character {
   id: Int!
@@ -635,7 +637,7 @@ schema {
 }
 ```
 
-You can recreate an in-memory representation of the schema with `AstSchemaMaterializer` (just like with introspection-based one). This feature has a lot of potential for client-side tools, testing, mocking, creating proxy/facade GraphQL servers, etc.
+You can recreate an in-memory representation of the schema with `AstSchemaMaterializer` (just like with the introspection-based one). This feature has a lot of potential for client-side tools: testing, mocking, creating proxy/facade GraphQL servers, etc.
 
 Here is a simple example of how you can use this feature:
 
@@ -645,21 +647,21 @@ val ast =
     schema {
       query: Hello
     }
-  
+
     type Hello {
       bar: Bar
     }
-  
+
     type Bar {
       isColor: Boolean
     }
   """
-  
-val clientSchema: Schema[Any, Any] = 
-  Schema.buildFromAst(ast)  
+
+val clientSchema: Schema[Any, Any] =
+  Schema.buildFromAst(ast)
 ```
 
-It takes a schema AST (in this example `graphql` macro is used, but you can also use `QueryParser.parse` to parse the schema dynamically) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `AstSchemaBuilder` implementation (you can also extend `DefaultAstSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations materialized schema only would be able to execute introspection queries. 
+It takes a schema AST (in this example the `graphql` macro is used, but you can also use `QueryParser.parse` to parse the schema dynamically) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `AstSchemaBuilder` implementation (you can also extend `DefaultAstSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
 
 ## Query Execution
 
@@ -668,46 +670,46 @@ Here is an example of how you can execute example schema:
 ```scala
 import sangria.execution.Executor
 
-Executor.execute(TestSchema.StarWarsSchema, queryAst, 
-  userContext = new CharacterRepo, 
-  deferredResolver = new FriendsResolver, 
+Executor.execute(TestSchema.StarWarsSchema, queryAst,
+  userContext = new CharacterRepo,
+  deferredResolver = new FriendsResolver,
   variables = vars)
 ```
 
 The result of the execution is a `Future` of marshaled GraphQL result (see [Result Marshalling and Input Unmarshalling](#result-marshalling-and-input-unmarshalling) section for more details)
 
 ### Prepared Queries
- 
-In some situations you may need to make a static query analysis and postpone the actual execution of the query. Later on you may need to execute this query several times. Typical example is subscription queries: you first validate and prepare a query, and then you execute it several times for every event. This is precisely what `PreparedQuery` allows you to do.
+
+In some situations, you may need to make a static query analysis and postpone the actual execution of the query. Later on, you may need to execute this query several times. A typical example is subscription queries: you first validate and prepare a query, and then you execute it several times for every event. This is precisely what `PreparedQuery` allows you to do.
 
 Let's look at the example:
 
 ```scala
-val preparedQueryFuture = Executor.prepare(StarWarsSchema, query, 
-  new CharacterRepo, 
+val preparedQueryFuture = Executor.prepare(StarWarsSchema, query,
+  new CharacterRepo,
   deferredResolver = new FriendsResolver)
 
-preparedQueryFuture.map(preparedQuery ⇒ 
+preparedQueryFuture.map(preparedQuery ⇒
   preparedQuery.execute(userContext = someCustomCtx, root = event))
 ```
 
-`Executor.prepare` will return you a `Future` with prepared query which you can execute several times later, possibly providing different `userContext` or `root` value. In addition to `execute`, `PreparedQuery` also gives you a lot of information about the query itself: operation, root `QueryType`, top-level fields with arguments, etc.
+`Executor.prepare` will return you a `Future` with a prepared query which you can execute several times later, possibly providing different `userContext` or `root` values. In addition to `execute`, `PreparedQuery` also gives you a lot of information about the query itself: operation, root `QueryType`, top-level fields with arguments, etc.
 
 ## Protection Against Malicious Queries
 
-GraphQL is very flexible data query language. Unfortunately with flexibility comes also a danger of misuse by malicious clients.
+GraphQL is a very flexible data query language. Unfortunately with flexibility comes also a danger of misuse by malicious clients.
 Since typical GraphQL schemas contain recursive types and circular dependencies, clients are able to send infinitely deep queries
 which may have high impact on server performance. That's because it's important to analyze query complexity before executing it.
-Sangria provides two mechanisms to protect your GraphQL server from malicious or too expensive queries which are described in the next sections.
+Sangria provides two mechanisms to protect your GraphQL server from malicious or expensive queries which are described in the next sections.
 
 ### Query Complexity Analysis
 
-Query complexity  analysis makes a rough estimation of the query complexity before it is executed. The complexity is `Double` number that is
+Query complexity analysis makes a rough estimation of the query complexity before it is executed. The complexity is a `Double` number that is
 calculated according to the simple rule described below.
 
 Every field in the query gets a default score `1` (including `ObjectType` nodes). The "complexity" of the query is the sum of all field scores.
 
-so for instance query:
+So the following instance query:
 
 ```js
 query Test {
@@ -723,10 +725,10 @@ query Test {
 }
 ```
 
-will have complexity `6`. You probably noticed, that score is a bit unfair since `pets` field is actually a list which can contain a max of 20
+will have complexity `6`. You probably noticed, that score is a bit unfair since the `pets` field is actually a list which can contain a max of 20
 elements in the response.
 
-You can customize the field score with `complexity` argument in order to solve this kind of issues:
+You can customize the field score with a `complexity` argument in order to solve these kinds of issues:
 
 ```scala
 Field("pets", OptionType(ListType(PetType)),
@@ -735,9 +737,9 @@ Field("pets", OptionType(ListType(PetType)),
   resolve = ctx ⇒ ...)
 ```
 
-Now query will get a score of `68` which is much better estimation.
+Now the query will get a score of `68` which is a much better estimation.
 
-In order to analyze the complexity of a query you need to add correspondent a `QueryReducer` to the `Executor`.
+In order to analyze the complexity of a query, you need to add a corresponding `QueryReducer` to the `Executor`.
 In this example `rejectComplexQueries` will reject all queries with complexity higher than `1000`:
 
 ```scala
@@ -747,7 +749,7 @@ val rejectComplexQueries = QueryReducer.rejectComplexQueries[Any](1000, (c, ctx)
 Executor.execute(schema, query, queryReducers = rejectComplexQueries :: Nil)
 ```
 
-If you just want to estimate the complexity and then perform different kind of action, then there is another helper function for this:
+If you just want to estimate the complexity and then perform different actions, then there is another helper function for this:
 
 ```scala
 val complReducer = QueryReducer.measureComplexity[MyCtx] { (c, ctx) ⇒
@@ -770,15 +772,15 @@ val executor = Executor(schema = MySchema, maxQueryDepth = Some(7))
 ## Error Handling
 
 Bad things can happen during the query execution. When errors happen, then `Future` would be resolved with some exception. Sangria allows you to distinguish between different types of errors that happen before actual query execution:
- 
-* `QueryReducingError` - an error happened in the query reducer. If you are throwing some exceptions within a custom `QueryReducer`, then they would be wrapped in `QueryReducingError`    
-* `QueryAnalysisError` - signifies issues in the query or variables. This means that client has made some error. If you are exposing GraphQL HTTP endpoint, than you may want to return 400 status code in this case.
-* `ErrorWithResolver` - unexpected errors before query execution
-  
-All mentioned exception classes expose `resolveError` method which you can use to render an error in GraphQL-compliant format.
 
-Let's see how you can handle these error in a small example. In most cases it makes a lot of sense to return 400 HTTP status code if query validation failed:
-    
+* `QueryReducingError` - an error happened in the query reducer. If you are throwing some exceptions within a custom `QueryReducer`, then they would be wrapped in `QueryReducingError`
+* `QueryAnalysisError` - signifies issues in the query or variables. This means that client has made some error. If you are exposing a GraphQL HTTP endpoint, then you may want to return a 400 status code in this case.
+* `ErrorWithResolver` - unexpected errors before query execution
+
+All mentioned, exception classes expose a `resolveError` method which you can use to render an error in GraphQL-compliant format.
+
+Let's see how you can handle these error in a small example. In most cases it makes a lot of sense to return a 400 HTTP status code if the query validation failed:
+
 ```scala
 executor.execute(query, ...)
   .map(Ok(_))
@@ -792,10 +794,11 @@ This code will produce status code 400 in case of any error caused by client (qu
 
 ### Custom ExceptionHandler
 
-When some unexpected error happens in `resolve` function, sangria handles it according to the [rules defined in the spec]({{site.link.spec.errors}}).
-If an exception implements `UserFacingError` trait, then error message would be visible in the response. Otherwise error message is obfuscated and response will contain `"Internal server error"`.
+When some unexpected error happens in the `resolve` function, sangria handles it according to the [rules defined in the spec]({{site.link.spec.errors}}).
+If an exception implements the `UserFacingError` trait, then the error message would be visible in the response.
+Otherwise the error message is obfuscated and the response will contain `"Internal server error"`.
 
-In order to define custom error handling mechanism, you need to provide an `exceptionHandler` to `Executor`. Here is an example:
+In order to define custom error handling mechanisms, you need to provide an `ExceptionHandler` to `Executor`. Here is an example:
 
 ```scala
 val exceptionHandler: Executor.ExceptionHandler = {
@@ -814,7 +817,7 @@ val exceptionHandler: Executor.ExceptionHandler = {
   case (m, e: IllegalStateException) =>
     HandledException(e.getMessage,
       Map(
-      "foo" -> m.arrayNode(Seq(m.scalarNode("bar", "String", Set.empty), m.scalarNode("1234", "Int", Set.empty))), 
+      "foo" -> m.arrayNode(Seq(m.scalarNode("bar", "String", Set.empty), m.scalarNode("1234", "Int", Set.empty))),
       "baz" -> m.scalarNode("Test", "String", Set.empty)))
 }
 ```
@@ -822,7 +825,7 @@ val exceptionHandler: Executor.ExceptionHandler = {
 ## Result Marshalling and Input Unmarshalling
 
 GraphQL query execution needs to know how to serialize the result of execution and how to deserialize arguments/variables.
-Specification itself does not define the data format, instead it uses abstract concepts like map and list.
+The specification itself does not define the data format, instead it uses abstract concepts like map and list.
 Sangria does not hard-code the serialization mechanism. Instead it provides two traits for this:
 
 * `ResultMarshaller` - knows how to serialize results of execution
@@ -831,24 +834,24 @@ Sangria does not hard-code the serialization mechanism. Instead it provides two 
 At the moment Sangria provides implementations for these libraries:
 
 * `sangria.marshalling.queryAst._` - native Query Value AST serialization
-* `sangria.marshalling.sprayJson._` - spray-json serialization 
+* `sangria.marshalling.sprayJson._` - spray-json serialization
   * `"{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"`
-* `sangria.marshalling.playJson._` - play-json serialization 
+* `sangria.marshalling.playJson._` - play-json serialization
   * `"{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"`
-* `sangria.marshalling.circe._` - circe serialization 
+* `sangria.marshalling.circe._` - circe serialization
   * `"{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"`
-* `sangria.marshalling.argonaut._` - argonaut serialization 
+* `sangria.marshalling.argonaut._` - argonaut serialization
   * `"{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"`
-* `sangria.marshalling.json4s.native._` - json4s-native serialization 
+* `sangria.marshalling.json4s.native._` - json4s-native serialization
   * `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
 * `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization
-  * `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`  
+  * `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`
 * `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization
   * `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`
 * `sangria.marshalling.ion._` - [Amazon Ion](http://amznlabs.github.io/ion-docs/index.html) serialization
-  * `"{{site.groupId}}" %% "sangria-ion" % "{{site.version.sangria-ion}}"`  
-     
-  
+  * `"{{site.groupId}}" %% "sangria-ion" % "{{site.version.sangria-ion}}"`
+
+
 In order to use one of these, just import it and the result of execution will be of the correct type:
 
 ```scala
@@ -856,33 +859,33 @@ import sangria.marshalling.sprayJson._
 
 val result: Future[JsValue] = Executor.execute(TestSchema.StarWarsSchema, queryAst,
   variables = vars
-  userContext = new CharacterRepo, 
+  userContext = new CharacterRepo,
   deferredResolver = new FriendsResolver)
 ```
 
 ### ToInput Type-Class
 
-Default values should now have an instance of `ToInput` type-class which is defined for all supported input types like Scala map-like data structures, different json ASTs, etc. It even supports things like `Writes` from play-json or `JsonFormat` from spray-json by default. This means that you can use your domain objects (like `User` or `Apple`) as a default value for input fields or arguments as long as you have `Writes` or `JsonFormat` defined for them. 
+Default values should now have an instance of the `ToInput` type-class which is defined for all supported input types like Scala map-like data structures, different JSON ASTs, etc. It even supports things like `Writes` from play-json or `JsonFormat` from spray-json by default. This means that you can use your domain objects (like `User` or `Apple`) as a default value for input fields or arguments as long as you have `Writes` or `JsonFormat` defined for them.
 
-The mechanism is very extensible: you just need to define implicit `ToInput[T]` for a class you want to use as a default value.
+The mechanism is very extensible: you just need to define an implicit `ToInput[T]` for a class you want to use as a default value.
 
 ### FromInput Type-Class
 
-`FromInput` provides high-level and low-level way to deserialize arbitrary input objects, just like `ToInput`.
- 
+`FromInput` provides high-level and low-level ways to deserialize arbitrary input objects, just like `ToInput`.
+
 In order to use this feature, you need to provide a type parameter to the `InputObjectType`:
- 
+
 ```scala
 case class Article(title: String, text: Option[String])
 
 val ArticleType = InputObjectType[Article]("Article", List(
   InputField("title", StringType),
   InputField("text", OptionInputType(StringType))))
-  
+
 val arg = Argument("article", ArticleType)
 ```
 
-This code will not compile unless you define an implicit instance of `FromInput` for `Article` case class:
+This code will not compile unless you define an implicit instance of `FromInput` for the `Article` case class:
 
 ```scala
 implicit val manual = new FromInput[Article] {
@@ -897,10 +900,11 @@ implicit val manual = new FromInput[Article] {
 }
 ```
 
-As you can see, you need to provide a `ResultMarshaller` for the desired format and then use a marshaled value to create a domain object based on it. Many instances of `FromInput` are already provided out-of-the-box. For instance `FromInput[Map[String, Any]]` supports map-like data-structure format. All supported Json libraries also provide `FromInput[JsValue]` so that you can use Json AST instead of working with `Map[String, Any]`.
+As you can see, you need to provide a `ResultMarshaller` for the desired format and then use a marshaled value to create a domain object based on it. Many instances of `FromInput` are already provided out-of-the-box. For instance `FromInput[Map[String, Any]]` supports map-like data-structure format. All supported JSON libraries also provide `FromInput[JsValue]` so that you can use JSON AST instead of working with `Map[String, Any]`.
 
-Moreover, libraries like sangria-play-json and sangria-spray-json already provide support for codecs like `Reads` and `JsonFormat`. This means that your domain objects are automatically supported as long as you have `Reads` or `JsonFormat` defined for them. For instance this example should compile and work just fine without explicit 
-`FromInput` declaration:
+Moreover, libraries like sangria-play-json and sangria-spray-json already provide support for codecs like `Reads` and `JsonFormat`.
+This means that your domain objects are automatically supported as long as you have `Reads` or `JsonFormat` defined for them.
+For instance, this example should compile and work just fine without an explicit `FromInput` declaration:
 
 ```scala
 import sangria.integration.playJson._
@@ -909,21 +913,21 @@ import play.api.libs.json._
 case class Article(title: String, text: Option[String])
 
 implicit val articleFormat = Json.format[Article]
-  
+
 val ArticleType = InputObjectType[Article]("Article", List(
   InputField("title", StringType),
   InputField("text", OptionInputType(StringType))))
-  
+
 val arg = Argument("article", ArticleType)
 ```
 
 ### Query AST Marshalling
- 
+
 A subset of GraphQL grammar that handles input object is also available as a standalone feature. You can read more about it in a following blog post:
- 
+
 [GraphQL Object Notation](https://medium.com/@oleg.ilyenko/graphql-object-notation-8f56194556ea)
 
-Feature allows you to parse and render any `ast.Value` independently from GraphQL query. You can also use `graphqlInput` macros for this:
+This feature allows you to parse and render any `ast.Value` independently from GraphQL query. You can also use `graphqlInput` macros for this:
 
 ```scala
 import sangria.renderer.QueryRenderer
@@ -962,32 +966,32 @@ It will produce the following output:
 }
 ```
 
-Proper `InputUnmarshaller` and `ResultMarshaller` are available for it, so you can use `ast.Value` as a variables or it can be a result 
+Proper `InputUnmarshaller` and `ResultMarshaller` are available for it, so you can use `ast.Value` as a variable or as a result
 of GraphQL query execution.
 
 ### Converting Between Formats
 
 As a natural extension of `ResultMarshaller` and `InputUnmarshaller` abstractions, sangria allows you to convert between different formats at will.
- 
+
 Here is, for instance, how you can convert circe `Json` into sprayJson `JsValue`:
- 
+
 ```scala
 import sangria.marshalling.circe._
 import sangria.marshalling.sprayJson._
 import sangria.marshalling.MarshallingUtil._
 
 val circeJson = Json.array(
-  Json.empty, 
-  Json.int(123), 
+  Json.empty,
+  Json.int(123),
   Json.array(Json.obj("foo" → Json.string("bar"))))
-  
-val sprayJson = circeJson.convertMarshaled[JsValue]  
+
+val sprayJson = circeJson.convertMarshaled[JsValue]
 ```
 
 ### Marshalling API & Testkit
 
 If your favorite library is not supported yet, then it's pretty easy to create an integration library yourself. All marshalling libraries depend on and implement `sangria-marshalling-api`. You can include it together with the testkit like this:
-  
+
 ```scala
 libraryDependencies ++= Seq(
   "{{site.groupId}}" %% "sangria-marshalling-api" % "{{site.version.sangria-marshalling-api}}",
@@ -997,10 +1001,10 @@ libraryDependencies ++= Seq(
 After you implemented the actual integration code, you test whether it's semantically correct with the help of a testkit. Testkit provides a set of ScalaTest-based tests to verify an implementation of marshalling library (so that you don't need to write tests yourself). Here is an example from spray-json integration library that uses a testkit tests:
 
 ```scala
-class SprayJsonSupportSpec extends WordSpec 
-                              with Matchers 
-                              with MarshallingBehaviour 
-                              with InputHandlingBehaviour 
+class SprayJsonSupportSpec extends WordSpec
+                              with Matchers
+                              with MarshallingBehaviour
+                              with InputHandlingBehaviour
                               with ParsingBehaviour {
 
   object JsonProtocol extends DefaultJsonProtocol {
@@ -1034,8 +1038,8 @@ class SprayJsonSupportSpec extends WordSpec
 
 ## Middleware
 
-Sangria support generic middleware that can be used for different purposes, like performance measurement, metrics collection, security enforcement, etc. on a field and query level.
-Moreover it makes it much easier for people to share standard middleware in a libraries. Middleware allows you to define callbacks before/after query and field.
+Sangria supports generic middleware that can be used for different purposes, like performance measurement, metrics collection, security enforcement, etc. on a field and query level.
+Moreover it makes it much easier for people to share standard middleware in libraries. Middleware allows you to define callbacks before/after query and field.
 
 Here is a small example of its usage:
 
@@ -1072,9 +1076,9 @@ class FieldMetrics extends Middleware[Any] with MiddlewareAfterField[Any] with M
 val result = Executor.execute(schema, query, middleware = new FieldMetrics :: Nil)
 ```
 
-It will record execution time of all fields in a query and then report it in some way.
+It will record the execution time of all fields in a query and then report it in some way.
 
-`afterField` also allows you to transform field value by returning `Some` with a transformed value. You can also throw an exception from `beforeField` or `afterField`
+`afterField` also allows you to transform field values by returning `Some` with a transformed value. You can also throw an exception from `beforeField` or `afterField`
 in order to indicate a field error.
 
 In order to ensure generic classification of fields, every field contains a generic list or `FieldTag`s which provides a user-defined
@@ -1083,12 +1087,12 @@ You can find another example of `FieldTag` and `Middleware` usage in [Authentica
 
 ## Query Reducers
 
-Sometimes in can be helpful to perform some analysis on a query before executing it. An example is complexity analysis: it aggregates the complexity
+Sometimes it can be helpful to perform some analysis on a query before executing it. An example is complexity analysis: it aggregates the complexity
 of all fields in the query and then rejects the query without executing it if complexity is too high. Another example is gathering all `Permission`
-field tags and then fetching extra user auth data from external service if query contains protected fields. This need to be done before the query
-started to execute.
+field tags and then fetching extra user auth data from an external service if query contains protected fields. This need to be done before the query
+starts to execute.
 
-Sangria provides a mechanism for this kind of query analysis with `QueryReducer`. Query reducer implementation will go through all of the fields
+Sangria provides a mechanism for this kind of query analysis with `QueryReducer`. The query reducer implementation will go through all of the fields
 in the query and aggregate them to a single value. `Executor` will then call `reduceCtx` with this aggregated value which gives you an
 opportunity to perform some logic and update the `Ctx` before query is executed.
 
@@ -1096,7 +1100,7 @@ Out-of-the-box sangria comes with several `QueryReducer`s for common use-cases:
 
 * `QueryReducer.measureComplexity` - measures a complexity of the query
 * `QueryReducer.rejectComplexQueries` - rejects queries with complexity above provided threshold
-* `QueryReducer.collectTags` - collects `FieldTag`s based on partial function
+* `QueryReducer.collectTags` - collects `FieldTag`s based on a partial function
 
 Here is a small example of `QueryReducer.collectTags`:
 
@@ -1117,22 +1121,22 @@ Executor.execute(schema, query,
   queryReducers = fetchUserProfile :: Nil)
 ```
 
-This allows you to avoid fetching user profile if it's not needed based on the query fields. You can find more information about the `QueryReducer`
-that analyses a query complexity in the [Query Complexity Analysis](#query-complexity-analysis) section.
+This allows you to avoid fetching a user profile if it's not needed based on the query fields. You can find more information about the `QueryReducer`
+that analyses query complexity in the [Query Complexity Analysis](#query-complexity-analysis) section.
 
 ## Scalar Types
 
-Sangria support all standard GraphQL scalars like `String`, `Int`, `ID`, etc. In addition, sangria introduces following built-in scalar types:
+Sangria supports all standard GraphQL scalars like `String`, `Int`, `ID`, etc. In addition, sangria introduces the following built-in scalar types:
 
 * `Long` - a 64 bit integer value which is represented as a `Long` in Scala code
-* `BigInt` - similar to `Int` scalar value, but allows you to transfer big integer values and represents them in code as Scala's `BigInt` class
-* `BigDecimal` - similar to `Float` scalar value, but allows you to transfer big decimal values and represents them in code as Scala's `BigDecimal` class
+* `BigInt` - similar to `Int` scalar values, but allows you to transfer big integer values and represents them in code as Scala's `BigInt` class
+* `BigDecimal` - similar to `Float` scalar values, but allows you to transfer big decimal values and represents them in code as Scala's `BigDecimal` class
 
 ### Custom Scalar Types
 
-You can also create your own custom scalar types. An input and output of Scala type should always be value that GraphQL grammar supports like string, 
-number, boolean, etc. Here is an example of `DateTime` (from joda-time) scalar type implementation:
-  
+You can also create your own custom scalar types. The input and output of scalar types should always be a value that the GraphQL grammar supports, like string,
+number, boolean, etc. Here is an example of a `DateTime` (from joda-time) scalar type implementation:
+
 ```scala
 case object DateCoercionViolation extends ValueCoercionViolation("Date value expected")
 
@@ -1160,7 +1164,7 @@ a `String` in ISO format.
 
 ## Deprecation Tracking
 
-GraphQL schema allows you to declare fields and enum values as deprecated. When you execute a query, you can provide your custom implementation of
+GraphQL schema allows you to declare fields and enum values as deprecated. When you execute a query, you can provide your custom implementation of the
 `DeprecationTracker` trait to the `Executor` in order to track deprecated fields and enum values (you can, for instance, log all usages or send metrics to graphite):
 
 ```scala
@@ -1172,8 +1176,8 @@ trait DeprecationTracker {
 
 ## Authentication and Authorisation
 
-Even though sangria does not provide security primitives explicitly, it's pretty straightforward to implement it in different ways. It's pretty common
-requirement of modern web-application so this section was written to demonstrate several possible approaches of handling authentication and authorisation.
+Even though sangria does not provide security primitives explicitly, it's pretty straightforward to implement it in different ways. It's a pretty common
+requirement of modern web-applications, so this section was written to demonstrate several possible approaches of handling authentication and authorisation.
 
 First let's define some basic infrastructure for this example:
 
@@ -1194,14 +1198,14 @@ class ColorRepo {
 }
 ```
 
-In order to indicate an auth error, we need to define some exception:
+In order to indicate an auth error, we need to define some exceptions:
 
 ```scala
 case class AuthenticationException(message: String) extends Exception(message)
 case class AuthorisationException(message: String) extends Exception(message)
 ```
 
-We also want user to see proper error messages in a response, so let's define an error handler for this:
+We also want the user to see proper error messages in a response, so let's define an error handler for this:
 
 ```scala
 val errorHandler: Executor.ExceptionHandler = {
@@ -1210,7 +1214,7 @@ val errorHandler: Executor.ExceptionHandler = {
 }
 ```
 
-Now that we defined base for secure application, let's create a context class, which will provide GraphQL schema with all necessary helper functions:
+Now that we defined a base for a secure application, let's create a context class, which will provide GraphQL schema with all necessary helper functions:
 
 ```scala
 case class SecureContext(token: Option[String], userRepo: UserRepo, colorRepo: ColorRepo) {
@@ -1241,7 +1245,7 @@ Executor.execute(schema, queryAst,
   exceptionHandler = errorHandler)
 ```
 
-As a last step we need to define a schema. You can do it in two different ways:
+As a last step, we need to define a schema. You can do it in two different ways:
 
 * Auth can be enforced in the `resolve` function itself
 * You can use `Middleware` and `FieldTag`s to ensure that user has permissions to access fields
@@ -1286,8 +1290,8 @@ val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
 def schema = Schema(QueryType, Some(MutationType))
 ```
 
-As you can see on this example, we are using context object to authorise user with the `authorised` function. Interesting thing to notice
-here is that `login` field uses `UpdateCtx` action in order make login information available for sibling mutation fields. This makes queries
+As you can see on this example, we are using context object to authorise user with the `authorised` function. An interesting thing to notice
+here is that the `login` field uses the `UpdateCtx` action in order make login information available for sibling mutation fields. This makes queries
 like this possible:
 
 ```js
@@ -1299,7 +1303,7 @@ mutation LoginAndMutate {
 }
 ```
 
-Here we login and adding colors in the same GraphQL query. It will produce result like this one:
+Here we login and adding colors in the same GraphQL query. It will produce a result like this one:
 
 ```json
 {
@@ -1311,7 +1315,7 @@ Here we login and adding colors in the same GraphQL query. It will produce resul
 }
 ```
 
-If user does not have sufficient permissions, he will see result like this:
+If the user does not have sufficient permissions, they will see a result like this:
 
 ```json
 {
@@ -1335,7 +1339,7 @@ If user does not have sufficient permissions, he will see result like this:
 
 ### Middleware-Based Auth
 
-An alternative approach is to use middleware. This can provide more declarative way to define field permissions.
+An alternative approach is to use middleware. This can provide a more declarative way to define field permissions.
 
 First let's define `FieldTag`s:
 
@@ -1344,7 +1348,7 @@ case object Authorised extends FieldTag
 case class Permission(name: String) extends FieldTag
 ```
 
-This allows us to define schema like this:
+This allows us to define a schema like this:
 
 ```scala
 val UserType = ObjectType("User", fields[SecureContext, User](
@@ -1411,10 +1415,10 @@ There are quite a few helpers available which you may find useful in different s
 ### Introspection Result Parsing
 
 Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of working
- directly with JSON (or other raw representation), you can parse it in a set of case classes that allow you to easily work with the whole schema introspection. 
+ directly with JSON (or other raw representations), you can parse it into a set of case classes that allow you to easily work with the whole schema introspection.
 
 You can find a parser function in `sangria.introspection.IntrospectionParser`.
- 
+
 ### Determine a Query Operation Type
 
-Sometimes it can be very useful to know the type of query operation. For example you need it if you want to return different response for subscription queries. `ast.Document` exposes `operationType` and `operation` for this.
+Sometimes it can be very useful to know the type of query operation. For example you need it if you want to return a different response for subscription queries. `ast.Document` exposes `operationType` and `operation` for this.
