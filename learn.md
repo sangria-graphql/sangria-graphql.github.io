@@ -385,6 +385,7 @@ case class User(id: String, permissions: List[String], password: String)
 val UserType = deriveObjectType[MyCtx, User](
   ObjectTypeName("AuthUser"),
   ObjectTypeDescription("A user of the system."),
+  RenameInputField("id", "identifier"),
   DocumentField("permissions", "User permissions",
     deprecationReason = Some("Will not be exposed in future")),
   ExcludeFields("password"))
