@@ -7,18 +7,22 @@ ga-code: UA-65759630-1
 domain: sangria-graphql.org
 
 version:
-  sangria: 0.7.3
-  sangria-relay: 0.7.3
+  sangria: 1.0.0-RC1
+  sangria-relay: 1.0.0-RC1
   sangria-spray-json: 0.3.1
   sangria-play-json: 0.3.2
   sangria-json4s-native: 0.2.1
   sangria-json4s-jackson: 0.3.1
-  sangria-circe: 0.5.0
+  sangria-circe: 0.5.1
   sangria-msgpack: 0.2.1
   sangria-ion: 0.1.0
   sangria-argonaut: 0.3.1
   sangria-marshalling-api: 0.2.1
   sangria-marshalling-testkit: 0.2.1
+  sangria-streaming-api: 0.1.0
+  sangria-akka-streams: 0.1.0
+  sangria-rxscala: 0.1.0
+  sangria-monix: 0.1.0
 
 groupId: org.sangria-graphql
 
@@ -43,6 +47,10 @@ link:
     sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut
     sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api
     sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit
+    sangria-streaming-api: https://github.com/sangria-graphql/sangria-streaming-api
+    sangria-akka-streams: https://github.com/sangria-graphql/sangria-akka-streams
+    sangria-rxscala: https://github.com/sangria-graphql/sangria-rxscala
+    sangria-monix: https://github.com/sangria-graphql/sangria-monix
   maven:
     sangria: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria_
     sangria-relay: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-relay_
@@ -56,6 +64,10 @@ link:
     sangria-argonaut: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-argonaut_
     sangria-marshalling-api: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-marshalling-api_
     sangria-marshalling-testkit: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-marshalling-testkit_
+    sangria-streaming-api: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-streaming-api_
+    sangria-akka-streams: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-akka-streams_
+    sangria-rxscala: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-rxscala_
+    sangria-monix: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-monix_
   issues:
     sangria: https://github.com/sangria-graphql/sangria/issues
     sangria-relay: https://github.com/sangria-graphql/sangria-relay/issues
@@ -69,6 +81,10 @@ link:
     sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut/issues
     sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api/issues
     sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit/issues
+    sangria-streaming-api: https://github.com/sangria-graphql/sangria-streaming-api/issues
+    sangria-akka-streams: https://github.com/sangria-graphql/sangria-akka-streams/issues
+    sangria-rxscala: https://github.com/sangria-graphql/sangria-rxscala/issues
+    sangria-monix: https://github.com/sangria-graphql/sangria-monix/issues
   releases:
     sangria: https://github.com/sangria-graphql/sangria/releases
     sangria-relay: https://github.com/sangria-graphql/sangria-relay/releases
@@ -82,6 +98,10 @@ link:
     sangria-argonaut: https://github.com/sangria-graphql/sangria-argonaut/releases
     sangria-marshalling-api: https://github.com/sangria-graphql/sangria-marshalling-api/releases
     sangria-marshalling-testkit: https://github.com/sangria-graphql/sangria-marshalling-testkit/releases
+    sangria-streaming-api: https://github.com/sangria-graphql/sangria-streaming-api/releases
+    sangria-akka-streams: https://github.com/sangria-graphql/sangria-akka-streams/releases
+    sangria-rxscala: https://github.com/sangria-graphql/sangria-rxscala/releases
+    sangria-monix: https://github.com/sangria-graphql/sangria-monix/releases
   website: https://github.com/sangria-graphql/sangria-website
   jekyll: http://jekyllrb.com/
   ghpages: https://pages.github.com/
