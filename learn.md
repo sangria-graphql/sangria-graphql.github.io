@@ -234,7 +234,9 @@ Here is the list of supported actions:
 * `Value` - a simple value result. If you want to indicate an error, you need to throw an exception
 * `TryValue` - a `scala.util.Try` result
 * `FutureValue` - a `Future` result
-* `DeferredValue` - used to return a `Deferred` result (see the [Deferred Values and Resolver](#deferred-values-and-resolver) section for more details)
+* `PartialValue` - a partially successful result with a list of errors
+* `PartialFutureValue` - a `Future` of partially successful result
+* `DeferredValue` - used to return a `Deferred` result (see the [Deferred Values and Resolver](#deferred-value-resolution) section for more details)
 * `DeferredFutureValue` - the same as `DeferredValue` but allows you to return `Deferred` inside of a `Future`
 * `UpdateCtx` - allows you to transform a `Ctx` object. The transformed context object would be available for nested sub-objects and subsequent sibling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of its usage in the [Authentication and Authorisation](#authentication-and-authorisation) section.
 
@@ -721,6 +723,136 @@ Following execution schemes are available:
 * `Extended` - Returns a `Future` containing `ExecutionResult`. 
 * `Stream` - Returns a stream of results. Very useful for subscription queries, where the result is an `Observable` or `Source`
 * `StreamExtended` - Returns a stream of `ExecutionResult`s
+
+## Stream-based Subscriptions
+
+As described in [previous section](#prepared-queries), you can handle subscription queries with prepared queries. 
+This approach provides a lot of flexibility, but also means that you need to manually analyze subscription fields and appropriately 
+execute query for every event.
+
+Stream-based subscriptions provide much easier and, in many respects, superior approach of handling subscription queries. 
+In order to use it, you first need to choose one of available stream implementations:
+
+* `sangria.streaming.akkaStreams._` - [akka-streams](http://doc.akka.io/docs/akka/current/scala/stream/index.html) implementation based on `Source[T, NotUsed]` 
+  * `"{{site.groupId}}" %% "sangria-akka-streams" % "{{site.version.sangria-akka-streams}}"`
+  * Requires an implicit `akka.stream.Materializer` to be available in scope
+* `sangria.streaming.rxscala._` - [RxScala](http://reactivex.io/rxscala) implementation based on `Observable[T]` 
+  * `"{{site.groupId}}" %% "sangria-rxscala" % "{{site.version.sangria-rxscala}}"`
+  * Requires an implicit `scala.concurrent.ExecutionContext` to be available in scope
+* `sangria.streaming.monix._` - [monix](https://monix.io) implementation based on `Observable[T]` 
+  * `"{{site.groupId}}" %% "sangria-monix" % "{{site.version.sangria-monix}}"`
+  * Requires an implicit `monix.execution.Scheduler` to be available in scope
+* `sangria.streaming.future._` - very simple implementation based on `Future[T]` which is treated as a stream with a single element 
+  * Requires an implicit `scala.concurrent.ExecutionContext` to be available in scope
+
+You can also easily create your own integration by implementing and providing an implicit instance of `SubscriptionStream[S]` type class.
+
+After you have imported a concrete stream implementation, you can defile a subscription type fields with `Field.subs`. 
+Here is an example that uses monix:
+  
+```scala
+import monix.execution.Scheduler.Implicits.global
+import monix.reactive.Observable
+import sangria.streaming.monix._
+
+val SubscriptionType = ObjectType("Subscription", fields[Unit, Unit](
+  Field.subs("userEvents", UserEventType, resolve = _ ⇒
+    Observable(UserCreated(1, "Bob"), UserNameChanged(1, "John")).map(action(_))),
+
+  Field.subs("messageEvents", MessageEventType, resolve = _ ⇒
+    Observable(MessagePosted(userId = 20, text = "Hello!")).map(action(_)))
+))
+```
+
+Please note, that evey element in a stream should be an `Action[Ctx, Val]`. An `action` helper function is used in this case to 
+transform every element of a stream into an `Action`. Also, it is important that either all fields of a `SubscriptionType` or none of them are
+created with the `Field.subs` function (otherwise it would not be possible to merge them in a single stream).
+
+Now you can execute subscription queries and get back a stream of query execution results like this:
+
+```scala
+import monix.execution.Scheduler.Implicits.global
+import sangria.streaming.monix._
+import sangria.execution.ExecutionScheme.Stream
+
+val schema = Schema(QueryType, subscription = Some(SubscriptionType))
+
+val query = 
+  graphql"""
+    subscription { 
+      userEvents {
+        id
+        __typename
+        
+        ... on UserCreated {
+          name
+        }
+      }
+      
+      messageEvents {
+        __typename
+        
+        ... on MessagePosted {
+          user {
+            id
+            name
+          }
+          
+          text
+        }
+      }
+    }
+  """  
+
+val stream: Observable[JsValue] =
+  Executor.execute(schema, query)
+```
+
+We are importing `ExecutionScheme.Stream` to instruct the executor to return a stream of results instead of `Future` of a single result.
+Stream will emit following elements (order may be different):
+
+```json
+{
+  "data": {
+    "userEvents": {
+      "id": 1,          
+      "__typename": "UserCreated",
+      "name": "Bob"
+    }
+  }
+}
+
+{
+  "data": {
+    "messageEvents": {          
+      "__typename": "MessagePosted",
+      "user": {
+        "id": 20,      
+        "name": "Test User"      
+      },
+      "text": "Hello!"
+    }
+  }
+}
+
+{
+  "data": {
+    "userEvents": {
+      "id": 1,          
+      "__typename": "UserNameChanged",
+      "name": "John"
+    }
+  }
+}
+```
+
+Only the top-level subscription fields have special semantics associated with them (in this respect it is similar to the mutation queries).
+Execution engine merges requested field streams into a single stream which is then returned as a result of the execution. 
+All other fields (2nd level, 3rd level, etc.) have normal semantics and would be fully resolved.   
+
+{% include ext.html type="info" title="Work In Progress" %}
+Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.      
+{% include cend.html %}
 
 ## Deferred Value Resolution
 
