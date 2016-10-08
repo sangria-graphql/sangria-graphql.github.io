@@ -201,3 +201,67 @@ You can use following dependency in your SBT build:
 ```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-marshalling-testkit" % "{{site.version.sangria-marshalling-testkit}}"
 ```
+
+### sangria-streaming-api
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-streaming-api}}">sangria-streaming-api</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-streaming-api}}">{{site.version.sangria-streaming-api}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for Scala <a target="_blank" href="{{site.link.maven.sangria-streaming-api}}2.11%7C{{site.version.sangria-streaming-api}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+```scala
+libraryDependencies += "{{site.groupId}}" %% "sangria-streaming-api" % "{{site.version.sangria-streaming-api}}"
+```
+
+### sangria-akka-streams
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-akka-streams}}">sangria-akka-streams</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-akka-streams}}">{{site.version.sangria-akka-streams}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for Scala <a target="_blank" href="{{site.link.maven.sangria-akka-streams}}2.11%7C{{site.version.sangria-akka-streams}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+```scala
+libraryDependencies += "{{site.groupId}}" %% "sangria-akka-streams" % "{{site.version.sangria-akka-streams}}"
+```
+
+### sangria-rxscala
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-rxscala}}">sangria-rxscala</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-rxscala}}">{{site.version.sangria-rxscala}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for Scala <a target="_blank" href="{{site.link.maven.sangria-rxscala}}2.11%7C{{site.version.sangria-rxscala}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+```scala
+libraryDependencies += "{{site.groupId}}" %% "sangria-rxscala" % "{{site.version.sangria-rxscala}}"
+```
+
+### sangria-monix
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-monix}}">sangria-monix</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-monix}}">{{site.version.sangria-monix}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for Scala <a target="_blank" href="{{site.link.maven.sangria-monix}}2.11%7C{{site.version.sangria-monix}}%7Cjar">2.11</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+```scala
+libraryDependencies += "{{site.groupId}}" %% "sangria-monix" % "{{site.version.sangria-monix}}"
+```

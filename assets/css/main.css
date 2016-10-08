@@ -33,7 +33,7 @@ h3 {
 }
 
 h4 {
-  font-weight: bold;
+  font-size: 25px;
 }
 
 h1, .header-logo {
@@ -435,6 +435,12 @@ body {
   animation-delay: 2.1s;
 }
 
+.fade-in.f7 {
+  -webkit-animation-delay: 2.3s;
+  -moz-animation-delay: 2.3s;
+  animation-delay: 2.3s;
+}
+
 .main-header-content a.btn {
   background: none;
   color: #F9E3D2;
@@ -516,4 +522,36 @@ body {
 .subtitle {
   font-weight: 100;
   font-size: 40px;
+}
+
+table th, table td {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.example-tables table thead {
+  border-bottom: 1px solid #DC7676;
+  color: #DC7676;
+}
+
+.example-tables {
+  width: 100%;
+  display: inline-block;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.example-tables .left-table, .example-tables .right-table {
+  float: left;
+}
+
+.example-tables .left-table {
+  padding-right: 40px;
+}
+
+.table-title {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: #DC7676;
 }
