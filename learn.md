@@ -701,6 +701,27 @@ preparedQueryFuture.map(preparedQuery ⇒
 
 `Executor.prepare` will return you a `Future` with a prepared query which you can execute several times later, possibly providing different `userContext` or `root` values. In addition to `execute`, `PreparedQuery` also gives you a lot of information about the query itself: operation, root `QueryType`, top-level fields with arguments, etc.
 
+### Alternative Execution Scheme
+
+The `Future` of marshaled result is not the only possible result of a query execution. By importing different implementation of `ExecutionScheme` you can 
+change the result type of an execution. Here is an example:
+
+```scala
+import sangria.execution.ExecutionScheme.Extended
+
+val result: Future[ExecutionResult[Ctx, JsValue]] = 
+  val Executor.execute(schema, query)
+```
+
+`Extended` execution scheme gives you the result of the execution together with additional information about the execution itself (like, for instance, the list of exceptions that happened during the execution).
+
+Following execution schemes are available:
+
+* `Default` - The default one. Returns a `Future` of marshaled result 
+* `Extended` - Returns a `Future` containing `ExecutionResult`. 
+* `Stream` - Returns a stream of results. Very useful for subscription queries, where the result is an `Observable` or `Source`
+* `StreamExtended` - Returns a stream of `ExecutionResult`s
+
 ## Deferred Value Resolution
 
 In the example schema, you probably noticed that some of the resolve functions return `DeferFriends`. It is defined like this:
