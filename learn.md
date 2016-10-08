@@ -525,6 +525,11 @@ EnumType("Foo", Some("It's foo"), List(
   EnumValue("Guave", value = Guave)))
 ```
 
+{% include ext.html type="info" title="Co-locate deriveEnumType with actual sealed trait" %}
+It is important to use `deriveEnumType` in the **same source file** where you have defined your sealed trait **after** all trait children are defined! 
+Otherwise macro will not be able to find all of the enum values.  
+{% include cend.html %}
+
 ### Dealing With Recursive Types
 
 Sometimes you need to model recursive and interdependent types. The macro needs a little bit of help: you must replace fields that use recursive types and define them manually.
