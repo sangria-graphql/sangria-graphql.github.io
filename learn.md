@@ -797,6 +797,202 @@ very low-level, unsafe, but efficient API for this. You certainly can use it dir
 you probably will work with isolated entity objects which you would like to load by ID or some relation to other entities. This is where `Fetcher`
 comes into play.
 
+`Fetcher` provides a high-level API for deferred value resolution and implemented as a specialized version `DeferredResolver`. 
+This API provides following features:
+
+* Deferred value resolution based on entity IDs
+* Deferred value resolution based on entity relations
+* Deduplication of the entities based on the ID
+* Caching support
+* Support for `maxBatchSize`
+* Supports a fallback to an existing `DeferredResolver`
+
+Examples in this section with use following data model of products and categories:
+
+<div class="example-tables">
+  <div class="left-table">
+    <span class="table-title">Products</span>
+    <table>
+      <thead><tr>
+        <th>ID</th>
+        <th>Name</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Rusty sword</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Health potion</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Small mana potion</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="right-table">
+    <span class="table-title">Categories</span>
+    <table>
+      <thead><tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Parent</th>
+        <th>Products</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Root</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Equipment</td>
+          <td>1</td>
+          <td>[1]</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Potions</td>
+          <td>1</td>
+          <td>[2, 3]</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+As you can see, product table (which also can be a document in a document DB or just a json which is returned from an external service call)
+has a just product information. Category, on the the other hand, also contains 2 relations - to the products within this category and to a parent category.
+First let's look how we can fetch entities by ID, and than we will look how we can use a relation information for this. 
+
+First of all you need to define a Fetcher itself:
+
+```scala
+val products =
+  Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ 
+    ctx.loadProductsById(ids))
+    
+val categories =
+  Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ 
+    ctx.loadCategoriesById(ids))
+```
+
+Now you should be able to define a `DeferredResolver` based on these fetchers like this:
+
+```scala
+val resolver: DeferredResolverp[MyCtx] = 
+  DeferredResolver.fetchers(products, categories)
+```
+
+Every time you need to load particular entity by ID, you can use fetcher to create a `Deferred` value for you:
+
+```scala
+Field("category", CategoryType,
+  arguments = Argument("id", IntType) :: Nil,
+  resolve = c ⇒ categories.defer(c.arg[Int]("id")))
+  
+Field("categoryMaybe", OptionType(CategoryType),
+  arguments = Argument("id", IntType) :: Nil,
+  resolve = c ⇒ categories.deferOpt(c.arg[Int]("id")))
+
+Field("productsWithinCategory", ListType(ProductType),
+  resolve = c ⇒ categories.deferSeqOpt(c.value.products))
+```
+
+The deferred resolution mechanism will take care of the rest and will fetch products and categories in the most efficient way.
+
+#### HasId Type Class
+
+In order to extract ID from entities, Fetch API uses `HasId` type class:
+ 
+```scala
+case class Product(id: String, name: String)
+
+object Product {
+  implicit val hasId = HasId[Product, String](_.id)
+}
+```
+
+If you don't want to define an implicit instance, you can also provide it directly to fetcher like this:
+
+```scala
+Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ ctx.loadProductsById(ids))(HasId(_.id))
+```
+
+#### Fetching Relations
+
+Fetch API also able to fetch entities based in their relation to other entities. In our example category has 2 relations, so let's define these relations:
+  
+```scala
+val byParent = Relation[Category, Int]("byCategory", c ⇒ Seq(c.parent))
+val byProduct = Relation[Category, Int]("byProduct", c ⇒ c.products)
+```
+
+You need to use `Fetcher.rel` to define a `Fetcher` that supports relations:
+
+```scala
+val categories = Fetcher.rel(
+  (repo, ids) ⇒ repo.loadCategories(ids),
+  (repo, ids) ⇒ repo.loadCategoriesByRelation(ids))
+```
+
+In case of relation batch function `ids` would be of type `Map[Relation[Res, _], Seq[Id]]` which contains the list of IDs for every relation type.
+
+Now you should be bale to use category fetcher to create `Deferred` values like this:
+ 
+```scala
+Field("categoriesByProduct", ListType(CategoryType),
+  arguments = Argument("productId", IntType) :: Nil,
+  resolve = c ⇒ categories.deferRelSeq(byProduct, c.arg[Int]("productId")))
+  
+Field("categoryChildren", ListType(CategoryType),
+  resolve = c ⇒ categories.deferRelSeq(byParent, c.value.id))
+```
+
+#### Caching
+
+Fetch API supports caching. You just need to define fetcher with `Fetcher.caching` or `relCaching` and all of the entities would be cached on a query basis.
+This means that every query execution gets it's own isolated cache instance.
+
+You can provide an alternative cache implementation via `FetcherConfig`:
+
+```scala
+val cache = FetcherCache.simple
+
+val categories = Fetcher(
+  config = FetcherConfig.caching(cache),
+  fetch = (repo, ids) ⇒ repo.loadCategories(ids))
+```
+
+The `FetcherCache` will cache not only the entities themselves, but also a relation information between entities. 
+
+#### Limiting Batch Size
+
+In some cases you may want to split bigger batches in a set of batches of particular size. You can do it by providing corresponding `FetcherConfig`:
+
+```scala
+val cache = FetcherCache.simple
+
+val categories = Fetcher(
+  config = FetcherConfig.maxBatchSize(10),
+  fetch = (repo, ids) ⇒ repo.loadCategories(ids))
+```
+
+#### Fallback to Existing DeferredResolver
+
+If you already have an existing `DeferredResolver`, you can still use it in combination with fetchers: 
+
+```scala
+DeferredResolver.fetchersWithFallback(new ExitingDeferredResolver, products, categoies)
+```
+
+The `includeDeferredFromField` and `groupDeferred` would be always delegated to a fallback.
+
 ## Protection Against Malicious Queries
 
 GraphQL is a very flexible data query language. Unfortunately with flexibility comes also a danger of misuse by malicious clients.
