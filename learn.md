@@ -804,8 +804,7 @@ val query =
     }
   """  
 
-val stream: Observable[JsValue] =
-  Executor.execute(schema, query)
+val stream: Observable[JsValue] = Executor.execute(schema, query)
 ```
 
 We are importing `ExecutionScheme.Stream` to instruct the executor to return a stream of results instead of `Future` of a single result.
