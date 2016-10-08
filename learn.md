@@ -219,28 +219,6 @@ Here is the list of supported actions:
 
 Normally the library is able to automatically infer the `Action` type, so that you don't need to specify it explicitly.
 
-### Deferred Values and Resolver
-
-In the example schema, you probably noticed that some of the resolve functions return `DeferFriends`. It is defined like this:
-
-```scala
-case class DeferFriends(friends: List[String]) extends Deferred[List[Character]]
-```
-
-The defer mechanism allows you to postpone the execution of particular fields and then batch them together in order to optimise object retrieval.
-This can be very useful when you are trying N+1. In this example all of the characters have list of friends, but they only have their IDs.
-You need to fetch from somewhere in order to progress query execution.
-Retrieving every friend one-by-one would be inefficient, since you potentially need to access an external database
-in order to do so. The defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. 
-In order to do it, you need to implement a `DeferredResolver` that will get a list of deferred values:
-
-```scala
-class FriendsResolver extends DeferredResolver[Any] {
-  def resolve(deferred: List[Deferred[Any]], ctx: Any): List[Future[Any]] =
-    // your bulk friends retrieving logic
-}
-```
-
 ### Projections
 
 Sangria also introduces the concept of projections. If you are fetching your data from the database (like let's say MongoDB), then it can be
@@ -696,6 +674,45 @@ preparedQueryFuture.map(preparedQuery ⇒
 ```
 
 `Executor.prepare` will return you a `Future` with a prepared query which you can execute several times later, possibly providing different `userContext` or `root` values. In addition to `execute`, `PreparedQuery` also gives you a lot of information about the query itself: operation, root `QueryType`, top-level fields with arguments, etc.
+
+## Deferred Value Resolution
+
+In the example schema, you probably noticed that some of the resolve functions return `DeferFriends`. It is defined like this:
+
+```scala
+case class DeferFriends(friends: List[String]) extends Deferred[List[Character]]
+```
+
+The defer mechanism allows you to postpone the execution of particular fields and then batch them together in order to optimise object retrieval.
+This can be very useful when you are want to avoid an N+1 problem. In the example schema all of the characters have list of friends, but they only have their IDs.
+You need to fetch them from somewhere in order to progress query execution.
+Retrieving every friend one-by-one would be very inefficient, since you potentially need to access an external database
+in order to do so. The defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. 
+In order to do it, you need to implement a `DeferredResolver` that will get a list of deferred values:
+
+```scala
+class FriendsResolver extends DeferredResolver[Any] {
+  override def resolve(deferred: Vector[Deferred[Any]], ctx: Any, queryState: Any)(implicit ec: ExecutionContext) = 
+    // Here goes your resolution logic
+}
+```
+
+The `resolve` function gives you a list of `Deferred[A]` values and expects you to return a list of resolved values `Future[B]`. 
+It is important to note, that the resulting list must have the same size. This allows an executor to figure out the relation 
+between deferred values and results. The order to results also plays an important role.
+
+After you have defined a `DeferredResolver[T]`, you can provide it to an executor like this:
+
+```scala
+Executor.execute(schema, query, deferredResolver = new FriendsResolver)
+```
+
+### High-level Fetch API
+ 
+`DeferredResolver[T]` provides very flexible mechanism to batch retrieval of object from external services or databases, but it provides 
+very low-level, not safe, but efficient API for this. You certainly can use it directly, especially in more non-trivial cases, but most of the time
+you probably will work with isolated entity objects which you would like to load by ID or some relation ID to other entities. This is where `Fetcher`
+comes into play.
 
 ## Protection Against Malicious Queries
 
