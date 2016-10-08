@@ -97,6 +97,27 @@ val queryAst: Document =
   """
 ```
 
+You can also parse and render the GraphQL input values independently from a query document:
+
+```scala
+import sangria.renderer.QueryRenderer
+import sangria.macros._
+import sangria.ast
+
+val parsed: ast.Value =
+  graphqlInput"""
+    {
+      id: "1234345"
+      version: 2 # changed 2 times
+      deliveries: [
+        {id: 123, received: false, note: null, state: OPEN}
+      ]
+    }
+  """
+
+println(parsed.renderPretty)
+```
+
 ## Schema Definition
 
 Here is an example of GraphQL schema DSL:
@@ -692,7 +713,7 @@ In order to do it, you need to implement a `DeferredResolver` that will get a li
 
 ```scala
 class FriendsResolver extends DeferredResolver[Any] {
-  override def resolve(deferred: Vector[Deferred[Any]], ctx: Any, queryState: Any)(implicit ec: ExecutionContext) = 
+  def resolve(deferred: Vector[Deferred[Any]], ctx: Any, queryState: Any)(implicit ec: ExecutionContext) = 
     // Here goes your resolution logic
 }
 ```
@@ -707,11 +728,68 @@ After you have defined a `DeferredResolver[T]`, you can provide it to an executo
 Executor.execute(schema, query, deferredResolver = new FriendsResolver)
 ```
 
+`DeferredResolver` will do its best to butch as many deferred values as possible. Let's look at this example query to see how it works:
+ 
+```js
+{
+  hero {
+    friends {
+      friends {
+        friends {
+          friends {
+            name
+          }
+        }
+      }
+      
+      more: friends {
+        friends {
+          friends {
+            name
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+During an execution of this query, amount of produced `Deferred` values grows exponentially. Still `DeferredResolver.resolve` method
+would be called only **4** times by executor because query has only 4 levels of fields that return deferred values (`friends` in this case).  
+
+### DeferredResolver State
+
+In some case you may need to have some state inside of a `DeferredResolver` for every query execution. This, for instance, is nesessary when you
+implement a cache inside of the resolver.
+
+Internally, an executor manages `DeferredResolver` state and provides it via `queryState` argument to a `resolve` method. You can provide an initial
+state by overriding the `initialQueryState` method:
+
+```scala
+class MyResolver[Ctx] DeferredResolver[Ctx] {
+  def initialQueryState: Any = TrieMap[String, Any]()
+
+  def resolve(deferred: Vector[Deferred[Any]], ctx: Ctx, queryState: Any)(implicit ec: ExecutionContext) = 
+    // resolve deferred values by using cache from `queryState`     
+}
+```
+
+### Customizing DeferredResolver Behaviour
+
+As was mentioned before, `DeferredResolver` will do its best collect and batch as many `Deferred` values as possible. This means that it 
+will even wait for a `Future`s to produce some values in order to find out whether they produce some deferred values. 
+
+In some cases it is not a desired effect. You can override following methods in order to customize this behaviour and define independent
+deferred value groups:
+
+* `includeDeferredFromField` - A function that decides whether deferred values from a particular field should be collected or processed independently.   
+* `groupDeferred` - Provides a way to group deferred values in batches that would be processed independently. Useful for separating cheap and expensive deferred values.
+
 ### High-level Fetch API
  
-`DeferredResolver[T]` provides very flexible mechanism to batch retrieval of object from external services or databases, but it provides 
-very low-level, not safe, but efficient API for this. You certainly can use it directly, especially in more non-trivial cases, but most of the time
-you probably will work with isolated entity objects which you would like to load by ID or some relation ID to other entities. This is where `Fetcher`
+`DeferredResolver` provides a very flexible mechanism to batch retrieval of objects from the external services or databases, but it provides 
+very low-level, unsafe, but efficient API for this. You certainly can use it directly, especially in more non-trivial cases, but most of the time
+you probably will work with isolated entity objects which you would like to load by ID or some relation to other entities. This is where `Fetcher`
 comes into play.
 
 ## Protection Against Malicious Queries

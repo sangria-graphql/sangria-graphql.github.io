@@ -435,6 +435,12 @@ body {
   animation-delay: 2.1s;
 }
 
+.fade-in.f7 {
+  -webkit-animation-delay: 2.3s;
+  -moz-animation-delay: 2.3s;
+  animation-delay: 2.3s;
+}
+
 .main-header-content a.btn {
   background: none;
   color: #F9E3D2;
