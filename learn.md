@@ -1046,10 +1046,10 @@ Here is a small example of its usage:
 
 ```scala
 class FieldMetrics extends Middleware[Any] with MiddlewareAfterField[Any] with MiddlewareErrorField[Any] {
-  type QueryVal = MutableMap[String, List[Long]]
+  type QueryVal = TrieMap[String, List[Long]]
   type FieldVal = Long
 
-  def beforeQuery(context: MiddlewareQueryContext[Any, _, _]) = MutableMap()
+  def beforeQuery(context: MiddlewareQueryContext[Any, _, _]) = TrieMap()
   def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[Any, _, _]) =
     reportQueryMetrics(queryVal)
 
