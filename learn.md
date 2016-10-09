@@ -1026,11 +1026,11 @@ First of all you need to define a Fetcher itself:
 
 ```scala
 val products =
-  Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ 
+  Fetcher((ctx: MyCtx, ids: Seq[Int]) ⇒ 
     ctx.loadProductsById(ids))
     
 val categories =
-  Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ 
+  Fetcher((ctx: MyCtx, ids: Seq[Int]) ⇒ 
     ctx.loadCategoriesById(ids))
 ```
 
@@ -1081,7 +1081,7 @@ Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ ctx.loadProductsById(ids))(HasId(_.id
 Fetch API also able to fetch entities based in their relation to other entities. In our example category has 2 relations, so let's define these relations:
   
 ```scala
-val byParent = Relation[Category, Int]("byCategory", c ⇒ Seq(c.parent))
+val byParent = Relation[Category, Int]("byParent", c ⇒ Seq(c.parent))
 val byProduct = Relation[Category, Int]("byProduct", c ⇒ c.products)
 ```
 
@@ -1118,7 +1118,7 @@ val cache = FetcherCache.simple
 
 val categories = Fetcher(
   config = FetcherConfig.caching(cache),
-  fetch = (repo, ids) ⇒ repo.loadCategories(ids))
+  fetch = (ctx, ids) ⇒ ctx.loadCategoriesById(ids))
 ```
 
 The `FetcherCache` will cache not only the entities themselves, but also a relation information between entities. 
