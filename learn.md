@@ -747,7 +747,7 @@ In order to use it, you first need to choose one of available stream implementat
 
 You can also easily create your own integration by implementing and providing an implicit instance of `SubscriptionStream[S]` type class.
 
-After you have imported a concrete stream implementation, you can defile a subscription type fields with `Field.subs`. 
+After you have imported a concrete stream implementation, you can define a subscription type fields with `Field.subs`. 
 Here is an example that uses monix:
   
 ```scala
@@ -764,7 +764,7 @@ val SubscriptionType = ObjectType("Subscription", fields[Unit, Unit](
 ))
 ```
 
-Please note, that evey element in a stream should be an `Action[Ctx, Val]`. An `action` helper function is used in this case to 
+Please note that every element in a stream should be an `Action[Ctx, Val]`. An `action` helper function is used in this case to 
 transform every element of a stream into an `Action`. Also, it is important that either all fields of a `SubscriptionType` or none of them are
 created with the `Field.subs` function (otherwise it would not be possible to merge them in a single stream).
 
@@ -807,8 +807,8 @@ val query =
 val stream: Observable[JsValue] = Executor.execute(schema, query)
 ```
 
-We are importing `ExecutionScheme.Stream` to instruct the executor to return a stream of results instead of `Future` of a single result.
-Stream will emit following elements (order may be different):
+We are importing `ExecutionScheme.Stream` to instruct the executor to return a stream of results instead of a `Future` of a single result.
+The stream will emit the following elements (the order may be different):
 
 ```json
 {
@@ -846,7 +846,7 @@ Stream will emit following elements (order may be different):
 ```
 
 Only the top-level subscription fields have special semantics associated with them (in this respect it is similar to the mutation queries).
-Execution engine merges requested field streams into a single stream which is then returned as a result of the execution. 
+The execution engine merges the requested field streams into a single stream which is then returned as a result of the execution. 
 All other fields (2nd level, 3rd level, etc.) have normal semantics and would be fully resolved.   
 
 {% include ext.html type="info" title="Work In Progress" %}
@@ -862,7 +862,7 @@ case class DeferFriends(friends: List[String]) extends Deferred[List[Character]]
 ```
 
 The defer mechanism allows you to postpone the execution of particular fields and then batch them together in order to optimise object retrieval.
-This can be very useful when you are want to avoid an N+1 problem. In the example schema all of the characters have list of friends, but they only have their IDs.
+This can be very useful when you want to avoid an N+1 problem. In the example schema all of the characters have a list of friends, but they only have their IDs.
 You need to fetch them from somewhere in order to progress query execution.
 Retrieving every friend one-by-one would be very inefficient, since you potentially need to access an external database
 in order to do so. The defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. 
@@ -877,7 +877,7 @@ class FriendsResolver extends DeferredResolver[Any] {
 
 The `resolve` function gives you a list of `Deferred[A]` values and expects you to return a list of resolved values `Future[B]`. 
 It is important to note, that the resulting list must have the same size. This allows an executor to figure out the relation 
-between deferred values and results. The order to results also plays an important role.
+between deferred values and results. The order of results also plays an important role.
 
 After you have defined a `DeferredResolver[T]`, you can provide it to an executor like this:
 
@@ -885,7 +885,7 @@ After you have defined a `DeferredResolver[T]`, you can provide it to an executo
 Executor.execute(schema, query, deferredResolver = new FriendsResolver)
 ```
 
-`DeferredResolver` will do its best to butch as many deferred values as possible. Let's look at this example query to see how it works:
+`DeferredResolver` will do its best to batch as many deferred values as possible. Let's look at this example query to see how it works:
  
 ```js
 {
@@ -911,15 +911,15 @@ Executor.execute(schema, query, deferredResolver = new FriendsResolver)
 }
 ```
 
-During an execution of this query, amount of produced `Deferred` values grows exponentially. Still `DeferredResolver.resolve` method
-would be called only **4** times by executor because query has only 4 levels of fields that return deferred values (`friends` in this case).  
+During an execution of this query, the amount of produced `Deferred` values grows exponentially. Still `DeferredResolver.resolve` method
+would be called only **4** times by the executor because the query has only 4 levels of fields that return deferred values (`friends` in this case).  
 
 ### DeferredResolver State
 
-In some case you may need to have some state inside of a `DeferredResolver` for every query execution. This, for instance, is nesessary when you
+In some cases you may need to have some state inside of a `DeferredResolver` for every query execution. This, for instance, is necessary when you
 implement a cache inside of the resolver.
 
-Internally, an executor manages `DeferredResolver` state and provides it via `queryState` argument to a `resolve` method. You can provide an initial
+Internally, an executor manages `DeferredResolver` state and provides it via the `queryState` argument to a `resolve` method. You can provide an initial
 state by overriding the `initialQueryState` method:
 
 ```scala
@@ -933,10 +933,10 @@ class MyResolver[Ctx] DeferredResolver[Ctx] {
 
 ### Customizing DeferredResolver Behaviour
 
-As was mentioned before, `DeferredResolver` will do its best collect and batch as many `Deferred` values as possible. This means that it 
-will even wait for a `Future`s to produce some values in order to find out whether they produce some deferred values. 
+As was mentioned before, `DeferredResolver` will do its best to collect and batch as many `Deferred` values as possible. This means that it 
+will even wait for a `Future` to produce some values in order to find out whether they produce some deferred values. 
 
-In some cases it is not a desired effect. You can override following methods in order to customize this behaviour and define independent
+In some cases this is not desired. You can override the following methods in order to customize this behaviour and define independent
 deferred value groups:
 
 * `includeDeferredFromField` - A function that decides whether deferred values from a particular field should be collected or processed independently.   
@@ -944,13 +944,13 @@ deferred value groups:
 
 ### High-level Fetch API
  
-`DeferredResolver` provides a very flexible mechanism to batch retrieval of objects from the external services or databases, but it provides 
+`DeferredResolver` provides a very flexible mechanism to batch retrieval of objects from the external services or databases, but it provides a
 very low-level, unsafe, but efficient API for this. You certainly can use it directly, especially in more non-trivial cases, but most of the time
 you probably will work with isolated entity objects which you would like to load by ID or some relation to other entities. This is where `Fetcher`
 comes into play.
 
-`Fetcher` provides a high-level API for deferred value resolution and implemented as a specialized version `DeferredResolver`. 
-This API provides following features:
+`Fetcher` provides a high-level API for deferred value resolution and is implemented as a specialized version of `DeferredResolver`. 
+This API provides the following features:
 
 * Deferred value resolution based on entity IDs
 * Deferred value resolution based on entity relations
@@ -959,7 +959,7 @@ This API provides following features:
 * Support for `maxBatchSize`
 * Supports a fallback to an existing `DeferredResolver`
 
-Examples in this section with use following data model of products and categories:
+Examples in this section will use the following data model of products and categories:
 
 <div class="example-tables">
   <div class="left-table">
@@ -1018,11 +1018,11 @@ Examples in this section with use following data model of products and categorie
   </div>
 </div>
 
-As you can see, product table (which also can be a document in a document DB or just a json which is returned from an external service call)
-has a just product information. Category, on the the other hand, also contains 2 relations - to the products within this category and to a parent category.
-First let's look how we can fetch entities by ID, and than we will look how we can use a relation information for this. 
+As you can see, the product table (which also can be a document in a document DB or just JSON which is returned from an external service call)
+just has product information. Category, on the the other hand, also contains 2 relations - to the products within this category and to a parent category.
+First let's look at how we can fetch entities by ID, and then we will look at how we can use a relation information for this. 
 
-First of all you need to define a Fetcher itself:
+First of all you need to define a Fetcher:
 
 ```scala
 val products =
@@ -1034,14 +1034,14 @@ val categories =
     ctx.loadCategoriesById(ids))
 ```
 
-Now you should be able to define a `DeferredResolver` based on these fetchers like this:
+Now you should be able to define a `DeferredResolver` based on these fetchers:
 
 ```scala
 val resolver: DeferredResolverp[MyCtx] = 
   DeferredResolver.fetchers(products, categories)
 ```
 
-Every time you need to load particular entity by ID, you can use fetcher to create a `Deferred` value for you:
+Every time you need to load a particular entity by ID, you can use the fetcher to create a `Deferred` value for you:
 
 ```scala
 Field("category", CategoryType,
@@ -1060,7 +1060,7 @@ The deferred resolution mechanism will take care of the rest and will fetch prod
 
 #### HasId Type Class
 
-In order to extract ID from entities, Fetch API uses `HasId` type class:
+In order to extract the ID from entities, the Fetch API uses the `HasId` type class:
  
 ```scala
 case class Product(id: String, name: String)
@@ -1070,7 +1070,7 @@ object Product {
 }
 ```
 
-If you don't want to define an implicit instance, you can also provide it directly to fetcher like this:
+If you don't want to define an implicit instance, you can also provide it directly to the fetcher like this:
 
 ```scala
 Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ ctx.loadProductsById(ids))(HasId(_.id))
@@ -1078,7 +1078,7 @@ Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ ctx.loadProductsById(ids))(HasId(_.id
 
 #### Fetching Relations
 
-Fetch API also able to fetch entities based in their relation to other entities. In our example category has 2 relations, so let's define these relations:
+The Fetch API is also able to fetch entities based on their relation to other entities. In our example category has 2 relations, so let's define these relations:
   
 ```scala
 val byParent = Relation[Category, Int]("byParent", c ⇒ Seq(c.parent))
@@ -1095,7 +1095,7 @@ val categories = Fetcher.rel(
 
 In case of relation batch function `ids` would be of type `Map[Relation[Res, _], Seq[Id]]` which contains the list of IDs for every relation type.
 
-Now you should be bale to use category fetcher to create `Deferred` values like this:
+Now you should be able to use the category fetcher to create `Deferred` values like this:
  
 ```scala
 Field("categoriesByProduct", ListType(CategoryType),
@@ -1108,8 +1108,8 @@ Field("categoryChildren", ListType(CategoryType),
 
 #### Caching
 
-Fetch API supports caching. You just need to define fetcher with `Fetcher.caching` or `relCaching` and all of the entities would be cached on a query basis.
-This means that every query execution gets it's own isolated cache instance.
+The Fetch API supports caching. You just need to define a fetcher with `Fetcher.caching` or `relCaching` and all of the entities will be cached on a per-query basis.
+This means that every query execution gets its own isolated cache instance.
 
 You can provide an alternative cache implementation via `FetcherConfig`:
 
@@ -1121,11 +1121,11 @@ val categories = Fetcher(
   fetch = (ctx, ids) ⇒ ctx.loadCategoriesById(ids))
 ```
 
-The `FetcherCache` will cache not only the entities themselves, but also a relation information between entities. 
+The `FetcherCache` will cache not only the entities themselves, but also relation information between entities. 
 
 #### Limiting Batch Size
 
-In some cases you may want to split bigger batches in a set of batches of particular size. You can do it by providing corresponding `FetcherConfig`:
+In some cases you may want to split bigger batches into a set of batches of particular size. You can do this by providing an appropriate `FetcherConfig`:
 
 ```scala
 val cache = FetcherCache.simple
@@ -1143,7 +1143,7 @@ If you already have an existing `DeferredResolver`, you can still use it in comb
 DeferredResolver.fetchersWithFallback(new ExitingDeferredResolver, products, categoies)
 ```
 
-The `includeDeferredFromField` and `groupDeferred` would be always delegated to a fallback.
+The `includeDeferredFromField` and `groupDeferred` would always be delegated to a fallback.
 
 ## Protection Against Malicious Queries
 
