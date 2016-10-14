@@ -1357,7 +1357,7 @@ This means that your domain objects are automatically supported as long as you h
 For instance, this example should compile and work just fine without an explicit `FromInput` declaration:
 
 ```scala
-import sangria.integration.playJson._
+import sangria.marshalling.playJson._
 import play.api.libs.json._
 
 case class Article(title: String, text: Option[String])
