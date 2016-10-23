@@ -747,6 +747,10 @@ In order to use it, you first need to choose one of available stream implementat
 
 You can also easily create your own integration by implementing and providing an implicit instance of `SubscriptionStream[S]` type class.
 
+{% include ext.html type="info" title="Example project" %}
+If you prefer a hands-on approach, then you can take a look at [sangria-subscriptions-example](https://github.com/sangria-graphql/sangria-subscriptions-example) project. It demonstrates most of the concepts that are described in this section.
+{% include cend.html %}
+ 
 After you have imported a concrete stream implementation, you can define a subscription type fields with `Field.subs`. 
 Here is an example that uses monix:
   
