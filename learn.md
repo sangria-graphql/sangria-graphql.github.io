@@ -1866,6 +1866,58 @@ object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeF
 
 There are quite a few helpers available which you may find useful in different situations.
 
+### Schema Comparator
+
+Schema comparator provides you a easy way to compare schemas. You can, of course, compare unrelated schemas and get all of the differences as a list.
+Where it becomes really useful, is when you compare different versions of the same schema.
+ 
+In this example I compare a schema loaded from staging environment against the schema from a production environment:
+
+```scala
+val prodSchema = Schema.buildFromIntrospection(
+  loadSchema("http://prod.my-company.com/graphql"))
+
+val stagingSchema = Schema.buildFromIntrospection(
+  loadSchema("http://staging.my-company.com/graphql"))
+
+val changes: Vector[SchemaChange] = stagingSchema compare prodSchema
+```
+
+Given this list of changes, we can do a few interesting thing with it. For instance, we can stop the deployment 
+to production if staging environment contains **breaking changes** (you can run this somewhere in your CI environment):
+    
+```scala
+val breakingChanges = changes.filter(_.breakingChange)
+
+if (breakingChanges.nonEmpty) {
+  val rendered = breakingChanges
+    .map(change ⇒ s" * ${change.description}")
+    .mkString("\n", "\n", "")
+
+  throw new IllegalStateException(
+    s"Staging environment has breaking changes in GraphQL schema! $rendered")
+}
+```
+
+You can also create **release notes** for all of the changes:
+
+```scala
+val releaseNotes =
+  if (chnages.nonEmpty) {
+    val rendered = breakingChanges
+      .map { change ⇒ 
+        val breaking = 
+          if(change.breakingChange) " (breaking change)"
+          else ""
+          
+        s" * ${change.description}$breaking"
+      }
+      .mkString("\n", "\n", "")
+
+    s"Release Notes: $rendered"
+  } else "No Changes"
+```
+
 ### Introspection Result Parsing
 
 Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of working
