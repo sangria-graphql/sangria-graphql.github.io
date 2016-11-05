@@ -1868,7 +1868,7 @@ There are quite a few helpers available which you may find useful in different s
 
 ### Schema Comparator
 
-Schema comparator provides you a easy way to compare schemas. You can, of course, compare unrelated schemas and get all of the differences as a list.
+Schema comparator provides an easy way to compare schemas between each other. You can, of course, compare unrelated schemas and get all of the differences as a list.
 Where it becomes really useful, is when you compare different versions of the same schema.
  
 In this example I compare a schema loaded from staging environment against the schema from a production environment:
