@@ -16,12 +16,12 @@ version:
   sangria-circe: 0.6.0
   sangria-msgpack: 0.2.2
   sangria-ion: 0.1.1
-  sangria-argonaut: 0.3.1
+  sangria-argonaut: 0.3.2
   sangria-marshalling-api: 0.2.2
   sangria-marshalling-testkit: 0.2.3
   sangria-streaming-api: 0.1.1
   sangria-akka-streams: 0.1.1
-  sangria-rxscala: 0.1.0
+  sangria-rxscala: 0.1.1
   sangria-monix: 0.1.1
 
 groupId: org.sangria-graphql
