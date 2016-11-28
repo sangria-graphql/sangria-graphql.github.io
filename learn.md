@@ -880,8 +880,10 @@ class FriendsResolver extends DeferredResolver[Any] {
 ```
 
 The `resolve` function gives you a list of `Deferred[A]` values and expects you to return a list of resolved values `Future[B]`. 
-It is important to note, that the resulting list must have the same size. This allows an executor to figure out the relation 
+
+It is important to note, that the resulting list must have the same size. This allows an executor to figure out the relation
 between deferred values and results. The order of results also plays an important role.
+(Fetch API, which is described below, uses `HasId` type class to match the entities, so the contract/restriction only relevant for `DeferredResolver`)
 
 After you have defined a `DeferredResolver[T]`, you can provide it to an executor like this:
 
@@ -1041,7 +1043,7 @@ val categories =
 Now you should be able to define a `DeferredResolver` based on these fetchers:
 
 ```scala
-val resolver: DeferredResolverp[MyCtx] = 
+val resolver: DeferredResolver[MyCtx] =
   DeferredResolver.fetchers(products, categories)
 ```
 
