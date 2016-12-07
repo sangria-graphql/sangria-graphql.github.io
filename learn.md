@@ -26,6 +26,8 @@ I would also would recommend you to check out [{{site.link.try}}]({{site.link.tr
 It is an example of a GraphQL server written with Play framework and Sangria. It also serves as a playground,
 where you can interactively execute GraphQL queries and play with some examples.
 
+[Apollo Client](http://dev.apollodata.com/) is a full featured, simple to use GraphQL client with convenient integrations for popular view layers. Apollo Client is an easy way to get started with Sangria as they're 100% compatible.
+
 If you want to use sangria with the react-relay framework, they you also need to include [sangria-relay]({{site.link.repo.sangria-relay}}):
 
 ```scala
