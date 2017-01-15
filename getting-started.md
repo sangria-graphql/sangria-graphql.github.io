@@ -34,16 +34,16 @@ Sangria-relay Playground ([{{site.link.try-relay}}]({{site.link.try-relay}})) is
 
 ## GraphQL Introduction
 
-GraphQL is a data query language. It was developed by Facebook and in in July 2015 a first draft of the specification was released publicly.
+GraphQL is a data query language. It was developed by Facebook and in July 2015 a first draft of the specification was released publicly.
 Here is an example of GraphQL client-server interaction:
 
 ![Client-server interaction]({{"/assets/img/graphql-api.svg" | prepend: site.baseurl}})
 
-As you can see, it's a typical HTTP-based client server interaction, where client makes a POST HTTP request with GraphQL query in a post body
-and server returns a JSON response. Though HTTP transport and JSON data format are not part of GraphQL specification and are not prescribed by it, 
+As you can see, it's a typical HTTP-based client server interaction, where the client makes a POST HTTP request with GraphQL query in a post body
+and the server returns a JSON response. Though HTTP transport and JSON data format are not part of GraphQL specification and are not prescribed by it, 
 it's the most popular option for GraphQL server, so next sections will use these for examples.  
 
-Conceptually, both client and server provide important information to each other:
+Conceptually, during this interaction, both client and server provide important pieces of information to each other:
 
 ![Data Requirements]({{"/assets/img/data-requirements.svg" | prepend: site.baseurl}})
 
@@ -127,7 +127,7 @@ We will discuss it in more detail later.
 First let's define a `Picture` GraphQL type. In scala, you most probably will model it a simple case class like this one:
  
 ```scala
-case class Picture( width: Int, height: Int, url: Option[String])
+case class Picture(width: Int, height: Int, url: Option[String])
 ```
 
 Let's define a GraphQL object type for it:
@@ -169,7 +169,7 @@ implicit val PictureType =
 
 Macro allows you not only to derive the structure of the case class and appropriate `resolve` functions for all of the derived fields, 
 but it also allows you to customize different aspects of the generated GraphQL object through macro arguments. In this case we added 
-additional documentation to the object type itself and one of its fields, but you can customize any aspect of generated GraphQL object this way.
+additional documentation to the object type itself and one of its fields, but you can also customize any aspect of generated GraphQL object this way.
  
 ### Product Type and Identifiable Interface 
  
@@ -181,7 +181,7 @@ trait Identifiable {
 }
 ```   
 
-The GraphQL definition will look pretty similar to what we saw before, but we Will use an `InterfaceType` instead:
+The GraphQL definition will look pretty similar to what we saw before, but we will use an `InterfaceType` instead:
 
 ```scala
 val IdentifiableType = InterfaceType(
@@ -208,14 +208,15 @@ val ProductType =
 ```
 
 By default, macro will only consider the case class fields. In this example we explicitly asked macro to include `picture` method. 
-We also defined an implemented interface since this does not happen by default.  
+We also defined an implemented interface since this does not happen by default. `deriveObjectType` macro is also able to handle method 
+arguments and translate them to GraphQL field arguments.   
 
 ### Query Type
 
-Finally we need to define a `Query` type. `Query` type is a bit special because it will define the top-level fields. You will you these 
-fields to start your GraphQL queries with. Otherwise `Query` is the same object type that we already defined several times. 
+Finally we need to define a `Query` type. `Query` type is a bit special because it will define the top-level fields. You will use these 
+fields as an entry point in your GraphQL queries. Otherwise `Query` is the same object type that we already defined several times earlier. 
 This time around, let's define it as a normal `ObjectType`, but before we will do this, we need to define a product repository 
-which will be responsible for loading the product from a database or external service. For simplicity sake, let's just use an in-memory 
+which will be responsible for loading the product information from a database or external service. For a simplicity sake, let's just use an in-memory 
 product list in this example:
 
 ```scala
@@ -248,12 +249,12 @@ val QueryType = ObjectType("Query", fields[ProductRepo, Unit](
 ```
 
 As you may noticed, we have defined `Query` type in terms of `ProductRepo`, but we have provided it as a first type argument this time around.
-We do not have a context value in this case because this type is an entry point for the whole query, but Sangria allows you to provide user
-context object which is available to all GraphQL type files and it's type is provided via the first type argument. In most cases this user
-context object provides access to a data storage (like database or external service), auth information and generally information that is common 
+We do not have a context value in this case because this type is an entry point for the whole query. Sangria allows you to provide user
+context object which is available to all GraphQL type fields withing the schema. The type of this object is provided via the first type argument. 
+In most cases this user context object provides access to a data storage (like database or external service), auth information and generally information that is common 
 and may be useful to all of the fields in your GraphQL schema.
 
-Now that we have defined the `Query` type, the only thing we need to do is to define the schema:
+Now that we have defined the `Query` type, the only thing we need to do is to define the schema itself:
 
 ```scala
 val schema = Schema(QueryType)
@@ -263,7 +264,7 @@ val schema = Schema(QueryType)
 
 Given this schema definition, we now can execute queries against it. Let's write a small test and execute an example query against our schema.  
 
-For testing purpose, Sangria provides very convenient `graphql` macro which parses a GraphQL query and reports all syntax errors are 
+For testing purpose, Sangria provides very convenient `graphql` macro which parses a GraphQL query and reports all syntax errors as a 
 compile-time errors, if there are any:
 
 ```scala
@@ -330,7 +331,7 @@ library dependency in your SBT build:
 "{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"
 ```
 
-Sangria support most of available JSON libraries, so you are not limited to a specific scala JSON implementation. In the next sections we will see an example of spray-json and play-json.  
+Sangria supports most of the available JSON libraries, so you are not limited to a specific scala JSON implementation. In the next sections we will see an example of spray-json and play-json.  
 
 Now that we know how to define the schema and execute queries against it, let's expose it as an HTTP endpoint.  
 
@@ -365,10 +366,10 @@ object Server extends App {
 }
 ``` 
 
-Nothing special here. I also added a static `graphiql.html` endpoint which you can find [on GitHub](https://github.com/graphql/graphiql/blob/master/example/index.html).
-It is a great tool that allows you edit and execute GraphQL queries in your browser.
+Nothing special here. I also added a static endpoint that serves a single `graphiql.html` page which you can find [on GitHub](https://github.com/graphql/graphiql/blob/master/example/index.html).
+It is a great tool that allows you edit and execute GraphQL queries directly in your browser.
 
-How that we have a basic setup, let's define `graphQLEndpoint` method:
+Now that we have a basic setup, let's define `graphQLEndpoint` method:
  
 ```scala
 def graphQLEndpoint(requestJson: JsValue) = {
@@ -399,11 +400,11 @@ def graphQLEndpoint(requestJson: JsValue) = {
 ``` 
 
 According to [GraphQL best practices](http://graphql.org/learn/serving-over-http/#post-request) we need to handle 3 fields 
-in request JSON body:
+in a request JSON body:
  
-* `query` - `String` - GraphQL query as a string
+* `query` - `String` - a GraphQL query as a string
 * `variables` - `Object` - defines variables for your query (optional)
-* `operationName` - `String` - the name of the operation, in case you defined several of them in the query (optional)
+* `operationName` - `String` - a name of an operation, in case you defined several of them in the query (optional)
 
 After we extracted these fields, we parse the query and execute it:
  
@@ -420,7 +421,7 @@ def executeGraphQLQuery(query: Document, op: Option[String], vars: JsObject) =
 ``` 
 
 After you have defined all these methods, your akka-http based GraphQL server is ready to rock! 
-Just start it and point your browser to [http://localhost:8080](http://localhost:8080) and you will see GraphiQL console:   
+Just start it and point your browser to [http://localhost:8080](http://localhost:8080). You will see GraphiQL console:   
 
 ![GraphiQL]({{"/assets/img/graphiql.gif" | prepend: site.baseurl}})
 
@@ -442,7 +443,7 @@ Now you need to define a new route in your `/conf/routes`:
 POST  /graphql  controllers.Application.graphql
 ```
 
-In `Application` controller you sill define an action which is very similar to akk-http route and it will:
+In `Application` controller we need to define an action which is very similar to akk-http route and it will do following things:
    
 * Extract `query`, `operationName` and `variables` from request JSON body
 * Parse the `query`
