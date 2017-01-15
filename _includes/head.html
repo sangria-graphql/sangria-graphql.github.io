@@ -1,4 +1,6 @@
 <head>
+  <!-- meta stuff -->
+
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -6,6 +8,25 @@
   <meta name="keywords" content="sangria,scala,graphql" />
 
   <link rel="shortcut icon" type="image/png" href="{{"/assets/img/favicon.png" | prepend: site.baseurl}}">
+
+  <link rel="canonical" href="http://{{site.domain}}" />
+
+  <meta name="description" content="Sangria - Scala GraphQL Implementation">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="http://{{site.domain}}">
+  <meta property="og:title" content="Sangria - Scala GraphQL Implementation">
+  <meta property="og:description" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
+  <meta property="og:image:url" content="http://{{site.domain}}/assets/img/share-sangria.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@easyangel">
+  <meta name="twitter:creator" content="@easyangel">
+  <meta name="twitter:title" content="Sangria - Scala GraphQL Implementation">
+  <meta name="twitter:description" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
+  <meta name="twitter:image" content="http://{{site.domain}}/assets/img/share-sangria.png">
+
+  <!-- /meta stuff -->
 
   <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
 
