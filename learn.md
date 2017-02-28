@@ -1907,8 +1907,8 @@ You can also create **release notes** for all of the changes:
 
 ```scala
 val releaseNotes =
-  if (chnages.nonEmpty) {
-    val rendered = breakingChanges
+  if (changes.nonEmpty) {
+    val rendered = changes
       .map { change ⇒ 
         val breaking = 
           if(change.breakingChange) " (breaking change)"
