@@ -1354,6 +1354,7 @@ implicit val manual = new FromInput[Article] {
     Article(
       title = ad("title").asInstanceOf[String],
       text = ad.get("text").flatMap(_.asInstanceOf[Option[String]])
+    )
   }
 }
 ```
