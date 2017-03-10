@@ -49,8 +49,8 @@ Conceptually, during this interaction, both client and server provide important 
 
 ![Data Requirements]({{"/assets/img/data-requirements.svg" | prepend: site.baseurl}})
 
-Since GraphQL has a type system, the server defines a schema which clint can query with introspection API. This provides the client with a 
-a set possibilities. After client got this information and decided which parts of the data it needs, it's able to describe its data 
+Since GraphQL has a type system, the server defines a schema which the client can query using the introspection API. This provides the client with a 
+a set of possibilities. After the client got this information and decided which parts of the data it needs, it is able to describe its data 
 requirements in form of GraphQL _query_.  
 
 Important aspect of GraphQL is that it's completely backend agnostic. This means that you are free to choose the transport protocol, 
