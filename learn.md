@@ -1560,6 +1560,10 @@ Out-of-the-box sangria comes with several `QueryReducer`s for common use-cases:
 * `QueryReducer.measureComplexity` - measures a complexity of the query
 * `QueryReducer.rejectComplexQueries` - rejects queries with complexity above provided threshold
 * `QueryReducer.collectTags` - collects `FieldTag`s based on a partial function
+* `QueryReducer.measureDepth` - measures max query depth
+* `QueryReducer.rejectMaxDepth` - rejects queries that are deeper than provided threshold
+* `QueryReducer.hasIntrospection` - verifies whether query contains an introspection fields
+* `QueryReducer.rejectIntrospection` - rejects queries that contain an introspection fields. This may be useful for production environments where introspection can potentially be abused.
 
 Here is a small example of `QueryReducer.collectTags`:
 
