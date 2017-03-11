@@ -728,6 +728,172 @@ Following execution schemes are available:
 
 ## Query And Schema Analysis
 
+Sangria provides a lot of generic tools to work with a GraphQL query and schema. Aside from the actual query execution, you may need to
+do different things like analysing query for breaking changes, introspection usage, deprecated field usage, validate query/schema without
+executing it, etc. This section describes some of the tools that will help you with these tasks.
+
+### Query Validation
+
+Query validation consists of validation rules. You can pick and choose which rules you would like to use for a query validation. You
+can even create your own validation rules and validate query against them. The list of standard validation rules in available in `QueryValidator.allRules`.
+In order to validate query against the list of rules you need to use `RuleBasedQueryValidator`. The default query validator which uses all standard rules
+is available under `QueryValidator.default`. Here is an example of how you can use it:
+
+```scala
+val violations = QueryValidator.default.validateQuery(schema, query)
+```
+
+You can also customise the list of validation rules when you are executing the query by providing a custom query validator like this:
+
+```scala
+Executor.execute(schema, query, queryValidator = ...)
+```
+
+For instance, it can be useful to disable validation for production setup, where you have validated all possible queries upfront and would
+like to save on CPU cycles during the execution.
+
+### Schema Validation
+
+Just like query validation, schema validation consists of validation rules. You can pick and choose which rules you would like to use for a schema validation. You
+can even create your own validation rules and validate schema against them. The list of standard validation rules in available in `SchemaValidationRule.default`.
+
+You can also customise the list of validation rules when you are creating a schema by providing a custom list of rules like this:
+
+```scala
+Schema(QueryType, validationRules = ...)
+```
+
+### Verification With Query Reducers
+
+Query reducers provide a lot useful analysis tools, but they require 2 bits of information in addition to a query: `operationName` and `variables`.
+Still, you can execute query reducers against query without executing it by using `Executor.prepare`. `prepare` will not execute the query,
+but instead it will prepare query for execution ensuring that query is validated and all query reducers are successful.
+
+Here is how you can ensure that query complexity does not exceed the threshold:
+
+```scala
+val variables: Json =  ...
+
+val prepared =
+  query.operations.keySet.map { operationName ⇒
+    Executor.prepare(schema, query,
+      operationName = operationName,
+      variables = variables,
+      queryReducers =
+        QueryReducer.rejectComplexQueries(1000, (_, _) ⇒ TooExpansiveQuery)) :: Nil
+  }
+
+val validated = Future.sequence(prepared).map(_ ⇒ Done)
+```
+
+You will need to initialise all required variable values with some stubs. All variable variable values that represent things that potentially
+may increase query complexity, like list limits, should be set to values that represent the worst-case scenario (like max limit).
+
+### AstVisitor
+
+`AstVisitor` provides an easy way to traverse and possibly transform all `AstNode`s in a query. Here is how basic usage looks like:
+
+```scala
+val queryWithoutComments =
+  AstVisitor.visit(query, AstVisitor {
+    case _: Comment ⇒ VisitorCommand.Delete
+  })
+```
+
+This visit will create a new query `Document` that does not contain any comments.
+
+`AstVisitor` also provides several variations of `visit` function that allow you to visit AST nodes with type info (from schema definition) and state.
+
+If you would like to analyse field (and all of it's selections/nested fields) inside of a `resolve` function, you can access it with `Context.astFields` and then use
+`AstVisitor` to analyse it. You may also consider using [projections feature](#projections) for this.
+
+### Document Analyzer
+
+Sangria provides several high-level tools to analyse AST `Document` without reliance on schema. They are defined in `DocumentAnalyzer`
+(which you can also access via `query.analyzer`).
+
+Here is an example of how you can separate query operations:
+
+```scala
+val query =
+  gql"""
+    query One {
+      ...A
+    }
+
+    query Two {
+      foo
+      bar
+      ...B
+      ...C
+    }
+
+    fragment A on T {
+      field
+      ...C
+    }
+
+    fragment B on T {
+      fieldX
+    }
+
+    fragment C on T {
+      fieldC
+    }
+  """
+
+query.analyzer.separateOperations.values.foreach { document ⇒
+  println(document.renderPretty)
+}
+```
+
+`separateOperations` will create two `Document`s that look like this:
+
+```js
+query One {
+  ...A
+}
+
+fragment A on T {
+  field
+  ...C
+}
+
+fragment C on T {
+  fieldC
+}
+```
+
+and
+
+```js
+query Two {
+  foo
+  bar
+  ...B
+  ...C
+}
+
+fragment B on T {
+  fieldX
+}
+
+fragment C on T {
+  fieldC
+}
+```
+
+### Schema Based Document Analyzer
+
+While `DocumentAnalyzer` does not rely on a schema information to analyse the query `Document`, `SchemaBasedDocumentAnalyzer` uses schema
+provide much deeper query analysis. It can be used to discover things like deprecated field, introspection, variable usage.
+
+Here is an example of how you can find all deprecated field and enum value usages:
+
+```scala
+schema.analyzer(query).deprecatedUsages
+```
+
 ### Schema Comparison
 
 Schema comparator provides an easy way to compare schemas between each other. You can, of course, compare unrelated schemas and get all of the differences as a list.
