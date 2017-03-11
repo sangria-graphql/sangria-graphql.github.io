@@ -265,3 +265,19 @@ You can use following dependency in your SBT build:
 ```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-monix" % "{{site.version.sangria-monix}}"
 ```
+
+### macro-visit
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.macro-visit}}">macro-visit</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.macro-visit}}">{{site.version.macro-visit}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for Scala <a target="_blank" href="{{site.link.maven.macro-visit}}2.11%7C{{site.version.macro-visit}}%7Cjar">2.11</a>, <a target="_blank" href="{{site.link.maven.macro-visit}}2.12%7C{{site.version.macro-visit}}%7Cjar">2.12</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+```scala
+libraryDependencies += "{{site.groupId}}" %% "macro-visit" % "{{site.version.macro-visit}}"
+```
