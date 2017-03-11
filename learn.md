@@ -1621,6 +1621,24 @@ val DateTimeType = ScalarType[DateTime]("DateTime",
 Some marshalling formats natively support `java.util.Date`, so we check for marshaller capabilities here and either return a `Date` or
 a `String` in ISO format.
 
+### Scalar Type Alias
+
+Sometime you want to use a standard scalar type, but add a validation on top of it which may be also represented by different scala type.
+Example can be a `UserId` value class that represent a `String`-based user ID or `Int Refined Positive` from [refined scala library](https://github.com/fthomas/refined).
+
+This is exactly what scalar aliases allow you to do. Here is how you can define a scalar alias for mentioned scenarios:
+
+```scala
+implicit val UserIdType = ScalarAlias[UserId, String](
+  StringType, _.id, id ⇒ Right(UserId(id)))
+
+implicit val PositiveIntType = ScalarAlias[Int Refined Positive, Int](
+  IntType, _.value, i ⇒ refineV[Positive](i).left.map(RefineViolation))
+```
+
+You can use `UserIdType` and `PositiveIntType` in all places where you can use a scalar types. In introspection results they would be seen as
+just `String` and `Int`, but behind the scenes values would be validated and transformed in correspondent scala types.
+
 ## Deprecation Tracking
 
 GraphQL schema allows you to declare fields and enum values as deprecated. When you execute a query, you can provide your custom implementation of the
