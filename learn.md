@@ -726,6 +726,60 @@ Following execution schemes are available:
 * `Stream` - Returns a stream of results. Very useful for subscription queries, where the result is an `Observable` or `Source`
 * `StreamExtended` - Returns a stream of `ExecutionResult`s
 
+## Query And Schema Analysis
+
+### Schema Comparison
+
+Schema comparator provides an easy way to compare schemas between each other. You can, of course, compare unrelated schemas and get all of the differences as a list.
+Where it becomes really useful, is when you compare different versions of the same schema.
+
+In this example I compare a schema loaded from staging environment against the schema from a production environment:
+
+```scala
+val prodSchema = Schema.buildFromIntrospection(
+  loadSchema("http://prod.my-company.com/graphql"))
+
+val stagingSchema = Schema.buildFromIntrospection(
+  loadSchema("http://staging.my-company.com/graphql"))
+
+val changes: Vector[SchemaChange] = stagingSchema compare prodSchema
+```
+
+Given this list of changes, we can do a few interesting thing with it. For instance, we can stop the deployment
+to production if staging environment contains **breaking changes** (you can run this somewhere in your CI environment):
+
+```scala
+val breakingChanges = changes.filter(_.breakingChange)
+
+if (breakingChanges.nonEmpty) {
+  val rendered = breakingChanges
+    .map(change ⇒ s" * ${change.description}")
+    .mkString("\n", "\n", "")
+
+  throw new IllegalStateException(
+    s"Staging environment has breaking changes in GraphQL schema! $rendered")
+}
+```
+
+You can also create **release notes** for all of the changes:
+
+```scala
+val releaseNotes =
+  if (changes.nonEmpty) {
+    val rendered = changes
+      .map { change ⇒
+        val breaking =
+          if(change.breakingChange) " (breaking change)"
+          else ""
+
+        s" * ${change.description}$breaking"
+      }
+      .mkString("\n", "\n", "")
+
+    s"Release Notes: $rendered"
+  } else "No Changes"
+```
+
 ## Stream-based Subscriptions
 
 As described in [previous section](#prepared-queries), you can handle subscription queries with prepared queries. 
@@ -1101,7 +1155,7 @@ val categories = Fetcher.rel(
   (repo, ids) ⇒ repo.loadCategoriesByRelation(ids))
 ```
 
-In case of relation batch function `ids` would be of type `Map[Relation[Res, _], Seq[Id]]` which contains the list of IDs for every relation type.
+In case of relation batch function `ids` would be of type `RelationIds[Res]` which contains the list of IDs for every relation type.
 
 Now you should be able to use the category fetcher to create `Deferred` values like this:
  
@@ -1892,58 +1946,6 @@ object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeF
 ## Helpers
 
 There are quite a few helpers available which you may find useful in different situations.
-
-### Schema Comparator
-
-Schema comparator provides an easy way to compare schemas between each other. You can, of course, compare unrelated schemas and get all of the differences as a list.
-Where it becomes really useful, is when you compare different versions of the same schema.
- 
-In this example I compare a schema loaded from staging environment against the schema from a production environment:
-
-```scala
-val prodSchema = Schema.buildFromIntrospection(
-  loadSchema("http://prod.my-company.com/graphql"))
-
-val stagingSchema = Schema.buildFromIntrospection(
-  loadSchema("http://staging.my-company.com/graphql"))
-
-val changes: Vector[SchemaChange] = stagingSchema compare prodSchema
-```
-
-Given this list of changes, we can do a few interesting thing with it. For instance, we can stop the deployment 
-to production if staging environment contains **breaking changes** (you can run this somewhere in your CI environment):
-    
-```scala
-val breakingChanges = changes.filter(_.breakingChange)
-
-if (breakingChanges.nonEmpty) {
-  val rendered = breakingChanges
-    .map(change ⇒ s" * ${change.description}")
-    .mkString("\n", "\n", "")
-
-  throw new IllegalStateException(
-    s"Staging environment has breaking changes in GraphQL schema! $rendered")
-}
-```
-
-You can also create **release notes** for all of the changes:
-
-```scala
-val releaseNotes =
-  if (changes.nonEmpty) {
-    val rendered = changes
-      .map { change ⇒ 
-        val breaking = 
-          if(change.breakingChange) " (breaking change)"
-          else ""
-          
-        s" * ${change.description}$breaking"
-      }
-      .mkString("\n", "\n", "")
-
-    s"Release Notes: $rendered"
-  } else "No Changes"
-```
 
 ### Introspection Result Parsing
 
