@@ -252,7 +252,7 @@ val QueryType = ObjectType("Query", fields[ProductRepo, Unit](
 
 As you may noticed, we have defined `Query` type in terms of `ProductRepo`, but we have provided it as a first type argument this time around.
 We do not have a context value in this case because this type is an entry point for the whole query. Sangria allows you to provide user
-context object which is available to all GraphQL type fields withing the schema. The type of this object is provided via the first type argument. 
+context object which is available to all GraphQL type fields within the schema. The type of this object is provided via the first type argument. 
 In most cases this user context object provides access to a data storage (like database or external service), auth information and generally information that is common 
 and may be useful to all of the fields in your GraphQL schema.
 
