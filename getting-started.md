@@ -163,6 +163,8 @@ to derive GraphQL definitions based in Scala classes.
 Let's simplify the GraphQL object type definition for `Product` with `deriveObjectType` macro:
   
 ```scala
+import sangria.macros.derive._
+
 implicit val PictureType =
   deriveObjectType[Unit, Picture](
     ObjectTypeDescription("The product picture"),
