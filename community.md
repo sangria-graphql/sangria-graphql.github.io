@@ -39,6 +39,12 @@ It definitely would be very helpful.
 Not to mention the code itself. There is nothing more exciting than hacking some stuff together :)
 So please feel free to materialize your ideas in form of code and send pull requests!
 
+## Community Projects
+
+There are several community projects that extend Sangria, or, provide worked examples for various frameworks.
+
+* [finch-sangria](https://github.com/redbubble/finch-sangria)
+
 ### Contribute to the Website
 
 If you would like to contribute to this website, then you can find the repo on the [GitHub]({{site.link.website}}).
