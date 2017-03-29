@@ -9,6 +9,13 @@ title: Sangria Community
 There are many different places where you discuss sangria, share your experiences, or ask for help.
 Your feedback and participation are very welcome!
 
+### Projects
+
+There are several community projects that extend Sangria, or, provide worked examples for various frameworks.
+
+* [finch-sangria](https://github.com/redbubble/finch-sangria) - Simple wrappers around Sangria to support its use in [Finch](https://github.com/finagle/finch). Includes [Circe](https://github.com/circe/circe) JSON decoders that may be relevant to other frameworks.
+* [Redbubble GraphQL template](https://github.com/redbubble/rb-graphql-template) - A [Finch](https://github.com/finagle/finch)-based GraphQL stack.
+
 ### Issues, Bugs, Ideas
 
 If you've got some interesting ideas for improvements or discovered some nasty bugs then feel free to use
