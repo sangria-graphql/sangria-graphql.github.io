@@ -1831,7 +1831,7 @@ def parseDate(s: String) = Try(new DateTime(s, DateTimeZone.UTC)) match {
 val DateTimeType = ScalarType[DateTime]("DateTime",
   coerceOutput = (d, caps) ⇒
     if (caps.contains(DateSupport)) d.toDate
-    else ISODateTimeFormat.dateTime().print(date),
+    else ISODateTimeFormat.dateTime().print(d),
   coerceUserInput = {
     case s: String ⇒ parseDate(s)
     case _ ⇒ Left(DateCoercionViolation)
