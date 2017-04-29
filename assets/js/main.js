@@ -1,4 +1,4 @@
-// Please forgive me fo this terrible JS code...
+// Please forgive me for this terrible JS code...
 // I just was trying to do make it work as quickly as possible
 // in order to be able to concentrate more on the actual content
 $(function () {
@@ -43,30 +43,9 @@ $(function () {
     $(document).resize(simpleHeaderShow)
   }
 
-  var slagify = function (text) {
-    return text.toLowerCase().replace(/[^\w \-]+/g,'').replace(/ +/g,'-')
-  }
-
   $("h2, h3").each(function () {
-    var me = $(this)
-    var includeALink = me.parents('.main-content').size() === 0
-    var slug = slagify(me.text())
-    var html = null
-
-    if (includeALink)
-      html = me.data('orig-text', me.text()).append('<a id="' + slug + '" href="#" class="a-link"></a>').html()
-    else
-      html = me.data('orig-text', me.text()).attr('id', slug).html()
-
-    me.append($('<a class="link-link" href="#' + slug + '"><span class="glyphicon glyphicon-link"></span></a>').css('display', 'none'))
-
-    me.mouseenter(function () {
-      me.find('.link-link').stop().fadeIn(300)
-    })
-
-    me.mouseleave(function () {
-      me.find('.link-link').stop().fadeOut(300)
-    })
+    var slug = $(this).attr("id")
+    $(this).append($('<a class="link-link" href="#' + slug + '"><span class="glyphicon glyphicon-link"></span></a>'))
   })
 
   // Monkey patching! Yay! :(
@@ -118,14 +97,14 @@ $(function () {
 
     $(headers).each(function () {
       var topHeader = this.header
-      var topId = (topHeader.attr('id') ? topHeader : topHeader.find('.a-link')).attr('id')
-      var topListElem = $('<li><a href="#' + topId + '">' + topHeader.data("orig-text") + '</a></li>').appendTo(sidebar)
+      var topId = topHeader.attr('id')
+      var topListElem = $('<li><a href="#' + topId + '">' + topHeader.text() + '</a></li>').appendTo(sidebar)
 
       var children = $(this.children).map(function () {
         var subHeader = $(this)
-        var subId = (subHeader.attr('id') ? subHeader : subHeader.find('.a-link')).attr('id')
+        var subId = subHeader.attr('id')
 
-        return $('<li><a href="#' + subId + '">' + subHeader.data("orig-text") + '</a></li>')
+        return $('<li><a href="#' + subId + '">' + subHeader.text() + '</a></li>')
       })
 
       if (children.length > 0) {

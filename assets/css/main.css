@@ -213,14 +213,6 @@ a.link-link {
   color: #2c3e50;
 }
 
-.a-link {
-  position: relative;
-  top: -80px;
-  margin: 0;
-  padding: 0;
-  float: left;
-}
-
 a {
   color: #DC7676;
 }
@@ -229,8 +221,15 @@ a:hover, a:visited, a:active, a:focus {
   color: #db5e5e;
 }
 
-a.link-link:hover {
+a.link-link {
   color: #db5e5e;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+h2:hover a.link-link,
+h3:hover a.link-link {
+  opacity: 1;
 }
 
 h2 a.link-link span {
