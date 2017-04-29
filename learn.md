@@ -752,6 +752,60 @@ Executor.execute(schema, query, queryValidator = ...)
 For instance, it can be useful to disable validation for production setup, where you have validated all possible queries upfront and would
 like to save on CPU cycles during the execution.
 
+Query validation can also be used for IDL validation. Let's say we have following type definitions:
+
+```js
+type User @auth(token: "TEST") {
+  name: String
+  isAdmin: Boolean @permission(name: "ADMIN")
+}
+```
+
+We can validate it against a stub schema like this:
+
+```scala
+val validationSchema =
+  Schema.buildStubFromAst(
+    gql"""
+      directive @permission(name: String) on FIELD_DEFINITION
+      directive @auth(token: String!) on OBJECT
+    """)
+
+val errors: Vector[Violation] =
+  QueryValidator.default.validateQuery(validationSchema,
+    gql"""
+      type User @auth(token: "TEST") {
+        name: String
+        isAdmin: Boolean @permission(name: "ADMIN")
+      }
+    """)
+```
+
+If we make a mistake somewhere (misplace the directive or forget to provide a directive argument):
+
+```scala
+val errors: Vector[Violation] =
+  QueryValidator.default.validateQuery(validationSchema,
+    gql"""
+      type User @auth {
+        name: String @auth(token: "TEST")
+        isAdmin: Boolean
+      }
+    """)
+```
+
+we will get following validation errors:
+
+```js
+Directive 'auth' may not be used on field definition. (line 3, column 22):
+        name: String @auth(token: "TEST")
+                     ^
+
+Field 'auth' argument 'token' of type 'String!' is required but not provided. (line 2, column 17):
+      type User @auth {
+                ^
+```
+
 ### Schema Validation
 
 Just like query validation, schema validation consists of validation rules. You can pick and choose which rules you would like to use for a schema validation. You
