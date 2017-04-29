@@ -1,4 +1,4 @@
-// Please forgive me fo this terrible JS code...
+// Please forgive me for this terrible JS code...
 // I just was trying to do make it work as quickly as possible
 // in order to be able to concentrate more on the actual content
 $(function () {
@@ -49,14 +49,7 @@ $(function () {
 
   $("h2, h3").each(function () {
     var me = $(this)
-    var includeALink = me.parents('.main-content').size() === 0
     var slug = slagify(me.text())
-    var html = null
-
-    if (includeALink)
-      html = me.data('orig-text', me.text()).append('<a id="' + slug + '" href="#" class="a-link"></a>').html()
-    else
-      html = me.data('orig-text', me.text()).attr('id', slug).html()
 
     me.append($('<a class="link-link" href="#' + slug + '"><span class="glyphicon glyphicon-link"></span></a>').css('display', 'none'))
 
