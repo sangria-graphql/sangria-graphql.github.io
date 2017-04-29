@@ -43,15 +43,9 @@ $(function () {
     $(document).resize(simpleHeaderShow)
   }
 
-  var slagify = function (text) {
-    return text.toLowerCase().replace(/[^\w \-]+/g,'').replace(/ +/g,'-')
-  }
-
   $("h2, h3").each(function () {
-    var me = $(this)
-    var slug = slagify(me.text())
-
-    me.append($('<a class="link-link" href="#' + slug + '"><span class="glyphicon glyphicon-link"></span></a>'))
+    var slug = $(this).attr("id")
+    $(this).append($('<a class="link-link" href="#' + slug + '"><span class="glyphicon glyphicon-link"></span></a>'))
   })
 
   // Monkey patching! Yay! :(
