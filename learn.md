@@ -1757,8 +1757,46 @@ val result = Executor.execute(schema, query, middleware = new FieldMetrics :: Ni
 
 It will record the execution time of all fields in a query and then report it in some way.
 
+Middleware supports 2 types state that you can use withing a middleware instance:
+
+* `QueryVal` - an instance of this type is create at the beginning of the query execution and then propagated to all other middleware methods
+* `FieldVal` - an instance of this type may be returned from `beforeField` and will be given as a argument to `afterField` and `fieldError` for the same field.
+
+These two types of state provide a way to avoid shared mutable state in case some intermediate value need to be propagated between different
+methods of middleware.
+
 `afterField` also allows you to transform field values by returning `Some` with a transformed value. You can also throw an exception from `beforeField` or `afterField`
 in order to indicate a field error.
+
+In case several middleware objects are defined for the same execution, `beforeField` would be called in the order middleware is defined.
+`afterField`, on the other hand, would be call in reverse order. To demonstrate this, let's look at this middleware as an example:
+
+```scala
+case class Suffixer(suffix: String) extends Middleware[Any] with MiddlewareAfterField[Any] {
+ type QueryVal = Unit
+ type FieldVal = Unit
+
+ def beforeQuery(context: MiddlewareQueryContext[Any, _, _]) = ()
+ def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[Any, _, _]) = ()
+ def beforeField(cache: QueryVal, mctx: MiddlewareQueryContext[Any, _, _], ctx: Context[Any, _]) = continue
+
+ def afterField(cache: QueryVal, fromCache: FieldVal, value: Any, mctx: MiddlewareQueryContext[Any, _, _], ctx: Context[Any, _]) =
+   value match {
+     case s: String ⇒ Some(s + suffix)
+     case _ ⇒ None
+   }
+}
+```
+
+it just adds a suffix to a string. When some field in a schema returns value `"v"` and we execute query like this:
+
+```scala
+Executor.execute(schema, query, middleware = Suffixer(" s1") :: Suffixer(" s2") :: Nil)
+```
+
+Then the result would be `"v s2 s1"`. Here is diagram that shows how different middleware methods are called:
+
+![Middleware execution order]({{"/assets/img/middleware.svg" | prepend: site.baseurl}})
 
 In order to ensure generic classification of fields, every field contains a generic list or `FieldTag`s which provides a user-defined
 meta-information about this field (just to highlight a few examples: `Permission("ViewOrders")`, `Authorized`, `Measured`, `Cached`, etc.).
