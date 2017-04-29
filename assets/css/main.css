@@ -229,8 +229,15 @@ a:hover, a:visited, a:active, a:focus {
   color: #db5e5e;
 }
 
-a.link-link:hover {
+a.link-link {
   color: #db5e5e;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+h2:hover a.link-link,
+h3:hover a.link-link {
+  opacity: 1;
 }
 
 h2 a.link-link span {

@@ -51,15 +51,7 @@ $(function () {
     var me = $(this)
     var slug = slagify(me.text())
 
-    me.append($('<a class="link-link" href="#' + slug + '"><span class="glyphicon glyphicon-link"></span></a>').css('display', 'none'))
-
-    me.mouseenter(function () {
-      me.find('.link-link').stop().fadeIn(300)
-    })
-
-    me.mouseleave(function () {
-      me.find('.link-link').stop().fadeOut(300)
-    })
+    me.append($('<a class="link-link" href="#' + slug + '"><span class="glyphicon glyphicon-link"></span></a>'))
   })
 
   // Monkey patching! Yay! :(
