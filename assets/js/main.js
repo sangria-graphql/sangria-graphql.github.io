@@ -97,14 +97,14 @@ $(function () {
 
     $(headers).each(function () {
       var topHeader = this.header
-      var topId = (topHeader.attr('id') ? topHeader : topHeader.find('.a-link')).attr('id')
-      var topListElem = $('<li><a href="#' + topId + '">' + topHeader.data("orig-text") + '</a></li>').appendTo(sidebar)
+      var topId = topHeader.attr('id')
+      var topListElem = $('<li><a href="#' + topId + '">' + topHeader.text() + '</a></li>').appendTo(sidebar)
 
       var children = $(this.children).map(function () {
         var subHeader = $(this)
-        var subId = (subHeader.attr('id') ? subHeader : subHeader.find('.a-link')).attr('id')
+        var subId = subHeader.attr('id')
 
-        return $('<li><a href="#' + subId + '">' + subHeader.data("orig-text") + '</a></li>')
+        return $('<li><a href="#' + subId + '">' + subHeader.text() + '</a></li>')
       })
 
       if (children.length > 0) {
