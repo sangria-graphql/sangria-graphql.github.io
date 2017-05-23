@@ -18,7 +18,7 @@ There are several community projects that extend Sangria, or, provide worked exa
 
 ### Videos
 
-To get started with Sangria, here is a great 15 introduction talk by Jérémie Astori.
+To get started with Sangria, here is a great 15-minute introduction talk by Jérémie Astori.
 
 {% include video.html id="6ttypoLyRaU" title="GraphQL: From Zero to Scala" name="Jérémie Astori" %}
 
