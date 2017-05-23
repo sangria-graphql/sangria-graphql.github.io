@@ -36,6 +36,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.s
 
 Sangria-relay Playground ([{{site.link.try-relay}}]({{site.link.try-relay}})) is a nice place to start if you would like to see it in action.
 
+I would also recommend you to check out ["Videos" section of the community page]({{"/community/#videos" | prepend: site.baseurl}}).
+It has a lot of nice introduction videos.
+
 ## Query Parser and Renderer
 
 Example usage:

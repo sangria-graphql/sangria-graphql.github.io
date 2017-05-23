@@ -16,6 +16,24 @@ There are several community projects that extend Sangria, or, provide worked exa
 * [finch-sangria](https://github.com/redbubble/finch-sangria) - Simple wrappers around Sangria to support its use in [Finch](https://github.com/finagle/finch). Includes [Circe](https://github.com/circe/circe) JSON decoders that may be relevant to other frameworks.
 * [Redbubble GraphQL template](https://github.com/redbubble/rb-graphql-template) - A [Finch](https://github.com/finagle/finch)-based GraphQL stack.
 
+### Videos
+
+To get started with Sangria, here is a great 15 introduction talk by Jérémie Astori.
+
+{% include video.html id="6ttypoLyRaU" title="GraphQL: From Zero to Scala" name="Jérémie Astori" %}
+
+Here are some videos on how Coursera uses GraphQL.
+
+{% include video.html id="JC-UJwBKc2Y" title="GraphQL and Coursera & their API evolution" name="Brennan Saeta" %}
+
+{% include video.html id="r-SmpTaqpDM?start=574&end=2217" title="Declarative GraphQL: Adding GraphQL to our REST APIs<br>without writing a single custom resolver" name="Bryan Kane" %}
+
+And even more great videos for you to watch! (if you are aware of other videos, we would really appreciate [a pull request](https://github.com/sangria-graphql/sangria-website/edit/master/community.md))
+
+{% include video.html id="wa7uHDb51fI" title="GraphQL for Fun & Profit" name="Tom Adams" %}
+
+{% include video.html id="3l--XM6j-1w" title="GraphQL: IoC makes its way to HTTP … and it’s great!" name="Dustin Whitney" %}
+
 ### Issues, Bugs, Ideas
 
 If you've got some interesting ideas for improvements or discovered some nasty bugs then feel free to use

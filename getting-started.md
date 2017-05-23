@@ -34,6 +34,9 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.s
 
 Sangria-relay Playground ([{{site.link.try-relay}}]({{site.link.try-relay}})) is a nice place to start if you would like to see it in action.
 
+Before you start, you might want to check out ["Videos" section of the community page]({{"/community/#videos" | prepend: site.baseurl}}).
+It has a lot of nice introduction videos.
+
 ## GraphQL Introduction
 
 GraphQL is a data query language. It was developed by Facebook and in July 2015 a first draft of the specification was released publicly.

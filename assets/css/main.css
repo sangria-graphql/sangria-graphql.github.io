@@ -554,3 +554,27 @@ table th, table td {
   text-align: center;
   color: #DC7676;
 }
+
+.video {
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.video-description {
+  color: #a09695;
+  font-size: 0.8em;
+  line-height: 25px;
+}
+
+.video-by {
+  font-style: italic;
+}
+
+.video-name {
+  font-weight: bold;
+}
+
+.video-by-name {
+  display: block;
+}
