@@ -156,14 +156,14 @@ This is the most common way to define the GraphQL schema with Sangria. An `Objec
 and a list of fields that describes the `Picture` type. We also have defined this GraphQL type in terms of our, previously defined, `Picture`
 case class. In order to identify what every GraphQL field should return during the query execution, we have provided a `resolve` function for
 every field. `resolve` function plays quite an important role since this is the place where you can define your own business logic. 
-In this simple example we just use the context `value` (which would be of type `Product`) and extract specific property value from it. 
+In this simple example we just use the context `value` (which would be of type `Picture`) and extract specific property value from it. 
 But we can also perform more complex logic in this function, even access the data storage as we will see in the later example.
    
 You probably noticed that it requires a lot of extra code to define a GraphQL type, especially considering that we already have the `Picture` case class
 which already contains a lot of information about our domain object. For situations like this, Sangria provides a set of macros that help you 
 to derive GraphQL definitions based in Scala classes. 
 
-Let's simplify the GraphQL object type definition for `Product` with `deriveObjectType` macro:
+Let's simplify the GraphQL object type definition for `Picture` with `deriveObjectType` macro:
   
 ```scala
 import sangria.macros.derive._
