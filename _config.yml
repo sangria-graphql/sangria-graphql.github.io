@@ -23,6 +23,7 @@ version:
   sangria-akka-streams: 1.0.0
   sangria-rxscala: 1.0.0
   sangria-monix: 1.0.0
+  sangria-slowlog: 0.1.0
   macro-visit: 0.1.1
 
 groupId: org.sangria-graphql
@@ -52,6 +53,7 @@ link:
     sangria-akka-streams: https://github.com/sangria-graphql/sangria-akka-streams
     sangria-rxscala: https://github.com/sangria-graphql/sangria-rxscala
     sangria-monix: https://github.com/sangria-graphql/sangria-monix
+    sangria-slowlog: https://github.com/sangria-graphql/sangria-slowlog
     macro-visit: https://github.com/sangria-graphql/macro-visit
   maven:
     sangria: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria_
@@ -70,6 +72,7 @@ link:
     sangria-akka-streams: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-akka-streams_
     sangria-rxscala: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-rxscala_
     sangria-monix: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-monix_
+    sangria-slowlog: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Csangria-slowlog_
     macro-visit: http://search.maven.org/#artifactdetails%7Corg.sangria-graphql%7Cmacro-visit_
   issues:
     sangria: https://github.com/sangria-graphql/sangria/issues
@@ -88,6 +91,7 @@ link:
     sangria-akka-streams: https://github.com/sangria-graphql/sangria-akka-streams/issues
     sangria-rxscala: https://github.com/sangria-graphql/sangria-rxscala/issues
     sangria-monix: https://github.com/sangria-graphql/sangria-monix/issues
+    sangria-slowlog: https://github.com/sangria-graphql/sangria-slowlog/issues
     macro-visit: https://github.com/sangria-graphql/macro-visit/issues
   releases:
     sangria: https://github.com/sangria-graphql/sangria/releases
@@ -105,7 +109,7 @@ link:
     sangria-streaming-api: https://github.com/sangria-graphql/sangria-streaming-api/releases
     sangria-akka-streams: https://github.com/sangria-graphql/sangria-akka-streams/releases
     sangria-rxscala: https://github.com/sangria-graphql/sangria-rxscala/releases
-    sangria-monix: https://github.com/sangria-graphql/sangria-monix/releases
+    sangria-slowlog: https://github.com/sangria-graphql/sangria-slowlog/releases
     macro-visit: https://github.com/sangria-graphql/macro-visit/releases
   website: https://github.com/sangria-graphql/sangria-website
   jekyll: http://jekyllrb.com/

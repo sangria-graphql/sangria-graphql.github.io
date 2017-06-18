@@ -1859,6 +1859,173 @@ In order to ensure generic classification of fields, every field contains a gene
 meta-information about this field (just to highlight a few examples: `Permission("ViewOrders")`, `Authorized`, `Measured`, `Cached`, etc.).
 You can find another example of `FieldTag` and `Middleware` usage in [Authentication and Authorisation](#authentication-and-authorisation) section.
 
+### Middleware Extensions
+
+GraphQL spec allows [free-form extensions](https://facebook.github.io/graphql/#sec-Response-Format) to be added in the GraphQL response.
+These are quite useful for things like debug and profiling information, for example. Sangria provides and special middleware trait
+`MiddlewareExtension` which provides an easy way for `Middleware` to add extensions in the GraphQL response.
+
+Here is am example of very simple middleware that adds a formatted query in the response:
+
+```scala
+object Formatted extends Middleware[Any] with MiddlewareExtension[Any] {
+  type QueryVal = Unit
+  def beforeQuery(context: MiddlewareQueryContext[Any, _, _]) = ()
+  def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[Any, _, _]) = ()
+
+  def afterQueryExtensions(
+    queryVal: QueryVal,
+    context: MiddlewareQueryContext[Any, _, _]
+  ): Vector[Extension[_]] = {
+    import sangria.marshalling.queryAst._
+
+    Vector(Extension(
+      ObjectValue(Vector(
+        ObjectField("formattedQuery",
+          StringValue(context.queryAst.renderPretty)))): Value))
+  }
+}
+```
+
+Now you can use it by just adding it in the list of middleware during the execution:
+
+```scala
+Executor.execute(schema, query, middleware = Formatted :: Nil)
+```
+ 
+Here is an example of execution result JSON:
+
+```json
+{
+   "data": {
+      "human": {
+         "name": "Luke Skywalker"
+      }
+   },
+   "extensions": {
+      "formattedQuery": "{\n  human(id: \"1000\") {\n    name\n  }\n}"
+   }
+}
+```
+
+### Profiling GraphQL Query Execution
+
+With middleware, Sangria provides a very convenient way to instrument GraphQL query execution and introduce profiling logic. Out-of-the-box
+Sangria provides a simple mechanism to log slow queries and show profiling information. To use it, your need to add `sangria-slowlog` dependency:
+
+```scala
+libraryDependencies += "{{site.groupId}}" %% "sangria-slowlog" % "{{site.version.sangria-slowlog}}"
+```
+
+Library provides a middleware that logs instrumented query information if execution exceeds specific threshold. An example:
+
+```scala
+import sangria.slowlog.SlowLog
+import scala.concurrent.duration._
+
+Executor.execute(schema, query,
+  middleware = SlowLog(logger, threshold = 10 seconds) :: Nil)
+```
+
+If query execution takes more than 10 seconds to execute, then you will see similar info in the logs:
+
+```graphql
+# [Execution Metrics] duration: 12362ms, validation: 0ms, reducers: 0ms
+#
+# $id = "1000"
+query Test($id: String!) {
+  # [Query] count: 1, time: 2ms
+  #
+  # $id = "1000"
+  human(id: $id) {
+    # [Human] count: 1, time: 0ms
+    name
+
+    # [Human] count: 1, time: 11916ms
+    appearsIn
+
+    # [Human] count: 1, time: 358ms
+    friends {
+      # [Droid] count: 2, min: 0ms, max: 0ms, mean: 0ms, p75: 0ms, p95: 0ms, p99: 0ms
+      # [Human] count: 2, min: 0ms, max: 0ms, mean: 0ms, p75: 0ms, p95: 0ms, p99: 0ms
+      name
+    }
+  }
+}
+```
+
+`sangria-slowlog` has full support for GraphQL fragments and polymorphic types, so you will always see metrics for concrete types.
+
+In addition to logging, `sangria-slowlog` also supports graphql extensions. Extensions will add a profiling info in the response under
+`extensions` top-level field. In the most basic form, you can use it like this (this approach also disables the logging):
+
+```scala
+
+Executor.execute(schema, query, middleware = SlowLog.extension :: Nil)
+```
+
+After middleware is added, you will see following JSON in the response:
+
+```json
+{
+  "data": {
+    "human": {
+      "name": "Luke Skywalker",
+      "appearsIn": ["NEWHOPE", "EMPIRE", "JEDI"],
+      "friends": [
+        {"name": "Han Solo"},
+        {"name": "Leia Organa"},
+        {"name": "C-3PO"},
+        {"name": "R2-D2"}
+      ]
+    }
+  },
+  "extensions": {
+    "metrics": {
+      "executionMs": 362,
+      "validationMs": 0,
+      "reducersMs": 0,
+      "query": "# [Execution Metrics] duration: 362ms, validation: 0ms, reducers: 0ms\n#\n# $id = \"1000\"\nquery Test($id: String!) {\n  # [Query] count: 1, time: 2ms\n  #\n  # $id = \"1000\"\n  human(id: $id) {\n    # [Human] count: 1, time: 0ms\n    name\n\n    # [Human] count: 1, time: 216ms\n    appearsIn\n\n    # [Human] count: 1, time: 358ms\n    friends {\n      # [Droid] count: 2, min: 0ms, max: 0ms, mean: 0ms, p75: 0ms, p95: 0ms, p99: 0ms\n      # [Human] count: 2, min: 0ms, max: 0ms, mean: 0ms, p75: 0ms, p95: 0ms, p99: 0ms\n      name\n    }\n  }\n}",
+      "types": {
+        "Human": {
+          "friends": {
+            "count": 1, "minMs": 358, "maxMs": 358, "meanMs": 358,
+            "p75Ms": 358, "p95Ms": 358, "p99Ms": 358
+          },
+          "appearsIn": {
+            "count": 1, "minMs": 216, "maxMs": 216, "meanMs": 216,
+            "p75Ms": 216, "p95Ms": 216, "p99Ms": 216
+          },
+          "name": {
+            "count": 3, "minMs": 0, "maxMs": 0, "meanMs": 0,
+            "p75Ms": 0, "p95Ms": 0, "p99Ms": 0
+          }
+        },
+        "Query": {
+          "human": {
+            "count": 1, "minMs": 2, "maxMs": 2, "meanMs": 2,
+            "p75Ms": 2, "p95Ms": 2, "p99Ms": 2
+          }
+        },
+        "Droid": {
+          "name": {
+            "count": 2, "minMs": 0, "maxMs": 0, "meanMs": 0,
+            "p75Ms": 0, "p95Ms": 0, "p99Ms": 0
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+All `SlowLog` methods accept `addExtentions` argument which allows you to include these extensions along the way.
+
+With a small tweaking, you can also include "Profile" button in GraphiQL. On the server you just need to conditionally include
+`SlowLog.extension` middleware to make it work. Here is an example of how this integration might look like:
+
+{% include video-simple.html id="OMa3SXC2mjA" title="Example of interactive GraphQL profiling" %}
+
 ## Query Reducers
 
 Sometimes it can be helpful to perform some analysis on a query before executing it. An example is complexity analysis: it aggregates the complexity

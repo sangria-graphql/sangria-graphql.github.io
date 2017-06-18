@@ -266,6 +266,22 @@ You can use following dependency in your SBT build:
 libraryDependencies += "{{site.groupId}}" %% "sangria-monix" % "{{site.version.sangria-monix}}"
 ```
 
+### sangria-slowlog
+
+<dl class="dl-horizontal">
+  <dt>GitHub</dt><dd><a target="_blank" href="{{site.link.repo.sangria-slowlog}}">sangria-slowlog</a></dd>
+  <dt>Latest version</dt><dd><a target="_blank" href="{{site.link.releases.sangria-slowlog}}">{{site.version.sangria-slowlog}}</a></dd>
+  <dt>Maven central</dt><dd>
+    for Scala <a target="_blank" href="{{site.link.maven.sangria-slowlog}}2.11%7C{{site.version.sangria-slowlog}}%7Cjar">2.11</a>, <a target="_blank" href="{{site.link.maven.sangria-slowlog}}2.12%7C{{site.version.sangria-slowlog}}%7Cjar">2.12</a>
+  </dd>
+</dl>
+
+You can use following dependency in your SBT build:
+
+```scala
+libraryDependencies += "{{site.groupId}}" %% "sangria-slowlog" % "{{site.version.sangria-slowlog}}"
+```
+
 ### macro-visit
 
 <dl class="dl-horizontal">
