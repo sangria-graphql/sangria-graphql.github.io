@@ -437,7 +437,7 @@ You can find the full example on the GitHub: [{{site.link.akka-http-example.gith
 
 ## Play GraphQL Endpoint
 
-The play implementation is very similar to akka-http. First we will se different JSON implementation:
+The play implementation is very similar to akka-http. First we will use different JSON implementation:
 
 ```scala
 "{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"
