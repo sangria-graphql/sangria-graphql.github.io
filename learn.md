@@ -177,7 +177,7 @@ val Human =
         resolve = _.value.name),
       Field("friends", OptionType(ListType(OptionType(Character))),
         Some("The friends of the human, or an empty list if they have none."),
-        resolve = (ctx) => DeferFriends(ctx.value.friends)),
+        resolve = ctx => DeferFriends(ctx.value.friends)),
       Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
         Some("Which movies they appear in."),
         resolve = _.value.appearsIn map (e => Some(e))),
@@ -218,7 +218,7 @@ val Query = ObjectType[CharacterRepo, Unit](
   "Query", fields[CharacterRepo, Unit](
     Field("hero", Character,
       arguments = EpisodeArg :: Nil,
-      resolve = (ctx) => ctx.ctx.getHero(ctx.argOpt(EpisodeArg))),
+      resolve = ctx => ctx.ctx.getHero(ctx.argOpt(EpisodeArg))),
     Field("human", OptionType(Human),
       arguments = ID :: Nil,
       resolve = ctx => ctx.ctx.getHuman(ctx arg ID)),
@@ -280,7 +280,7 @@ val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
   "HeroOnlyQuery", fields[CharacterRepo, Unit](
     Field("hero", TestSchema.Character,
       arguments = TestSchema.EpisodeArg :: Nil,
-      resolve = (ctx) => ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
+      resolve = ctx => ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
   ))
 
 val heroOnlySchema = Schema(HeroOnlyQuery,
