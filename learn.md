@@ -259,7 +259,7 @@ The `ProjectionExclude` field tag, on the other hand, allows you to exclude a fi
 
 ### Input and Context Objects
 
-Many schema elements, like `ObjectType`, `Field` or `Schema` itself, takes two type parameters: `Ctx` and `Val`:
+Many schema elements, like `ObjectType`, `Field` or `Schema` itself, take two type parameters: `Ctx` and `Val`:
 
 * `Val` - represent values that are returned by the `resolve` function and given to the `resolve` function as a part of the `Context`. In the schema example,
   `Val` can be a `Human`, `Droid`, `String`, etc.
