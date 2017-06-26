@@ -738,8 +738,8 @@ executing it, etc. This section describes some of the tools that will help you w
 ### Query Validation
 
 Query validation consists of validation rules. You can pick and choose which rules you would like to use for a query validation. You
-can even create your own validation rules and validate query against them. The list of standard validation rules in available in `QueryValidator.allRules`.
-In order to validate query against the list of rules you need to use `RuleBasedQueryValidator`. The default query validator which uses all standard rules
+can even create your own validation rules and validate queries against them. The list of standard validation rules in available in `QueryValidator.allRules`.
+In order to validate queries against the list of rules you need to use `RuleBasedQueryValidator`. The default query validator which uses all standard rules
 is available under `QueryValidator.default`. Here is an example of how you can use it:
 
 ```scala
