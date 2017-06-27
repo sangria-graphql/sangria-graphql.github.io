@@ -435,7 +435,7 @@ implicit val UserType = deriveObjectType[MyCtx, User]()
 val MutationType = deriveContextObjectType[MyCtx, Mutation, Unit](_.mutation)
 ```
 
-Resulting mutation type would be an equivalent to this one:
+Resulting mutation type would be equivalent to this one:
 
 ```scala
 val FirstNameArg = Argument("firstName", StringType)
