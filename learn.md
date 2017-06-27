@@ -367,7 +367,7 @@ For this, sangria provides a set of macros that are able to derive GraphQL types
 * `deriveInputObjectType[T]` - constructs an `InputObjectType[T]` with fields found in `T` case class (only supports case class accessors)
 * `deriveEnumType[T]` - constructs an `EnumType[T]` with values found in `T` enumeration. It supports Scala `Enumeration` as well as sealed hierarchies of case objects.
 
-You need following import to use them:
+You need the following import to use them:
 
 ```scala
 import sangria.macros.derive._
