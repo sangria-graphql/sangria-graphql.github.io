@@ -317,7 +317,7 @@ You can render a schema or an introspection result in human-readable form (IDL s
 SchemaRenderer.renderSchema(SchemaDefinition.StarWarsSchema)
 ```
 
-For a StarWars schema it will produce following results:
+For a StarWars schema it will produce the following results:
 
 ```
 interface Character {
