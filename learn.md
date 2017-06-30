@@ -732,7 +732,7 @@ Following execution schemes are available:
 ## Query And Schema Analysis
 
 Sangria provides a lot of generic tools to work with a GraphQL query and schema. Aside from the actual query execution, you may need to
-do different things like analysing query for breaking changes, introspection usage, deprecated field usage, validate query/schema without
+do different things like analyze a query for breaking changes, introspection usage, deprecated field usage, validate query/schema without
 executing it, etc. This section describes some of the tools that will help you with these tasks.
 
 ### Query Validation
