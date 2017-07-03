@@ -317,7 +317,7 @@ You can render a schema or an introspection result in human-readable form (IDL s
 SchemaRenderer.renderSchema(SchemaDefinition.StarWarsSchema)
 ```
 
-For a StarWars schema it will produce following results:
+For a StarWars schema it will produce the following results:
 
 ```
 interface Character {
@@ -623,7 +623,7 @@ val clientSchema: Schema[Any, Any] =
   Schema.buildFromIntrospection(introspectionResults)
 ```
 
-It takes a results of a full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder` implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
+It takes the result of a full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder` implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
 
 ### Based on IDL definitions
 
@@ -732,13 +732,13 @@ Following execution schemes are available:
 ## Query And Schema Analysis
 
 Sangria provides a lot of generic tools to work with a GraphQL query and schema. Aside from the actual query execution, you may need to
-do different things like analysing query for breaking changes, introspection usage, deprecated field usage, validate query/schema without
+do different things like analyze a query for breaking changes, introspection usage, deprecated field usage, validate query/schema without
 executing it, etc. This section describes some of the tools that will help you with these tasks.
 
 ### Query Validation
 
 Query validation consists of validation rules. You can pick and choose which rules you would like to use for a query validation. You
-can even create your own validation rules and validate queries against them. The list of standard validation rules in available in `QueryValidator.allRules`.
+can even create your own validation rules and validate queries against them. The list of standard validation rules is available in `QueryValidator.allRules`.
 In order to validate queries against the list of rules you need to use `RuleBasedQueryValidator`. The default query validator which uses all standard rules
 is available under `QueryValidator.default`. Here is an example of how you can use it:
 
@@ -812,7 +812,7 @@ Field 'auth' argument 'token' of type 'String!' is required but not provided. (l
 ### Schema Validation
 
 Just like query validation, schema validation consists of validation rules. You can pick and choose which rules you would like to use for a schema validation. You
-can even create your own validation rules and validate schema against them. The list of standard validation rules in available in `SchemaValidationRule.default`.
+can even create your own validation rules and validate schema against them. The list of standard validation rules is available in `SchemaValidationRule.default`.
 
 You can also customise the list of validation rules when you are creating a schema by providing a custom list of rules like this:
 
