@@ -10,7 +10,7 @@ version:
   sangria: 1.2.2
   sangria-relay: 1.2.2
   sangria-spray-json: 1.0.0
-  sangria-play-json: 1.0.2
+  sangria-play-json: 1.0.3
   sangria-json4s-native: 1.0.0
   sangria-json4s-jackson: 1.0.0
   sangria-circe: 1.1.0
