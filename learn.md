@@ -22,7 +22,7 @@ You can find an example application that uses akka-http with _sangria_ here:
 
 It is also available as an [Activator template]({{site.link.akka-http-example.activator}}).
 
-I would also recommend you to check out [{{site.link.try}}]({{site.link.try}}).
+I would also recommend that you check out [{{site.link.try}}]({{site.link.try}}).
 It is an example of a GraphQL server written with Play framework and Sangria. It also serves as a playground,
 where you can interactively execute GraphQL queries and play with some examples.
 
@@ -36,7 +36,7 @@ libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.s
 
 Sangria-relay Playground ([{{site.link.try-relay}}]({{site.link.try-relay}})) is a nice place to start if you would like to see it in action.
 
-I would also recommend you to check out ["Videos" section of the community page]({{"/community/#videos" | prepend: site.baseurl}}).
+I would also recommend that you check out ["Videos" section of the community page]({{"/community/#videos" | prepend: site.baseurl}}).
 It has a lot of nice introduction videos.
 
 ## Query Parser and Renderer
