@@ -1313,7 +1313,7 @@ First of all you need to define a Fetcher:
 val products =
   Fetcher((ctx: MyCtx, ids: Seq[Int]) ⇒ 
     ctx.loadProductsById(ids))
-    
+
 val categories =
   Fetcher((ctx: MyCtx, ids: Seq[Int]) ⇒ 
     ctx.loadCategoriesById(ids))
@@ -1342,6 +1342,17 @@ Field("productsWithinCategory", ListType(ProductType),
 ```
 
 The deferred resolution mechanism will take care of the rest and will fetch products and categories in the most efficient way.
+
+#### Transforming Fetched Entities with `DeferredValue`
+
+Fetched entities can be further transformed as part of the deferred resolution
+mechanism by wrapping the deferred value in `DeferredValue` and using its `map`
+method.
+
+```scala
+Field("categoryName", OptionType(StringType),
+  resolve = c ⇒ DeferredValue(categories.deferOpt(c.value.categoryId)).map(_.name))
+```
 
 #### HasId Type Class
 
