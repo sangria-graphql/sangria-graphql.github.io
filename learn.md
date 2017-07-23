@@ -2277,7 +2277,7 @@ mutation LoginAndMutate {
 }
 ```
 
-Here we login and adding colors in the same GraphQL query. It will produce a result like this one:
+Here we login and add colors in the same GraphQL query. It will produce a result like this one:
 
 ```json
 {
