@@ -449,7 +449,7 @@ Now you need to define a new route in your `/conf/routes`:
 POST  /graphql  controllers.Application.graphql
 ```
 
-In `Application` controller we need to define an action which is very similar to akk-http route and it will do following things:
+In `Application` controller we need to define an action which is very similar to akka-http route and it will do following things:
    
 * Extract `query`, `operationName` and `variables` from request JSON body
 * Parse the `query`
