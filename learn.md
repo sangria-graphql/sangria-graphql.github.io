@@ -882,6 +882,76 @@ Field 'auth' argument 'token' of type 'String!' is required but not provided. (l
                 ^
 ```
 
+### Input Document Validation
+
+`QueryValidator` also able to validate `InputDocument`. Here is a small example:
+
+```scala
+val schema = Schema.buildStubFromAst(
+  gql"""
+    enum Color {
+      RED
+      GREEN
+      BLUE
+    }
+
+    input Foo {
+      baz: Color!
+    }
+
+    input Config {
+      foo: String
+      bar: Int
+      list: [Foo]
+    }
+  """)
+
+val inp =
+  gqlInpDoc"""
+    {
+      foo: "bar"
+      bar: "foo"
+      list: [
+        {baz: RED}
+        {baz: FOO_BAR}
+        {test: 1}
+        {}
+      ]
+    }
+
+    {
+      doo: "hello"
+    }
+  """
+
+val errors = QueryValidator.default.validateInputDocument(schema, inp, "Config")
+```
+
+In contrast to standard validation, you also need to provide an input type against which you would like to validate the input
+document. Validation will result in following errors:
+
+```js
+At path 'bar' Int value expected (line 4, column 13):
+            bar: "foo"
+            ^
+
+At path 'list[1].baz' Enum value 'FOO_BAR' is undefined in enum type 'Color'. Known values are: RED, GREEN, BLUE. (line 5, column 13):
+            list: [
+            ^
+ (line 5, column 19):
+            list: [
+                  ^
+ (line 7, column 16):
+              {baz: FOO_BAR}
+               ^
+
+At path 'list[2].test' Field 'test' is not defined in the input type 'Foo'. (line 5, column 13):
+            list: [
+            ^
+
+...
+```
+
 ### Schema Validation
 
 Just like query validation, schema validation consists of validation rules. You can pick and choose which rules you would like to use for a schema validation. You
@@ -1811,6 +1881,50 @@ It will produce the following output:
 Proper `InputUnmarshaller` and `ResultMarshaller` are available for it, so you can use `ast.Value` as a variable or as a result
 of GraphQL query execution.
 
+In addition to parsing, you can also deserialize an `InputDocument` based on the `FromInput` type class. Here is an example:
+
+```scala
+case class Comment(author: String, text: Option[String])
+case class Article(title: String, text: Option[String], tags: Option[Vector[String]], comments: Vector[Option[Comment]])
+
+val ArticleType: InputObjectType[Article] = ???
+
+val document = QueryParser.parseInputDocumentWithVariables(
+  """
+    {
+      title: "foo",
+      tags: null,
+      comments: []
+    }
+
+    {
+      title: "Article 2",
+      text: "contents 2",
+      tags: ["spring", "guitars"],
+      comments: [{
+        author: "Me"
+        text: $comm
+      }]
+    }
+  """)
+
+val vars = scalaInput(Map(
+  "comm" → "from variable"
+))
+
+val articles: Vector[Article] = document.to(ArticleType, vars)
+```
+
+as a result of this deserialization, you will get following list of `articles`:
+
+```scala
+Vector(
+  Article("foo", Some("Hello World!"), None, Vector.empty),
+  Article("Article 2", Some("contents 2"),
+    Some(Vector("spring", "guitars")),
+    Vector(Some(Comment("Me", Some("from variable"))))))
+```
+
 ### Converting Between Formats
 
 As a natural extension of `ResultMarshaller` and `InputUnmarshaller` abstractions, sangria allows you to convert between different formats at will.
@@ -2066,7 +2180,6 @@ In addition to logging, `sangria-slowlog` also supports graphql extensions. Exte
 `extensions` top-level field. In the most basic form, you can use it like this (this approach also disables the logging):
 
 ```scala
-
 Executor.execute(schema, query, middleware = SlowLog.extension :: Nil)
 ```
 

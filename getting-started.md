@@ -372,7 +372,9 @@ object Server extends App {
 }
 ``` 
 
-Nothing special here. I also added a static endpoint that serves a single `graphiql.html` page which you can find [on GitHub](https://github.com/graphql/graphiql/blob/master/example/index.html).
+Nothing special here. I also added a static endpoint that serves a single `graphiql.html` page which you can
+find [on GitHub](https://github.com/graphql/graphiql/blob/master/example/index.html) (or use already
+prepared [`graphiql.html` from akka-http example](https://github.com/sangria-graphql/sangria-akka-http-example/blob/master/src/main/resources/graphiql.html)).
 It is a great tool that allows you edit and execute GraphQL queries directly in your browser.
 
 Now that we have a basic setup, let's define `graphQLEndpoint` method:
