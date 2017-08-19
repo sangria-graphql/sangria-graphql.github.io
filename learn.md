@@ -726,8 +726,81 @@ Following execution schemes are available:
 
 * `Default` - The default one. Returns a `Future` of marshaled result 
 * `Extended` - Returns a `Future` containing `ExecutionResult`. 
-* `Stream` - Returns a stream of results. Very useful for subscription queries, where the result is an `Observable` or `Source`
+* `Stream` - Returns a stream of results. Very useful for subscription and batch queries, where the result is an `Observable` or a `Source`
 * `StreamExtended` - Returns a stream of `ExecutionResult`s
+
+### Batch Executor
+
+{% include ext.html type="info" title="Experimental" %}
+Please use this feature with caution! It might be removed in future releases or have big semantic changes. In particular in the way how variables are inferred and merged.
+{% include cend.html %}
+
+Batch executor allow you to execute several inter-dependent queries and get an execution result as a stream.
+Dependencies are expressed via variables and `@export` directive. It provides following features:
+
+* Allows specifying multiple `operationNames` when executing a GraphQL query document.
+  All operations would be executed in order inferred from the dependencies between queries.
+* Support for `@export(as: "foo")` directive. This directive allows you to save the results of
+  the query execution and then use it as a variable in a different query within the same document.
+  This provides a way to define data dependencies between queries.
+* When used with `@export` directive, the variables would be automatically inferred by the execution
+  engine, so you don't need to declare them explicitly
+* You still can declare variables explicitly and completely disable variable inference with `inferVariableDefinitions` flag
+
+Batch executor implementation is inspired by this talk:
+
+{% include video.html id="ViXL0YQnioU?start=626&end=769" title="GraphQL Future at react-europe 2016" name="Laney Kuenzel & Lee Byron " %}
+
+You can use any [execution scheme](#alternative-execution-scheme) with batch executor, but `Stream` and `StreamExtended` are recommended
+since they will return execution results for all of the queries as a stream.
+
+In the example below we are using monix for streaming and spray-json for data serialization. Also notice that we need to explicitly
+add `BatchExecutor.ExportDirective` directive and use `BatchExecutor.executeBatch` instead of standard executor:
+
+```scala
+import monix.execution.Scheduler.Implicits.global
+
+import sangria.execution.ExecutionScheme.Stream
+import sangria.marshalling.sprayJson._
+import sangria.streaming.monix._
+
+val schema = Schema(..., directives = BuiltinDirectives :+ BatchExecutor.ExportDirective)
+
+val result: Observable[JsValue] =
+  BatchExecutor.executeBatch(schema, query,
+    operationNames = List("StoryComments", "NewsFeed"))
+```
+
+You can also use `BatchExecutor.OperationNameExtension` middleware to include an operation name in the execution results (as an extension).
+This will make it easier for a client to distinguish between different execution results coming from the same response stream.
+
+Here is an example of request that will execute 2 queries in batch:
+
+```js
+GET /graphql?batchOperations=[StoryComments, NewsFeed]
+
+query NewsFeed {
+  feed {
+    stories {
+      id @export(as: "ids")
+      actor
+      message
+    }
+  }
+}
+
+query StoryComments {
+  stories(ids: $ids) {
+    comments {
+      actor
+      message
+    }
+  }
+}
+```
+
+In this example `NewsFeed` query would be executed first and all story comments would be loaded in a separate query execution step (`StoryComments`).
+This allows client to load all required data with one efficient request to the server, but data would be sent back to the client in chunks.
 
 ## Query And Schema Analysis
 
