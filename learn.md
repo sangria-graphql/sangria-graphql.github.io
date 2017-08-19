@@ -311,7 +311,7 @@ In most cases you also need to define (at least one of) these types with `lazy v
 
 ### Schema Rendering
 
-You can render a schema or an introspection result in human-readable form (IDL syntax) with `SchemaRenderer`. Here is an example:
+You can render a schema or an introspection result in human-readable form (SDL syntax) with `SchemaRenderer`. Here is an example:
 
 ```scala
 SchemaRenderer.renderSchema(SchemaDefinition.StarWarsSchema)
@@ -606,7 +606,7 @@ As you can see, `InputObjectTypeName` is also used in this case. Macro settings 
 
 ## Schema Materialization
 
-If you have an introspection result (coming from remote server, for instance) or an IDL-based schema definition, then you can create an executable in-memory schema representation out of it.
+If you have an introspection result (coming from remote server, for instance) or an SDL-based schema definition, then you can create an executable in-memory schema representation out of it.
 
 ### Based on introspection
 
@@ -625,7 +625,7 @@ val clientSchema: Schema[Any, Any] =
 
 It takes the result of a full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder` implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
 
-### Based on IDL definitions
+### Based on SDL definitions
 
 In addition to normal query syntax, GraphQL allows you to define the schema itself. This is how the syntax look like:
 
@@ -674,7 +674,165 @@ val clientSchema: Schema[Any, Any] =
   Schema.buildFromAst(ast)
 ```
 
-It takes a schema AST (in this example the `graphql` macro is used, but you can also use `QueryParser.parse` to parse the schema dynamically) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `AstSchemaBuilder` implementation (you can also extend `DefaultAstSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
+It takes a schema AST (in this example the `graphql` macro is used, but you can also use `QueryParser.parse` to parse the schema dynamically)
+and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a
+custom `AstSchemaBuilder` implementation (you can also extend `DefaultAstSchemaBuilder` class). This means that you can, for instance,
+plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized
+schema would only be able to execute introspection queries.
+
+### Schema Materialization Example
+
+Schema materialization can be overwhelming at first, so let's go though a small example that combines static schema defined with scala code and
+dynamic SDL-based schema extensions.
+
+First we need to define some model classes and repository that we will use in this example:
+
+```scala
+case class Article(id: String, title: String, text: String, author: Option[String])
+
+class Repo {
+  def loadArticle(id: String): Option[Article] =
+    Some(Article(id, s"Test Article #$id", "blah blah blah...", Some("Bob")))
+
+  def loadComments: List[JsValue] =
+    List(JsObject(
+      "text" → JsString("First!"),
+      "author" → JsObject(
+        "name" → JsString("Jane"),
+        "lastComment" → JsObject(
+          "text" → JsString("Boring...")))))
+}
+```
+
+In order to demonstrate different approaches, we represent `Article` as a case class and `comments` as a JSON
+value (using spray-json in this example).
+
+Now let's define static part of the schema:
+
+```scala
+val ArticleType = deriveObjectType[Repo, Article]()
+
+val IdArg = Argument("id", StringType)
+
+val QueryType = ObjectType("Query", fields[Repo, Unit](
+  Field("article", OptionType(ArticleType),
+    arguments = IdArg :: Nil,
+    resolve = c ⇒ c.ctx.loadArticle(c arg IdArg))))
+
+val staticSchema = Schema(QueryType)
+```
+
+Nothing special going on here - just a standard schema definition. It becomes more interesting when we add schema extentions into the mix:
+
+```scala
+val extensions =
+  gql"""
+    extend type Article {
+      comments: [Comment]! @loadComments
+    }
+
+    type Comment {
+      text: String!
+      author: CommentAuthor!
+    }
+
+    type CommentAuthor {
+      name: String!
+      lastComment: Comment
+    }
+  """
+
+val schema = staticSchema.extend(extensions, builder)
+```
+
+This code will extend an `Article` GraphQL type and add `comments` field. Also notice that `Comment` and `CommentAuthor` types
+are mutually recursive. In order simplify the builder logic, we also use `@loadComments` directive. The only missing piece
+of the puzzle is the `builder` itself:
+
+```scala
+val builder = new DefaultAstSchemaBuilder[Repo] {
+  override def resolveField(
+      typeDefinition: TypeDefinition,
+      extensions: Vector[TypeExtensionDefinition],
+      definition: FieldDefinition) =
+    if (definition.directives.exists(_.name == "loadComments"))
+      c ⇒ c.ctx.loadComments
+    else
+      c ⇒ resolveJson(c.field.name, c.field.fieldType, c.value.asInstanceOf[JsValue])
+
+  def resolveJson(name: String, tpe: OutputType[_], json: JsValue): Any = tpe match {
+    case OptionType(ofType) ⇒
+      resolveJson(name, ofType, json)
+    case ListType(ofType) ⇒
+      json.asInstanceOf[JsArray].elements.map(resolveJson(name, ofType, _))
+    case StringType ⇒
+      json.asJsObject.fields(name).asInstanceOf[JsString].value
+    case _ if json.asJsObject.fields(name).isInstanceOf[JsObject] ⇒
+      json.asJsObject.fields(name)
+    case t ⇒
+      throw new IllegalStateException(
+        s"Type ${SchemaRenderer.renderTypeName(t)} is not supported yet")
+  }
+}
+```
+
+As you can see, we are using `@loadComments` directive to define a special `resolve` function logic that loads all of the comments.
+In general it is recommended approach to handle field logic in the builder (alternative would be to rely of the field/type names which is quite fragile).
+
+All other fields are defined in terms of `resolveJson` function. It just adopts contextual value (which is JSON in our example)
+to the field's return type. This implementation is by no means complete - it just shows a short example.
+For production application you would need to improve this logic according to the needs of the application.
+
+Now we are ready to execute query against out new shiny schema:
+
+```scala
+val query =
+  gql"""
+    {
+      article(id: "42") {
+        title
+        text
+        comments {
+          text
+          author {
+            name
+            lastComment {
+              text
+            }
+          }
+        }
+      }
+    }
+  """
+
+Executor.execute(schema, query, new Repo)
+```
+
+Result of the execution would look like this:
+
+```json
+{
+  "data": {
+    "article": {
+      "title": "Test Article #42",
+      "text": "blah blah blah...",
+      "comments": [{
+        "text": "First!",
+        "author": {
+          "name": "Jane",
+          "lastComment": {
+            "text": "Boring..."
+          }
+        }
+      }]
+    }
+  }
+}
+```
+
+{% include ext.html type="info" title="High-Level API" %}
+As you probably noticed, schema builder provides pretty low-level API. You can customize almost all aspects of the created/extended schema, but it does not provide a lot of convenience. In future more high-level API might be introduced.
+{% include cend.html %}
 
 ## Query Execution
 
@@ -828,7 +986,7 @@ Executor.execute(schema, query, queryValidator = ...)
 For instance, it can be useful to disable validation for production setup, where you have validated all possible queries upfront and would
 like to save on CPU cycles during the execution.
 
-Query validation can also be used for IDL validation. Let's say we have following type definitions:
+Query validation can also be used for SDL validation. Let's say we have following type definitions:
 
 ```js
 type User @auth(token: "TEST") {
