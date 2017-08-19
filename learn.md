@@ -148,7 +148,7 @@ val Character: InterfaceType[Unit, TestData.Character] =
   InterfaceType(
     "Character",
     "A character in the Star Wars Trilogy",
-    () => fields[Unit, TestData.Character](
+    () ⇒ fields[Unit, TestData.Character](
       Field("id", StringType,
         Some("The id of the character."),
         resolve = _.value.id),
@@ -157,10 +157,10 @@ val Character: InterfaceType[Unit, TestData.Character] =
         resolve = _.value.name),
       Field("friends", OptionType(ListType(OptionType(Character))),
         Some("The friends of the character, or an empty list if they have none."),
-        resolve = ctx => DeferFriends(ctx.value.friends)),
+        resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
       Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
         Some("Which movies they appear in."),
-        resolve = _.value.appearsIn map (e => Some(e)))
+        resolve = _.value.appearsIn map (e ⇒ Some(e)))
     ))
 
 val Human =
@@ -177,10 +177,10 @@ val Human =
         resolve = _.value.name),
       Field("friends", OptionType(ListType(OptionType(Character))),
         Some("The friends of the human, or an empty list if they have none."),
-        resolve = ctx => DeferFriends(ctx.value.friends)),
+        resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
       Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
         Some("Which movies they appear in."),
-        resolve = _.value.appearsIn map (e => Some(e))),
+        resolve = _.value.appearsIn map (e ⇒ Some(e))),
       Field("homePlanet", OptionType(StringType),
         Some("The home planet of the human, or null if unknown."),
         resolve = _.value.homePlanet)
@@ -197,13 +197,13 @@ val Droid = ObjectType(
       resolve = _.value.id),
     Field("name", OptionType(StringType),
       Some("The name of the droid."),
-      resolve = ctx => Future.successful(ctx.value.name)),
+      resolve = ctx ⇒ Future.successful(ctx.value.name)),
     Field("friends", OptionType(ListType(OptionType(Character))),
       Some("The friends of the droid, or an empty list if they have none."),
-      resolve = ctx => DeferFriends(ctx.value.friends)),
+      resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
     Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
       Some("Which movies they appear in."),
-      resolve = _.value.appearsIn map (e => Some(e))),
+      resolve = _.value.appearsIn map (e ⇒ Some(e))),
     Field("primaryFunction", OptionType(StringType),
       Some("The primary function of the droid."),
       resolve = _.value.primaryFunction)
@@ -218,13 +218,13 @@ val Query = ObjectType[CharacterRepo, Unit](
   "Query", fields[CharacterRepo, Unit](
     Field("hero", Character,
       arguments = EpisodeArg :: Nil,
-      resolve = ctx => ctx.ctx.getHero(ctx.argOpt(EpisodeArg))),
+      resolve = ctx ⇒ ctx.ctx.getHero(ctx.argOpt(EpisodeArg))),
     Field("human", OptionType(Human),
       arguments = ID :: Nil,
-      resolve = ctx => ctx.ctx.getHuman(ctx arg ID)),
+      resolve = ctx ⇒ ctx.ctx.getHuman(ctx arg ID)),
     Field("droid", Droid,
       arguments = ID :: Nil,
-      resolve = Projector((ctx, f) => ctx.ctx.getDroid(ctx arg ID).get))
+      resolve = Projector((ctx, f) ⇒ ctx.ctx.getDroid(ctx arg ID).get))
   ))
 
 val StarWarsSchema = Schema(Query)
@@ -232,7 +232,7 @@ val StarWarsSchema = Schema(Query)
 
 ### Actions
 
-The `resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] => Action[Ctx, Res]`.
+The `resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] ⇒ Action[Ctx, Res]`.
 As you can see, the result of the `resolve` is an `Action` type which can take different shapes.
 Here is the list of supported actions:
 
@@ -280,7 +280,7 @@ val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
   "HeroOnlyQuery", fields[CharacterRepo, Unit](
     Field("hero", TestSchema.Character,
       arguments = TestSchema.EpisodeArg :: Nil,
-      resolve = ctx => ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
+      resolve = ctx ⇒ ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
   ))
 
 val heroOnlySchema = Schema(HeroOnlyQuery,
@@ -298,11 +298,11 @@ by allowing you to provide a no-arg function that creates `ObjectType` fields in
 case class A(b: Option[B], name: String)
 case class B(a: A, size: Int)
 
-lazy val AType: ObjectType[Unit, A] = ObjectType("A", () => fields[Unit, A](
+lazy val AType: ObjectType[Unit, A] = ObjectType("A", () ⇒ fields[Unit, A](
   Field("name", StringType, resolve = _.value.name),
   Field("b", OptionType(BType), resolve = _.value.b)))
 
-lazy val BType: ObjectType[Unit, B] = ObjectType("B", () => fields[Unit, B](
+lazy val BType: ObjectType[Unit, B] = ObjectType("B", () ⇒ fields[Unit, B](
   Field("size", IntType, resolve = _.value.size),
   Field("a", AType, resolve = _.value.a)))
 ```
@@ -1620,8 +1620,8 @@ Otherwise the error message is obfuscated and the response will contain `"Intern
 In order to define custom error handling mechanisms, you need to provide an `ExceptionHandler` to `Executor`. Here is an example:
 
 ```scala
-val exceptionHandler: Executor.ExceptionHandler = {
-  case (m, e: IllegalStateException) => HandledException(e.getMessage)
+val exceptionHandler = ExceptionHandler {
+  case (m, e: IllegalStateException) ⇒ HandledException(e.getMessage)
 }
 
 Executor(schema, exceptionHandler = exceptionHandler).execute(doc)
@@ -1632,13 +1632,35 @@ This example provides an error `message` (which would be shown instead of "Inter
 You can also add additional fields in the error object like this:
 
 ```scala
-val exceptionHandler: Executor.ExceptionHandler = {
-  case (m, e: IllegalStateException) =>
+val exceptionHandler = ExceptionHandler {
+  case (m, e: IllegalStateException) ⇒
     HandledException(e.getMessage,
       Map(
-      "foo" -> m.arrayNode(Seq(m.scalarNode("bar", "String", Set.empty), m.scalarNode("1234", "Int", Set.empty))),
-      "baz" -> m.scalarNode("Test", "String", Set.empty)))
+      "foo" → m.arrayNode(Seq(
+        m.scalarNode("bar", "String", Set.empty),
+        m.scalarNode("1234", "Int", Set.empty))),
+      "baz" → m.scalarNode("Test", "String", Set.empty)))
 }
+```
+
+You can also provide a list of handled errors to `HandledException`. This will result in several error elements in the execution result.
+
+In addition to handling errors coming from `resolve` function, `ExceptionHandler` also allows to handle `Violation`s and `UserFacingError`s:
+
+* `onException` - all unexpected exceptions coming from the `resolve` functions
+* `onViolation` - handles violations (things like validation errors, argument/variable coercion, etc.)
+* `onUserFacingError` - handles standard sangria errors (errors like invalid operation name, max query depth, etc.)
+
+Here is an example if handling a violation, changing the message and adding extra fields:
+
+```scala
+val exceptionHandler = ExceptionHandler (onViolation = {
+  case (m, v: UndefinedFieldViolation) ⇒
+    HandledException("Field is missing!!! D:",
+      Map(
+        "fieldName" → m.scalarNode(v.fieldName, "String", Set.empty),
+        "errorCode" → m.scalarNode("OOPS", "String", Set.empty)))
+})
 ```
 
 ## Result Marshalling and Input Unmarshalling
@@ -2255,9 +2277,9 @@ case class AuthorisationException(message: String) extends Exception(message)
 We also want the user to see proper error messages in a response, so let's define an error handler for this:
 
 ```scala
-val errorHandler: Executor.ExceptionHandler = {
-  case (m, AuthenticationException(message)) => HandledException(message)
-  case (m, AuthorisationException(message)) => HandledException(message)
+val errorHandler = ExceptionHandler {
+  case (m, AuthenticationException(message)) ⇒ HandledException(message)
+  case (m, AuthorisationException(message)) ⇒ HandledException(message)
 }
 ```
 
@@ -2268,14 +2290,14 @@ case class SecureContext(token: Option[String], userRepo: UserRepo, colorRepo: C
   def login(userName: String, password: String) = userRepo.authenticate(userName, password) getOrElse (
       throw new AuthenticationException("UserName or password is incorrect"))
 
-  def authorised[T](permissions: String*)(fn: User => T) =
-    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user =>
+  def authorised[T](permissions: String*)(fn: User ⇒ T) =
+    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user ⇒
       if (permissions.forall(user.permissions.contains)) fn(user)
       else throw AuthorisationException("You do not have permission to do this operation")
     }
 
   def ensurePermissions(permissions: List[String]): Unit =
-    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user =>
+    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user ⇒
       if (!permissions.forall(user.permissions.contains))
         throw AuthorisationException("You do not have permission to do this operation")
     }
@@ -2307,15 +2329,15 @@ val ColorArg = Argument("color", StringType)
 val UserType = ObjectType("User", fields[SecureContext, User](
   Field("userName", StringType, resolve = _.value.userName),
   Field("permissions", OptionType(ListType(StringType)),
-    resolve = ctx => ctx.ctx.authorised("VIEW_PERMISSIONS") { _ =>
+    resolve = ctx ⇒ ctx.ctx.authorised("VIEW_PERMISSIONS") { _ ⇒
       ctx.value.permissions
     })
 ))
 
 val QueryType = ObjectType("Query", fields[SecureContext, Unit](
-  Field("me", OptionType(UserType), resolve = ctx => ctx.ctx.authorised()(user => user)),
+  Field("me", OptionType(UserType), resolve = ctx ⇒ ctx.ctx.authorised()(user ⇒ user)),
   Field("colors", OptionType(ListType(StringType)),
-    resolve = ctx => ctx.ctx.authorised("VIEW_COLORS") { _ =>
+    resolve = ctx ⇒ ctx.ctx.authorised("VIEW_COLORS") { _ ⇒
       ctx.ctx.colorRepo.colors
     })
 ))
@@ -2323,12 +2345,12 @@ val QueryType = ObjectType("Query", fields[SecureContext, Unit](
 val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
   Field("login", OptionType(StringType),
     arguments = UserNameArg :: PasswordArg :: Nil,
-    resolve = ctx => UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token =>
+    resolve = ctx ⇒ UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token ⇒
       ctx.ctx.copy(token = Some(token))
     }),
   Field("addColor", OptionType(ListType(StringType)),
     arguments = ColorArg :: Nil,
-    resolve = ctx => ctx.ctx.authorised("EDIT_COLORS") { _ =>
+    resolve = ctx ⇒ ctx.ctx.authorised("EDIT_COLORS") { _ ⇒
       ctx.ctx.colorRepo.addColor(ctx.arg(ColorArg))
       ctx.ctx.colorRepo.colors
     })
@@ -2414,13 +2436,13 @@ val QueryType = ObjectType("Query", fields[SecureContext, Unit](
 val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
   Field("login", OptionType(StringType),
     arguments = UserNameArg :: PasswordArg :: Nil,
-    resolve = ctx => UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token =>
+    resolve = ctx ⇒ UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token ⇒
       ctx.ctx.copy(token = Some(token))
     }),
   Field("addColor", OptionType(ListType(StringType)),
     arguments = ColorArg :: Nil,
     tags = Permission("EDIT_COLORS") :: Nil,
-    resolve = ctx => {
+    resolve = ctx ⇒ {
       ctx.ctx.colorRepo.addColor(ctx.arg(ColorArg))
       ctx.ctx.colorRepo.colors
     })
@@ -2440,7 +2462,7 @@ object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeF
   def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[SecureContext, _, _]) = ()
 
   def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[SecureContext, _, _], ctx: Context[SecureContext, _]) = {
-    val permissions = ctx.field.tags.collect {case Permission(p) => p}
+    val permissions = ctx.field.tags.collect {case Permission(p) ⇒ p}
     val requireAuth = ctx.field.tags contains Authorised
     val securityCtx = ctx.ctx
 
