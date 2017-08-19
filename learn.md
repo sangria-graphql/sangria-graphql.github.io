@@ -148,7 +148,7 @@ val Character: InterfaceType[Unit, TestData.Character] =
   InterfaceType(
     "Character",
     "A character in the Star Wars Trilogy",
-    () => fields[Unit, TestData.Character](
+    () ⇒ fields[Unit, TestData.Character](
       Field("id", StringType,
         Some("The id of the character."),
         resolve = _.value.id),
@@ -157,10 +157,10 @@ val Character: InterfaceType[Unit, TestData.Character] =
         resolve = _.value.name),
       Field("friends", OptionType(ListType(OptionType(Character))),
         Some("The friends of the character, or an empty list if they have none."),
-        resolve = ctx => DeferFriends(ctx.value.friends)),
+        resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
       Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
         Some("Which movies they appear in."),
-        resolve = _.value.appearsIn map (e => Some(e)))
+        resolve = _.value.appearsIn map (e ⇒ Some(e)))
     ))
 
 val Human =
@@ -177,10 +177,10 @@ val Human =
         resolve = _.value.name),
       Field("friends", OptionType(ListType(OptionType(Character))),
         Some("The friends of the human, or an empty list if they have none."),
-        resolve = ctx => DeferFriends(ctx.value.friends)),
+        resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
       Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
         Some("Which movies they appear in."),
-        resolve = _.value.appearsIn map (e => Some(e))),
+        resolve = _.value.appearsIn map (e ⇒ Some(e))),
       Field("homePlanet", OptionType(StringType),
         Some("The home planet of the human, or null if unknown."),
         resolve = _.value.homePlanet)
@@ -197,13 +197,13 @@ val Droid = ObjectType(
       resolve = _.value.id),
     Field("name", OptionType(StringType),
       Some("The name of the droid."),
-      resolve = ctx => Future.successful(ctx.value.name)),
+      resolve = ctx ⇒ Future.successful(ctx.value.name)),
     Field("friends", OptionType(ListType(OptionType(Character))),
       Some("The friends of the droid, or an empty list if they have none."),
-      resolve = ctx => DeferFriends(ctx.value.friends)),
+      resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
     Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
       Some("Which movies they appear in."),
-      resolve = _.value.appearsIn map (e => Some(e))),
+      resolve = _.value.appearsIn map (e ⇒ Some(e))),
     Field("primaryFunction", OptionType(StringType),
       Some("The primary function of the droid."),
       resolve = _.value.primaryFunction)
@@ -218,13 +218,13 @@ val Query = ObjectType[CharacterRepo, Unit](
   "Query", fields[CharacterRepo, Unit](
     Field("hero", Character,
       arguments = EpisodeArg :: Nil,
-      resolve = ctx => ctx.ctx.getHero(ctx.argOpt(EpisodeArg))),
+      resolve = ctx ⇒ ctx.ctx.getHero(ctx.argOpt(EpisodeArg))),
     Field("human", OptionType(Human),
       arguments = ID :: Nil,
-      resolve = ctx => ctx.ctx.getHuman(ctx arg ID)),
+      resolve = ctx ⇒ ctx.ctx.getHuman(ctx arg ID)),
     Field("droid", Droid,
       arguments = ID :: Nil,
-      resolve = Projector((ctx, f) => ctx.ctx.getDroid(ctx arg ID).get))
+      resolve = Projector((ctx, f) ⇒ ctx.ctx.getDroid(ctx arg ID).get))
   ))
 
 val StarWarsSchema = Schema(Query)
@@ -232,7 +232,7 @@ val StarWarsSchema = Schema(Query)
 
 ### Actions
 
-The `resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] => Action[Ctx, Res]`.
+The `resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] ⇒ Action[Ctx, Res]`.
 As you can see, the result of the `resolve` is an `Action` type which can take different shapes.
 Here is the list of supported actions:
 
@@ -280,7 +280,7 @@ val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
   "HeroOnlyQuery", fields[CharacterRepo, Unit](
     Field("hero", TestSchema.Character,
       arguments = TestSchema.EpisodeArg :: Nil,
-      resolve = ctx => ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
+      resolve = ctx ⇒ ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
   ))
 
 val heroOnlySchema = Schema(HeroOnlyQuery,
@@ -298,11 +298,11 @@ by allowing you to provide a no-arg function that creates `ObjectType` fields in
 case class A(b: Option[B], name: String)
 case class B(a: A, size: Int)
 
-lazy val AType: ObjectType[Unit, A] = ObjectType("A", () => fields[Unit, A](
+lazy val AType: ObjectType[Unit, A] = ObjectType("A", () ⇒ fields[Unit, A](
   Field("name", StringType, resolve = _.value.name),
   Field("b", OptionType(BType), resolve = _.value.b)))
 
-lazy val BType: ObjectType[Unit, B] = ObjectType("B", () => fields[Unit, B](
+lazy val BType: ObjectType[Unit, B] = ObjectType("B", () ⇒ fields[Unit, B](
   Field("size", IntType, resolve = _.value.size),
   Field("a", AType, resolve = _.value.a)))
 ```
@@ -311,7 +311,7 @@ In most cases you also need to define (at least one of) these types with `lazy v
 
 ### Schema Rendering
 
-You can render a schema or an introspection result in human-readable form (IDL syntax) with `SchemaRenderer`. Here is an example:
+You can render a schema or an introspection result in human-readable form (SDL syntax) with `SchemaRenderer`. Here is an example:
 
 ```scala
 SchemaRenderer.renderSchema(SchemaDefinition.StarWarsSchema)
@@ -606,7 +606,7 @@ As you can see, `InputObjectTypeName` is also used in this case. Macro settings 
 
 ## Schema Materialization
 
-If you have an introspection result (coming from remote server, for instance) or an IDL-based schema definition, then you can create an executable in-memory schema representation out of it.
+If you have an introspection result (coming from remote server, for instance) or an SDL-based schema definition, then you can create an executable in-memory schema representation out of it.
 
 ### Based on introspection
 
@@ -625,7 +625,7 @@ val clientSchema: Schema[Any, Any] =
 
 It takes the result of a full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder` implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
 
-### Based on IDL definitions
+### Based on SDL definitions
 
 In addition to normal query syntax, GraphQL allows you to define the schema itself. This is how the syntax look like:
 
@@ -674,7 +674,165 @@ val clientSchema: Schema[Any, Any] =
   Schema.buildFromAst(ast)
 ```
 
-It takes a schema AST (in this example the `graphql` macro is used, but you can also use `QueryParser.parse` to parse the schema dynamically) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `AstSchemaBuilder` implementation (you can also extend `DefaultAstSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
+It takes a schema AST (in this example the `graphql` macro is used, but you can also use `QueryParser.parse` to parse the schema dynamically)
+and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a
+custom `AstSchemaBuilder` implementation (you can also extend `DefaultAstSchemaBuilder` class). This means that you can, for instance,
+plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized
+schema would only be able to execute introspection queries.
+
+### Schema Materialization Example
+
+Schema materialization can be overwhelming at first, so let's go though a small example that combines static schema defined with scala code and
+dynamic SDL-based schema extensions.
+
+First we need to define some model classes and repository that we will use in this example:
+
+```scala
+case class Article(id: String, title: String, text: String, author: Option[String])
+
+class Repo {
+  def loadArticle(id: String): Option[Article] =
+    Some(Article(id, s"Test Article #$id", "blah blah blah...", Some("Bob")))
+
+  def loadComments: List[JsValue] =
+    List(JsObject(
+      "text" → JsString("First!"),
+      "author" → JsObject(
+        "name" → JsString("Jane"),
+        "lastComment" → JsObject(
+          "text" → JsString("Boring...")))))
+}
+```
+
+In order to demonstrate different approaches, we represent `Article` as a case class and `comments` as a JSON
+value (using spray-json in this example).
+
+Now let's define static part of the schema:
+
+```scala
+val ArticleType = deriveObjectType[Repo, Article]()
+
+val IdArg = Argument("id", StringType)
+
+val QueryType = ObjectType("Query", fields[Repo, Unit](
+  Field("article", OptionType(ArticleType),
+    arguments = IdArg :: Nil,
+    resolve = c ⇒ c.ctx.loadArticle(c arg IdArg))))
+
+val staticSchema = Schema(QueryType)
+```
+
+Nothing special going on here - just a standard schema definition. It becomes more interesting when we add schema extentions into the mix:
+
+```scala
+val extensions =
+  gql"""
+    extend type Article {
+      comments: [Comment]! @loadComments
+    }
+
+    type Comment {
+      text: String!
+      author: CommentAuthor!
+    }
+
+    type CommentAuthor {
+      name: String!
+      lastComment: Comment
+    }
+  """
+
+val schema = staticSchema.extend(extensions, builder)
+```
+
+This code will extend an `Article` GraphQL type and add `comments` field. Also notice that `Comment` and `CommentAuthor` types
+are mutually recursive. In order simplify the builder logic, we also use `@loadComments` directive. The only missing piece
+of the puzzle is the `builder` itself:
+
+```scala
+val builder = new DefaultAstSchemaBuilder[Repo] {
+  override def resolveField(
+      typeDefinition: TypeDefinition,
+      extensions: Vector[TypeExtensionDefinition],
+      definition: FieldDefinition) =
+    if (definition.directives.exists(_.name == "loadComments"))
+      c ⇒ c.ctx.loadComments
+    else
+      c ⇒ resolveJson(c.field.name, c.field.fieldType, c.value.asInstanceOf[JsValue])
+
+  def resolveJson(name: String, tpe: OutputType[_], json: JsValue): Any = tpe match {
+    case OptionType(ofType) ⇒
+      resolveJson(name, ofType, json)
+    case ListType(ofType) ⇒
+      json.asInstanceOf[JsArray].elements.map(resolveJson(name, ofType, _))
+    case StringType ⇒
+      json.asJsObject.fields(name).asInstanceOf[JsString].value
+    case _ if json.asJsObject.fields(name).isInstanceOf[JsObject] ⇒
+      json.asJsObject.fields(name)
+    case t ⇒
+      throw new IllegalStateException(
+        s"Type ${SchemaRenderer.renderTypeName(t)} is not supported yet")
+  }
+}
+```
+
+As you can see, we are using `@loadComments` directive to define a special `resolve` function logic that loads all of the comments.
+In general it is recommended approach to handle field logic in the builder (alternative would be to rely of the field/type names which is quite fragile).
+
+All other fields are defined in terms of `resolveJson` function. It just adopts contextual value (which is JSON in our example)
+to the field's return type. This implementation is by no means complete - it just shows a short example.
+For production application you would need to improve this logic according to the needs of the application.
+
+Now we are ready to execute query against out new shiny schema:
+
+```scala
+val query =
+  gql"""
+    {
+      article(id: "42") {
+        title
+        text
+        comments {
+          text
+          author {
+            name
+            lastComment {
+              text
+            }
+          }
+        }
+      }
+    }
+  """
+
+Executor.execute(schema, query, new Repo)
+```
+
+Result of the execution would look like this:
+
+```json
+{
+  "data": {
+    "article": {
+      "title": "Test Article #42",
+      "text": "blah blah blah...",
+      "comments": [{
+        "text": "First!",
+        "author": {
+          "name": "Jane",
+          "lastComment": {
+            "text": "Boring..."
+          }
+        }
+      }]
+    }
+  }
+}
+```
+
+{% include ext.html type="info" title="High-Level API" %}
+As you probably noticed, schema builder provides pretty low-level API. You can customize almost all aspects of the created/extended schema, but it does not provide a lot of convenience. In future more high-level API might be introduced.
+{% include cend.html %}
 
 ## Query Execution
 
@@ -726,8 +884,81 @@ Following execution schemes are available:
 
 * `Default` - The default one. Returns a `Future` of marshaled result 
 * `Extended` - Returns a `Future` containing `ExecutionResult`. 
-* `Stream` - Returns a stream of results. Very useful for subscription queries, where the result is an `Observable` or `Source`
+* `Stream` - Returns a stream of results. Very useful for subscription and batch queries, where the result is an `Observable` or a `Source`
 * `StreamExtended` - Returns a stream of `ExecutionResult`s
+
+### Batch Executor
+
+{% include ext.html type="info" title="Experimental" %}
+Please use this feature with caution! It might be removed in future releases or have big semantic changes. In particular in the way how variables are inferred and merged.
+{% include cend.html %}
+
+Batch executor allow you to execute several inter-dependent queries and get an execution result as a stream.
+Dependencies are expressed via variables and `@export` directive. It provides following features:
+
+* Allows specifying multiple `operationNames` when executing a GraphQL query document.
+  All operations would be executed in order inferred from the dependencies between queries.
+* Support for `@export(as: "foo")` directive. This directive allows you to save the results of
+  the query execution and then use it as a variable in a different query within the same document.
+  This provides a way to define data dependencies between queries.
+* When used with `@export` directive, the variables would be automatically inferred by the execution
+  engine, so you don't need to declare them explicitly
+* You still can declare variables explicitly and completely disable variable inference with `inferVariableDefinitions` flag
+
+Batch executor implementation is inspired by this talk:
+
+{% include video.html id="ViXL0YQnioU?start=626&end=769" title="GraphQL Future at react-europe 2016" name="Laney Kuenzel & Lee Byron " %}
+
+You can use any [execution scheme](#alternative-execution-scheme) with batch executor, but `Stream` and `StreamExtended` are recommended
+since they will return execution results for all of the queries as a stream.
+
+In the example below we are using monix for streaming and spray-json for data serialization. Also notice that we need to explicitly
+add `BatchExecutor.ExportDirective` directive and use `BatchExecutor.executeBatch` instead of standard executor:
+
+```scala
+import monix.execution.Scheduler.Implicits.global
+
+import sangria.execution.ExecutionScheme.Stream
+import sangria.marshalling.sprayJson._
+import sangria.streaming.monix._
+
+val schema = Schema(..., directives = BuiltinDirectives :+ BatchExecutor.ExportDirective)
+
+val result: Observable[JsValue] =
+  BatchExecutor.executeBatch(schema, query,
+    operationNames = List("StoryComments", "NewsFeed"))
+```
+
+You can also use `BatchExecutor.OperationNameExtension` middleware to include an operation name in the execution results (as an extension).
+This will make it easier for a client to distinguish between different execution results coming from the same response stream.
+
+Here is an example of request that will execute 2 queries in batch:
+
+```js
+GET /graphql?batchOperations=[StoryComments, NewsFeed]
+
+query NewsFeed {
+  feed {
+    stories {
+      id @export(as: "ids")
+      actor
+      message
+    }
+  }
+}
+
+query StoryComments {
+  stories(ids: $ids) {
+    comments {
+      actor
+      message
+    }
+  }
+}
+```
+
+In this example `NewsFeed` query would be executed first and all story comments would be loaded in a separate query execution step (`StoryComments`).
+This allows client to load all required data with one efficient request to the server, but data would be sent back to the client in chunks.
 
 ## Query And Schema Analysis
 
@@ -755,7 +986,7 @@ Executor.execute(schema, query, queryValidator = ...)
 For instance, it can be useful to disable validation for production setup, where you have validated all possible queries upfront and would
 like to save on CPU cycles during the execution.
 
-Query validation can also be used for IDL validation. Let's say we have following type definitions:
+Query validation can also be used for SDL validation. Let's say we have following type definitions:
 
 ```js
 type User @auth(token: "TEST") {
@@ -807,6 +1038,76 @@ Directive 'auth' may not be used on field definition. (line 3, column 22):
 Field 'auth' argument 'token' of type 'String!' is required but not provided. (line 2, column 17):
       type User @auth {
                 ^
+```
+
+### Input Document Validation
+
+`QueryValidator` also able to validate `InputDocument`. Here is a small example:
+
+```scala
+val schema = Schema.buildStubFromAst(
+  gql"""
+    enum Color {
+      RED
+      GREEN
+      BLUE
+    }
+
+    input Foo {
+      baz: Color!
+    }
+
+    input Config {
+      foo: String
+      bar: Int
+      list: [Foo]
+    }
+  """)
+
+val inp =
+  gqlInpDoc"""
+    {
+      foo: "bar"
+      bar: "foo"
+      list: [
+        {baz: RED}
+        {baz: FOO_BAR}
+        {test: 1}
+        {}
+      ]
+    }
+
+    {
+      doo: "hello"
+    }
+  """
+
+val errors = QueryValidator.default.validateInputDocument(schema, inp, "Config")
+```
+
+In contrast to standard validation, you also need to provide an input type against which you would like to validate the input
+document. Validation will result in following errors:
+
+```js
+At path 'bar' Int value expected (line 4, column 13):
+            bar: "foo"
+            ^
+
+At path 'list[1].baz' Enum value 'FOO_BAR' is undefined in enum type 'Color'. Known values are: RED, GREEN, BLUE. (line 5, column 13):
+            list: [
+            ^
+ (line 5, column 19):
+            list: [
+                  ^
+ (line 7, column 16):
+              {baz: FOO_BAR}
+               ^
+
+At path 'list[2].test' Field 'test' is not defined in the input type 'Foo'. (line 5, column 13):
+            list: [
+            ^
+
+...
 ```
 
 ### Schema Validation
@@ -1547,8 +1848,8 @@ Otherwise the error message is obfuscated and the response will contain `"Intern
 In order to define custom error handling mechanisms, you need to provide an `ExceptionHandler` to `Executor`. Here is an example:
 
 ```scala
-val exceptionHandler: Executor.ExceptionHandler = {
-  case (m, e: IllegalStateException) => HandledException(e.getMessage)
+val exceptionHandler = ExceptionHandler {
+  case (m, e: IllegalStateException) ⇒ HandledException(e.getMessage)
 }
 
 Executor(schema, exceptionHandler = exceptionHandler).execute(doc)
@@ -1559,13 +1860,35 @@ This example provides an error `message` (which would be shown instead of "Inter
 You can also add additional fields in the error object like this:
 
 ```scala
-val exceptionHandler: Executor.ExceptionHandler = {
-  case (m, e: IllegalStateException) =>
+val exceptionHandler = ExceptionHandler {
+  case (m, e: IllegalStateException) ⇒
     HandledException(e.getMessage,
       Map(
-      "foo" -> m.arrayNode(Seq(m.scalarNode("bar", "String", Set.empty), m.scalarNode("1234", "Int", Set.empty))),
-      "baz" -> m.scalarNode("Test", "String", Set.empty)))
+      "foo" → m.arrayNode(Seq(
+        m.scalarNode("bar", "String", Set.empty),
+        m.scalarNode("1234", "Int", Set.empty))),
+      "baz" → m.scalarNode("Test", "String", Set.empty)))
 }
+```
+
+You can also provide a list of handled errors to `HandledException`. This will result in several error elements in the execution result.
+
+In addition to handling errors coming from `resolve` function, `ExceptionHandler` also allows to handle `Violation`s and `UserFacingError`s:
+
+* `onException` - all unexpected exceptions coming from the `resolve` functions
+* `onViolation` - handles violations (things like validation errors, argument/variable coercion, etc.)
+* `onUserFacingError` - handles standard sangria errors (errors like invalid operation name, max query depth, etc.)
+
+Here is an example if handling a violation, changing the message and adding extra fields:
+
+```scala
+val exceptionHandler = ExceptionHandler (onViolation = {
+  case (m, v: UndefinedFieldViolation) ⇒
+    HandledException("Field is missing!!! D:",
+      Map(
+        "fieldName" → m.scalarNode(v.fieldName, "String", Set.empty),
+        "errorCode" → m.scalarNode("OOPS", "String", Set.empty)))
+})
 ```
 
 ## Result Marshalling and Input Unmarshalling
@@ -1715,6 +2038,50 @@ It will produce the following output:
 
 Proper `InputUnmarshaller` and `ResultMarshaller` are available for it, so you can use `ast.Value` as a variable or as a result
 of GraphQL query execution.
+
+In addition to parsing, you can also deserialize an `InputDocument` based on the `FromInput` type class. Here is an example:
+
+```scala
+case class Comment(author: String, text: Option[String])
+case class Article(title: String, text: Option[String], tags: Option[Vector[String]], comments: Vector[Option[Comment]])
+
+val ArticleType: InputObjectType[Article] = ???
+
+val document = QueryParser.parseInputDocumentWithVariables(
+  """
+    {
+      title: "foo",
+      tags: null,
+      comments: []
+    }
+
+    {
+      title: "Article 2",
+      text: "contents 2",
+      tags: ["spring", "guitars"],
+      comments: [{
+        author: "Me"
+        text: $comm
+      }]
+    }
+  """)
+
+val vars = scalaInput(Map(
+  "comm" → "from variable"
+))
+
+val articles: Vector[Article] = document.to(ArticleType, vars)
+```
+
+as a result of this deserialization, you will get following list of `articles`:
+
+```scala
+Vector(
+  Article("foo", Some("Hello World!"), None, Vector.empty),
+  Article("Article 2", Some("contents 2"),
+    Some(Vector("spring", "guitars")),
+    Vector(Some(Comment("Me", Some("from variable"))))))
+```
 
 ### Converting Between Formats
 
@@ -1971,7 +2338,6 @@ In addition to logging, `sangria-slowlog` also supports graphql extensions. Exte
 `extensions` top-level field. In the most basic form, you can use it like this (this approach also disables the logging):
 
 ```scala
-
 Executor.execute(schema, query, middleware = SlowLog.extension :: Nil)
 ```
 
@@ -2182,9 +2548,9 @@ case class AuthorisationException(message: String) extends Exception(message)
 We also want the user to see proper error messages in a response, so let's define an error handler for this:
 
 ```scala
-val errorHandler: Executor.ExceptionHandler = {
-  case (m, AuthenticationException(message)) => HandledException(message)
-  case (m, AuthorisationException(message)) => HandledException(message)
+val errorHandler = ExceptionHandler {
+  case (m, AuthenticationException(message)) ⇒ HandledException(message)
+  case (m, AuthorisationException(message)) ⇒ HandledException(message)
 }
 ```
 
@@ -2195,14 +2561,14 @@ case class SecureContext(token: Option[String], userRepo: UserRepo, colorRepo: C
   def login(userName: String, password: String) = userRepo.authenticate(userName, password) getOrElse (
       throw new AuthenticationException("UserName or password is incorrect"))
 
-  def authorised[T](permissions: String*)(fn: User => T) =
-    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user =>
+  def authorised[T](permissions: String*)(fn: User ⇒ T) =
+    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user ⇒
       if (permissions.forall(user.permissions.contains)) fn(user)
       else throw AuthorisationException("You do not have permission to do this operation")
     }
 
   def ensurePermissions(permissions: List[String]): Unit =
-    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user =>
+    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user ⇒
       if (!permissions.forall(user.permissions.contains))
         throw AuthorisationException("You do not have permission to do this operation")
     }
@@ -2234,15 +2600,15 @@ val ColorArg = Argument("color", StringType)
 val UserType = ObjectType("User", fields[SecureContext, User](
   Field("userName", StringType, resolve = _.value.userName),
   Field("permissions", OptionType(ListType(StringType)),
-    resolve = ctx => ctx.ctx.authorised("VIEW_PERMISSIONS") { _ =>
+    resolve = ctx ⇒ ctx.ctx.authorised("VIEW_PERMISSIONS") { _ ⇒
       ctx.value.permissions
     })
 ))
 
 val QueryType = ObjectType("Query", fields[SecureContext, Unit](
-  Field("me", OptionType(UserType), resolve = ctx => ctx.ctx.authorised()(user => user)),
+  Field("me", OptionType(UserType), resolve = ctx ⇒ ctx.ctx.authorised()(user ⇒ user)),
   Field("colors", OptionType(ListType(StringType)),
-    resolve = ctx => ctx.ctx.authorised("VIEW_COLORS") { _ =>
+    resolve = ctx ⇒ ctx.ctx.authorised("VIEW_COLORS") { _ ⇒
       ctx.ctx.colorRepo.colors
     })
 ))
@@ -2250,12 +2616,12 @@ val QueryType = ObjectType("Query", fields[SecureContext, Unit](
 val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
   Field("login", OptionType(StringType),
     arguments = UserNameArg :: PasswordArg :: Nil,
-    resolve = ctx => UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token =>
+    resolve = ctx ⇒ UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token ⇒
       ctx.ctx.copy(token = Some(token))
     }),
   Field("addColor", OptionType(ListType(StringType)),
     arguments = ColorArg :: Nil,
-    resolve = ctx => ctx.ctx.authorised("EDIT_COLORS") { _ =>
+    resolve = ctx ⇒ ctx.ctx.authorised("EDIT_COLORS") { _ ⇒
       ctx.ctx.colorRepo.addColor(ctx.arg(ColorArg))
       ctx.ctx.colorRepo.colors
     })
@@ -2341,13 +2707,13 @@ val QueryType = ObjectType("Query", fields[SecureContext, Unit](
 val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
   Field("login", OptionType(StringType),
     arguments = UserNameArg :: PasswordArg :: Nil,
-    resolve = ctx => UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token =>
+    resolve = ctx ⇒ UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token ⇒
       ctx.ctx.copy(token = Some(token))
     }),
   Field("addColor", OptionType(ListType(StringType)),
     arguments = ColorArg :: Nil,
     tags = Permission("EDIT_COLORS") :: Nil,
-    resolve = ctx => {
+    resolve = ctx ⇒ {
       ctx.ctx.colorRepo.addColor(ctx.arg(ColorArg))
       ctx.ctx.colorRepo.colors
     })
@@ -2367,7 +2733,7 @@ object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeF
   def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[SecureContext, _, _]) = ()
 
   def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[SecureContext, _, _], ctx: Context[SecureContext, _]) = {
-    val permissions = ctx.field.tags.collect {case Permission(p) => p}
+    val permissions = ctx.field.tags.collect {case Permission(p) ⇒ p}
     val requireAuth = ctx.field.tags contains Authorised
     val securityCtx = ctx.ctx
 

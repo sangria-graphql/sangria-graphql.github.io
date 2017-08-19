@@ -30,6 +30,8 @@ Here are some videos on how Coursera uses GraphQL.
 
 And even more great videos for you to watch! (if you are aware of other videos, we would really appreciate [a pull request](https://github.com/sangria-graphql/sangria-website/edit/master/community.md))
 
+{% include video.html id="cQJXSBEmcIc" title="Adopting GraphQL at Twitter" name="Tom Ashworth" %}
+
 {% include video.html id="wa7uHDb51fI" title="GraphQL for Fun & Profit" name="Tom Adams" %}
 
 {% include video.html id="3l--XM6j-1w" title="GraphQL: IoC makes its way to HTTP … and it’s great!" name="Dustin Whitney" %}
