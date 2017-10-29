@@ -872,8 +872,8 @@ val builder = resolverBased[Any](
   AnyFieldResolver.defaultInput[Any, JsValue])
 ```
 
-Though general recommendation is to use `DirectiveResolver` instead of explicit `FieldResolver` since it provides more robust mechanism to
-define the resolution logic.
+Though general recommendation is to use `DirectiveResolver` instead of explicit `FieldResolver` if possible, since it provides more robust
+mechanism to define the resolution logic.
 
 ### Schema Materialization Example
 
