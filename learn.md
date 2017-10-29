@@ -1479,6 +1479,21 @@ Executor.execute(schema, query, deferredResolver = new FriendsResolver)
 During an execution of this query, the amount of produced `Deferred` values grows exponentially. Still `DeferredResolver.resolve` method
 would be called only **4** times by the executor because the query has only 4 levels of fields that return deferred values (`friends` in this case).  
 
+### Transforming the Deferred Value
+
+It is quite common requirement to transform the resolved deferred value before it is used by the execution engine. This can be easily achieved
+with `map` method on the `DeferredValue` action. here is an example:
+
+```scala
+Field("products", ListType(ProductType),
+  resolve = c ⇒
+    DeferredValue(fetcherProd.deferSeqOpt(c.value.products))
+      .map(fetchedProducts ⇒ ...)),
+```
+
+In some cases you need to report errors that happened during deferred value resolution, but still preserving successful result. You can do
+it by using `mapWithErrors` instead of `map`.
+
 ### DeferredResolver State
 
 In some cases you may need to have some state inside of a `DeferredResolver` for every query execution. This, for instance, is necessary when you
