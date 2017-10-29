@@ -1123,8 +1123,13 @@ val prepared =
 val validated = Future.sequence(prepared).map(_ ⇒ Done)
 ```
 
-You will need to initialise all required variable values with some stubs. All variable variable values that represent things that potentially
+You will need to initialize all required variable values with some stubs. All variable variable values that represent things that potentially
 may increase query complexity, like list limits, should be set to values that represent the worst-case scenario (like max limit).
+
+If you don't have the variables or don't want to work with the stub value, then you can use another mechanism that does not require variables.
+`QueryReducerExecutor.reduceQueryWithoutVariables` provides a convenient way to achieve this. In its signature it is similar to
+`Executor.prepare`, but it does not require `variables` and designed to validate and execute query reducers for queries that are
+being analyzed ahead of time (e.g. in the context of persistent queries).
 
 ### AstVisitor
 
