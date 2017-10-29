@@ -750,34 +750,17 @@ are mutually recursive. In order simplify the builder logic, we also use `@loadC
 of the puzzle is the `builder` itself:
 
 ```scala
-val builder = new DefaultAstSchemaBuilder[Repo] {
-  override def resolveField(
-      typeDefinition: TypeDefinition,
-      extensions: Vector[TypeExtensionDefinition],
-      definition: FieldDefinition) =
-    if (definition.directives.exists(_.name == "loadComments"))
-      c ⇒ c.ctx.loadComments
-    else
-      c ⇒ resolveJson(c.field.name, c.field.fieldType, c.value.asInstanceOf[JsValue])
+val LoadCommentsDir = Directive("loadComments",
+  locations = Set(DirectiveLocation.FieldDefinition))
 
-  def resolveJson(name: String, tpe: OutputType[_], json: JsValue): Any = tpe match {
-    case OptionType(ofType) ⇒
-      resolveJson(name, ofType, json)
-    case ListType(ofType) ⇒
-      json.asInstanceOf[JsArray].elements.map(resolveJson(name, ofType, _))
-    case StringType ⇒
-      json.asJsObject.fields(name).asInstanceOf[JsString].value
-    case _ if json.asJsObject.fields(name).isInstanceOf[JsObject] ⇒
-      json.asJsObject.fields(name)
-    case t ⇒
-      throw new IllegalStateException(
-        s"Type ${SchemaRenderer.renderTypeName(t)} is not supported yet")
-  }
-}
+val builder = AstSchemaBuilder.resolverBased[Repo](
+  DirectiveResolver(LoadCommentsDir, _.ctx.ctx.loadComments),
+  FieldResolver.defaultInput[Repo, JsValue])
 ```
 
 As you can see, we are using `@loadComments` directive to define a special `resolve` function logic that loads all of the comments.
-In general it is recommended approach to handle field logic in the builder (alternative would be to rely of the field/type names which is quite fragile).
+In general it is recommended approach to handle field logic in the builder
+(an alternative would be to rely of the field/type names with `FieldResolver {case (TypeName("Article"), FieldName("comments")) ⇒ ...}` which is quite fragile).
 
 All other fields are defined in terms of `resolveJson` function. It just adopts contextual value (which is JSON in our example)
 to the field's return type. This implementation is by no means complete - it just shows a short example.
@@ -829,10 +812,6 @@ Result of the execution would look like this:
   }
 }
 ```
-
-{% include ext.html type="info" title="High-Level API" %}
-As you probably noticed, schema builder provides pretty low-level API. You can customize almost all aspects of the created/extended schema, but it does not provide a lot of convenience. In future more high-level API might be introduced.
-{% include cend.html %}
 
 ## Query Execution
 
@@ -2202,6 +2181,9 @@ methods of middleware.
 
 `afterField` also allows you to transform field values by returning `Some` with a transformed value. You can also throw an exception from `beforeField` or `afterField`
 in order to indicate a field error.
+
+`beforeField` returns `BeforeFieldResult` which allows you to add a `MiddlewareAttachment`.
+This attachment then can be used in resolve function via `Context.attachment`/`Context.attachments`.
 
 In case several middleware objects are defined for the same execution, `beforeField` would be called in the order middleware is defined.
 `afterField`, on the other hand, would be call in reverse order. To demonstrate this, let's look at this middleware as an example:
