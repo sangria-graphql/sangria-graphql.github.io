@@ -766,7 +766,7 @@ val builder = AstSchemaBuilder.resolverBased[Unit](
   FieldResolver.defaultInput[Unit, JsValue])
 ```
 
-How that we have the schema builder, we can define the schema itself:
+Now that we have the schema builder, we can define the schema itself:
 
 ```scala
 val schema = Schema.buildFromAst(schemaAst,
