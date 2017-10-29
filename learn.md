@@ -623,7 +623,11 @@ val clientSchema: Schema[Any, Any] =
   Schema.buildFromIntrospection(introspectionResults)
 ```
 
-It takes the result of a full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder` implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would only be able to execute introspection queries.
+It takes the result of a full introspection query (loaded from the server, file, etc.) and recreates the schema definition with stubs for
+resolve methods. You can customize a lot of aspects of the materialization by providing a custom `IntrospectionSchemaBuilder`
+implementation (you can also extend `DefaultIntrospectionSchemaBuilder` class). This means that you can, for instance, plug in some
+generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized schema would
+only be able to execute introspection queries.
 
 ### Based on SDL definitions
 
@@ -650,7 +654,8 @@ schema {
 }
 ```
 
-You can recreate an in-memory representation of the schema with `AstSchemaMaterializer` (just like with the introspection-based one). This feature has a lot of potential for client-side tools: testing, mocking, creating proxy/facade GraphQL servers, etc.
+You can recreate an in-memory representation of the schema with `AstSchemaMaterializer` (just like with the introspection-based one).
+This feature has a lot of potential for client-side tools: testing, mocking, creating proxy/facade GraphQL servers, etc.
 
 Here is a simple example of how you can use this feature:
 
@@ -679,6 +684,196 @@ and recreates the schema definition with stubs for resolve methods. You can cust
 custom `AstSchemaBuilder` implementation (you can also extend `DefaultAstSchemaBuilder` class). This means that you can, for instance,
 plug in some generic field resolution logic or provide generic logic for custom scalars. Without these customizations, the materialized
 schema would only be able to execute introspection queries.
+
+### High-level SDL-based Schema Builder
+
+`AstSchemaBuilder` and `DefaultAstSchemaBuilder` provide a lot of flexibility in how you build the schema based on the SDL AST, but the are
+also quite low-level API and hard to work with directly. Sangria provides more higher-level API that is based on `resolve` functions that are
+defined in the scope of the whole schema based on the directives and other SDL elements. `ResolverBasedAstSchemaBuilder` or `AstSchemaBuilder.resolverBased`
+allow you to do this. They take a list of `AstSchemaResolver`s as an argument. Each resolver might contribute specific logic in the generated schema.
+
+Let's look a the simple example that primarily uses JSON as a data type (quite typical for GraphQL API that aggregates other JSON API).
+The schema definition looks like this:
+
+```scala
+val schemaAst =
+  gql"""
+    enum Color {
+      Red, Green, Blue
+    }
+
+    interface Fruit {
+      id: ID!
+    }
+
+    type Apple implements Fruit {
+      id: ID!
+      color: Color
+    }
+
+    type Banana implements Fruit {
+      id: ID!
+      length: Int
+    }
+
+    type Query @addSpecial {
+      fruit: Fruit
+      bananas: [Fruit] @generateBananas(count: 3)
+    }
+  """
+```
+
+It contains several interesting elements which we need to implement in the schema builder:
+
+1. `Fruit` is an interface type, so we need to properly define an instance check in order to select appropriate `ObjectType`
+   based on the `type` JSON field (in this example)
+2. `@generateBananas` directive defines the resolution logic for `bananas` field. We need to define a resolver for it and generate
+   a simple list with size `count`.
+3. `@addSpecial` directive needs to add new field in the `Query` type.
+4. For all other fields in the schema we need to define default behavior that just transforms context JSON value in appropriate
+   GraphQL representation.
+
+Given all these requirements, we can defined a schema builder like this:
+
+```scala
+val CountArg = Argument("count", IntType)
+
+val GenerateBananasDir = Directive("generateBananas",
+  arguments = CountArg :: Nil,
+  locations = Set(DL.FieldDefinition))
+
+val AddSpecialDir = Directive("addSpecial",
+  locations = Set(DL.Object))
+
+val builder = AstSchemaBuilder.resolverBased[Unit](
+  // Requirement #1 - provides appropriate instance check based on the `type` JSON field
+  InstanceCheck.field[Unit, JsValue],
+
+  // Requirement #2 - defined a resolution logic based on the `@generateBananas` directive
+  DirectiveResolver(GenerateBananasDir, c ⇒
+    (1 to c.arg(CountArg)) map (id ⇒ JsObject(
+      "type" → JsString("Banana"),
+      "id" → JsString(id.toString),
+      "length" → JsNumber(id * 10)))),
+
+  // Requirement #3 - add extra field based on the `@addSpecial` directive
+  DirectiveFieldProvider(AddSpecialDir, c ⇒
+    MaterializedField(StandaloneOrigin,
+      Field("specialFruit", c.objectType("Banana"), resolve =
+        ResolverBasedAstSchemaBuilder.extractFieldValue[Unit, JsValue])) :: Nil),
+
+  // Requirement #4 - provides default behaviour for all other fields
+  FieldResolver.defaultInput[Unit, JsValue])
+```
+
+How that we have the schema builder, we can define the schema itself:
+
+```scala
+val schema = Schema.buildFromAst(schemaAst,
+  builder.validateSchemaWithException(schemaAst))
+```
+
+Here we are also using `builder.validateSchemaWithException` to validate the AST and ensure that all directives are known and correct (
+`builder.validateSchema` will just return a list of violations).
+
+Now we are ready to execute the schema against a query and provide it with initial root JSON value:
+
+```scala
+val query =
+  gql"""
+    {
+      fruit {
+        id
+
+        ... on Apple {color}
+        ... on Banana {length}
+      }
+
+      bananas {
+        ... on Banana {length}
+      }
+
+      specialFruit {id}
+    }
+  """
+
+val initialData =
+  """
+    {
+      "fruit": {
+        "type": "Apple",
+        "id": "1",
+        "color": "Red"
+      },
+      "specialFruit": {
+        "type": "Apple",
+        "id": "42",
+        "color": "Blue"
+      }
+    }
+  """.parseJson
+
+Executor.execute(schema, query, root = initialData)
+```
+
+The result of an execution would be JSON like this one:
+
+```json
+{
+  "data": {
+    "fruit": {"id": "1", "color": "Red"},
+    "bananas": [
+      {"length": 10},
+      {"length": 20},
+      {"length": 30}
+    ],
+    "specialFruit": {"id": "42"}
+  }
+}
+```
+
+`ResolverBasedAstSchemaBuilder` provides a lot of features. All supported resolvers are subtypes of `AstSchemaResolver`, so you can check
+these if you would like to learn about other features, like providing additional types with `AdditionalTypes`, handling scalar values with
+`ScalarResolver`, etc.
+
+Sometimes it might be very useful to analyze the schema AST document in order to collect information about some of the used directives in advance (before building the schema).
+This can be achieved with `ResolverBasedAstSchemaBuilder.resolveDirectives`. Here is a small example:
+
+```scala
+val ValueArg = Argument("value", IntType)
+val NumDir = Directive("num",
+  arguments = ValueArg :: Nil,
+  locations = Set(DirectiveLocation.Schema, DirectiveLocation.Object))
+
+val collectedValue = schemaAst.analyzer.resolveDirectives(
+  GenericDirectiveResolver(NumDir, resolve = c ⇒ Some(c arg ValueArg))).sum
+```
+
+In this example, the resulting `collectedValue` will contain the sum of all numbers collected via `@num` directive.
+
+For another example of SDL-based schema materialization, please see the next section. I would also recommend to look at
+[Materializer class](https://github.com/OlegIlyenko/graphql-toolbox/blob/master/app/controllers/Materializer.scala) in
+[graphql-toolbox project](https://github.com/OlegIlyenko/graphql-toolbox). It contains much bigger and more comprehensive example.
+
+If you have previously worked with [apollo-tools](https://github.com/apollographql/graphql-tools) and would like to know how SDL-based schema definition translates to sangria, then
+`ResolverBasedAstSchemaBuilder` is a good place to start. Some apollo-tools examples use exact type/field name matches in order to define the
+resolve functions. You can achieve the same in sangria by using `FieldResolver`:
+
+```scala
+val builder = resolverBased[Any](
+  FieldResolver.map(
+    "Query" → Map(
+      "posts" → (context ⇒ ...)),
+    "Mutation" → Map(
+      "upvotePost" → (context ⇒ ...)),
+    "Post" → Map(
+      "author" → (context ⇒ ...),
+      "comments" → (context ⇒ ...))),
+  AnyFieldResolver.defaultInput[Any, JsValue])
+```
+
+Though general recommendation is to use `DirectiveResolver` instead of explicit `FieldResolver` since it provides more robust mechanism to
+define the resolution logic.
 
 ### Schema Materialization Example
 
@@ -750,34 +945,17 @@ are mutually recursive. In order simplify the builder logic, we also use `@loadC
 of the puzzle is the `builder` itself:
 
 ```scala
-val builder = new DefaultAstSchemaBuilder[Repo] {
-  override def resolveField(
-      typeDefinition: TypeDefinition,
-      extensions: Vector[TypeExtensionDefinition],
-      definition: FieldDefinition) =
-    if (definition.directives.exists(_.name == "loadComments"))
-      c ⇒ c.ctx.loadComments
-    else
-      c ⇒ resolveJson(c.field.name, c.field.fieldType, c.value.asInstanceOf[JsValue])
+val LoadCommentsDir = Directive("loadComments",
+  locations = Set(DirectiveLocation.FieldDefinition))
 
-  def resolveJson(name: String, tpe: OutputType[_], json: JsValue): Any = tpe match {
-    case OptionType(ofType) ⇒
-      resolveJson(name, ofType, json)
-    case ListType(ofType) ⇒
-      json.asInstanceOf[JsArray].elements.map(resolveJson(name, ofType, _))
-    case StringType ⇒
-      json.asJsObject.fields(name).asInstanceOf[JsString].value
-    case _ if json.asJsObject.fields(name).isInstanceOf[JsObject] ⇒
-      json.asJsObject.fields(name)
-    case t ⇒
-      throw new IllegalStateException(
-        s"Type ${SchemaRenderer.renderTypeName(t)} is not supported yet")
-  }
-}
+val builder = AstSchemaBuilder.resolverBased[Repo](
+  DirectiveResolver(LoadCommentsDir, _.ctx.ctx.loadComments),
+  FieldResolver.defaultInput[Repo, JsValue])
 ```
 
 As you can see, we are using `@loadComments` directive to define a special `resolve` function logic that loads all of the comments.
-In general it is recommended approach to handle field logic in the builder (alternative would be to rely of the field/type names which is quite fragile).
+In general it is recommended approach to handle field logic in the builder
+(an alternative would be to rely of the field/type names with `FieldResolver {case (TypeName("Article"), FieldName("comments")) ⇒ ...}` which is quite fragile).
 
 All other fields are defined in terms of `resolveJson` function. It just adopts contextual value (which is JSON in our example)
 to the field's return type. This implementation is by no means complete - it just shows a short example.
@@ -829,10 +1007,6 @@ Result of the execution would look like this:
   }
 }
 ```
-
-{% include ext.html type="info" title="High-Level API" %}
-As you probably noticed, schema builder provides pretty low-level API. You can customize almost all aspects of the created/extended schema, but it does not provide a lot of convenience. In future more high-level API might be introduced.
-{% include cend.html %}
 
 ## Query Execution
 
@@ -1144,8 +1318,13 @@ val prepared =
 val validated = Future.sequence(prepared).map(_ ⇒ Done)
 ```
 
-You will need to initialise all required variable values with some stubs. All variable variable values that represent things that potentially
+You will need to initialize all required variable values with some stubs. All variable variable values that represent things that potentially
 may increase query complexity, like list limits, should be set to values that represent the worst-case scenario (like max limit).
+
+If you don't have the variables or don't want to work with the stub value, then you can use another mechanism that does not require variables.
+`QueryReducerExecutor.reduceQueryWithoutVariables` provides a convenient way to achieve this. In its signature it is similar to
+`Executor.prepare`, but it does not require `variables` and designed to validate and execute query reducers for queries that are
+being analyzed ahead of time (e.g. in the context of persistent queries).
 
 ### AstVisitor
 
@@ -1499,6 +1678,21 @@ Executor.execute(schema, query, deferredResolver = new FriendsResolver)
 
 During an execution of this query, the amount of produced `Deferred` values grows exponentially. Still `DeferredResolver.resolve` method
 would be called only **4** times by the executor because the query has only 4 levels of fields that return deferred values (`friends` in this case).  
+
+### Transforming the Deferred Value
+
+It is quite common requirement to transform the resolved deferred value before it is used by the execution engine. This can be easily achieved
+with `map` method on the `DeferredValue` action. here is an example:
+
+```scala
+Field("products", ListType(ProductType),
+  resolve = c ⇒
+    DeferredValue(fetcherProd.deferSeqOpt(c.value.products))
+      .map(fetchedProducts ⇒ ...)),
+```
+
+In some cases you need to report errors that happened during deferred value resolution, but still preserving successful result. You can do
+it by using `mapWithErrors` instead of `map`.
 
 ### DeferredResolver State
 
@@ -2202,6 +2396,9 @@ methods of middleware.
 
 `afterField` also allows you to transform field values by returning `Some` with a transformed value. You can also throw an exception from `beforeField` or `afterField`
 in order to indicate a field error.
+
+`beforeField` returns `BeforeFieldResult` which allows you to add a `MiddlewareAttachment`.
+This attachment then can be used in resolve function via `Context.attachment`/`Context.attachments`.
 
 In case several middleware objects are defined for the same execution, `beforeField` would be called in the order middleware is defined.
 `afterField`, on the other hand, would be call in reverse order. To demonstrate this, let's look at this middleware as an example:
