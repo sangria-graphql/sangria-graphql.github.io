@@ -11,10 +11,15 @@ Your feedback and participation are very welcome!
 
 ### Projects
 
-There are several community projects that extend Sangria, or, provide worked examples for various frameworks.
+There are several community projects and tools that use or extend Sangria, or, provide worked examples for various frameworks (sorted alphabetically):
 
+* [Database Flow](https://databaseflow.com/) ([GitHub](https://github.com/KyleU/databaseflow)) - An opinionated modern database interface
 * [finch-sangria](https://github.com/redbubble/finch-sangria) - Simple wrappers around Sangria to support its use in [Finch](https://github.com/finagle/finch). Includes [Circe](https://github.com/circe/circe) JSON decoders that may be relevant to other frameworks.
-* [Redbubble GraphQL template](https://github.com/redbubble/rb-graphql-template) - A [Finch](https://github.com/finagle/finch)-based GraphQL stack.
+* [Graphcool Framework](https://www.graph.cool/) ([GitHub](https://github.com/graphcool/framework)) - Framework to develop & deploy serverless GraphQL backends
+* [Redbubble GraphQL template](https://github.com/redbubble/rb-graphql-template) - A [Finch](https://github.com/finagle/finch)-based GraphQL stack
+* [sangria-codegen](https://github.com/mediative/sangria-codegen) - Generate API code based on a GraphQL schema and queries
+* [sbt-graphql](https://github.com/muuki88/sbt-graphql) - SBT plugin to generate and validate graphql schemas written with Sangria
+* [scala-relay-compiler](https://github.com/dispalt/relay-modern-helper/tree/master/node-compiler) - A Scala.js bindings generator for the [relay-compiler](https://facebook.github.io/relay/docs/relay-compiler.html)
 
 ### Videos
 
