@@ -394,7 +394,10 @@ val UserType = deriveObjectType[MyCtx, User](
   RenameField("id", "identifier"),
   DocumentField("permissions", "User permissions",
     deprecationReason = Some("Will not be exposed in future")),
-  ExcludeFields("password"))
+  ExcludeFields("password"),
+  AddFields(
+    Field("reverse_name", BooleanType, resolve = _ => _.value.name.reverse)
+  ))
 ```
 
 It will generate an `ObjectType` which is equivalent to this one:
@@ -405,7 +408,8 @@ ObjectType("AuthUser", "A user of the system.", fields[MyCtx, User](
   Field("permissions", ListType(StringType),
     description = Some("User permissions"),
     deprecationReason = Some("Will not be exposed in future"),
-    resolve = _.value.permissions)))
+    resolve = _.value.permissions),
+  Field("reverse_name", BooleanType, resolve = _ => _.value.name.reverse)))
 ```
 
 #### Deriving Methods with Arguments
