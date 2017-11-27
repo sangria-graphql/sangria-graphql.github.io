@@ -1698,6 +1698,8 @@ Field("products", ListType(ProductType),
 In some cases you need to report errors that happened during deferred value resolution, but still preserving successful result. You can do
 it by using `mapWithErrors` instead of `map`.
 
+Functions like `defer` or `deferSeq` will trigger internal errors if one of the deferred values cannot be resolved (tags with id `1`, `2`, and `3` are requested but the deferred resolver only returns tags with id `1` and `3` for example), whereas their `Opt` counterparts (`deferOpt`, `deferSeqOpt`, etc.), although having the same signatures, will ignore the missing values silently.
+
 ### DeferredResolver State
 
 In some cases you may need to have some state inside of a `DeferredResolver` for every query execution. This, for instance, is necessary when you
