@@ -643,13 +643,20 @@ interface Character {
   name: String!
 }
 
+"""
+The human character
+"""
 type Human implements Character {
   id: Int!
   name: String!
   height: Float
 }
 
+"""
+The root query type
+"""
 type Query {
+  "The main hero or the saga"
   hero: Character
 }
 
