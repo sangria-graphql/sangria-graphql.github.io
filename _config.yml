@@ -13,7 +13,7 @@ version:
   sangria-play-json: 1.0.4
   sangria-json4s-native: 1.0.0
   sangria-json4s-jackson: 1.0.0
-  sangria-circe: 1.1.1
+  sangria-circe: 1.2.0
   sangria-msgpack: 1.0.0
   sangria-ion: 1.0.0
   sangria-argonaut: 1.0.0
