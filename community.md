@@ -20,6 +20,7 @@ There are several community projects and tools that use or extend Sangria, or, p
 * [sangria-codegen](https://github.com/mediative/sangria-codegen) - Generate API code based on a GraphQL schema and queries
 * [sbt-graphql](https://github.com/muuki88/sbt-graphql) - SBT plugin to generate and validate graphql schemas written with Sangria
 * [scala-relay-compiler](https://github.com/dispalt/relay-modern-helper/tree/master/node-compiler) - A Scala.js bindings generator for the [relay-compiler](https://facebook.github.io/relay/docs/relay-compiler.html)
+* [Drunk](https://github.com/Jarlakxen/drunk) - A simple GraphQL client on top of [Akka HTTP](https://doc.akka.io/docs/akka-http/current/) and [Circe](https://circe.github.io/circe/).
 
 ### Videos
 
