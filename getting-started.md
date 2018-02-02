@@ -463,9 +463,13 @@ class Application extends Controller {
     val query = (request.body \ "query").as[String]
     val operation = (request.body \ "operationName").asOpt[String]
     val variables = (request.body \ "variables").toOption.flatMap {
+      case JsString(vars) ⇒ parseVariables(vars)
       case obj: JsObject ⇒ obj
       case _ ⇒ Json.obj()
     }
+
+    def parseVariables(variables: String) =
+      if (variables.trim == "" || variables.trim == "null") Json.obj() else Json.parse(variables).as[JsObject]
 
     QueryParser.parse(query) match {
       // query parsed successfully, time to execute it!
