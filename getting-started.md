@@ -502,5 +502,10 @@ I recommend you to check out [{{site.link.try}}]({{site.link.try}}) for more det
 
 ## Next steps
 
-This page highlights only a small subset of sangria capabilities and features. I would recommend you to play with [sangria-playground]({{site.link.try}}) mentioned above. You can also check
-[in-depth sangria documentation]({{"/learn/" | prepend: site.baseurl}}).
+This page highlights only a small subset of sangria capabilities and features. I would recommend you to:
+
+* Check out more advanced sangria tutorial available at ["How To GraphQL"](https://www.howtographql.com/graphql-scala/0-introduction/).
+* Check [in-depth sangria documentation]({{"/learn/" | prepend: site.baseurl}}).
+* Play with [sangria-playground]({{site.link.try}}) mentioned above. 
+* Try out [{{site.link.akka-http-example.github}}]({{site.link.akka-http-example.github}}).
+* Try out ["Zero To GraphQL" example](https://github.com/steveluscher/zero-to-graphql/tree/master/zero-scala). 
