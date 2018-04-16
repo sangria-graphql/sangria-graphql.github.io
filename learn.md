@@ -28,7 +28,7 @@ where you can interactively execute GraphQL queries and play with some examples.
 
 [Apollo Client](http://dev.apollodata.com/) is a full featured, simple to use GraphQL client with convenient integrations for popular view layers. Apollo Client is an easy way to get started with Sangria as they're 100% compatible.
 
-If you want to use sangria with the react-relay framework, they you also need to include [sangria-relay]({{site.link.repo.sangria-relay}}):
+If you want to use sangria with the react-relay framework, then you also need to include [sangria-relay]({{site.link.repo.sangria-relay}}):
 
 ```scala
 libraryDependencies += "{{site.groupId}}" %% "sangria-relay" % "{{site.version.sangria-relay}}"
