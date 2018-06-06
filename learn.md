@@ -2399,7 +2399,7 @@ val result = Executor.execute(schema, query, middleware = new FieldMetrics :: Ni
 
 It will record the execution time of all fields in a query and then report it in some way.
 
-Middleware supports 2 types state that you can use withing a middleware instance:
+Middleware supports 2 types state that you can use within a middleware instance:
 
 * `QueryVal` - an instance of this type is create at the beginning of the query execution and then propagated to all other middleware methods
 * `FieldVal` - an instance of this type may be returned from `beforeField` and will be given as a argument to `afterField` and `fieldError` for the same field.
