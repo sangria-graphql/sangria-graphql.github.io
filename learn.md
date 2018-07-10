@@ -75,14 +75,15 @@ val query =
     }
   """
 
-// Parse GraphQl query
-val Success(document: Document) = QueryParser.parse(query)
-
-// Pretty rendering of GraphQl query as a `String`
-println(QueryRenderer.render(document))
-
-// Compact rendering of GraphQl query as a `String`
-println(QueryRenderer.render(document, QueryRenderer.Compact))
+// Parse GraphQL query
+QueryParser.parse(query) match {
+  case Success(document) ⇒ 
+    // Pretty rendering of the GraphQL query as a `String`
+    println(document.renderPretty)
+    
+  case Failure(error) ⇒ 
+    println(s"Syntax error: ${error.getMessage}")
+}
 ```
 
 Alternatively you can use `graphql` macro, which will ensure that your query is syntactically correct at compile time:
