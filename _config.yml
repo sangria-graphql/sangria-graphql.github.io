@@ -23,7 +23,7 @@ version:
   sangria-akka-streams: 1.0.1
   sangria-rxscala: 1.0.0
   sangria-monix: 1.0.0
-  sangria-slowlog: 0.1.6
+  sangria-slowlog: 0.1.7
   macro-visit: 0.1.1
 
 groupId: org.sangria-graphql
