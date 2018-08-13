@@ -7,8 +7,8 @@ ga-code: UA-65759630-1
 domain: sangria-graphql.org
 
 version:
-  sangria: 1.4.1
-  sangria-relay: 1.4.1
+  sangria: 1.4.2
+  sangria-relay: 1.4.2
   sangria-spray-json: 1.0.1
   sangria-play-json: 1.0.4
   sangria-json4s-native: 1.0.0
@@ -23,7 +23,7 @@ version:
   sangria-akka-streams: 1.0.1
   sangria-rxscala: 1.0.0
   sangria-monix: 1.0.0
-  sangria-slowlog: 0.1.7
+  sangria-slowlog: 0.1.8
   macro-visit: 0.1.1
 
 groupId: org.sangria-graphql
