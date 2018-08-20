@@ -1717,7 +1717,7 @@ Internally, an executor manages `DeferredResolver` state and provides it via the
 state by overriding the `initialQueryState` method:
 
 ```scala
-class MyResolver[Ctx] DeferredResolver[Ctx] {
+class MyResolver[Ctx] extends DeferredResolver[Ctx] {
   def initialQueryState: Any = TrieMap[String, Any]()
 
   def resolve(deferred: Vector[Deferred[Any]], ctx: Ctx, queryState: Any)(implicit ec: ExecutionContext) = 
