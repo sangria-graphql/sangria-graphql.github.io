@@ -1061,7 +1061,7 @@ change the result type of an execution. Here is an example:
 import sangria.execution.ExecutionScheme.Extended
 
 val result: Future[ExecutionResult[Ctx, JsValue]] = 
-  val Executor.execute(schema, query)
+  Executor.execute(schema, query)
 ```
 
 `Extended` execution scheme gives you the result of the execution together with additional information about the execution itself (like, for instance, the list of exceptions that happened during the execution).
