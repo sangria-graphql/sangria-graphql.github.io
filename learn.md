@@ -2687,7 +2687,7 @@ val DateTimeType = ScalarType[DateTime]("DateTime",
     case _ ⇒ Left(DateCoercionViolation)
   },
   coerceInput = {
-    case ast.StringValue(s, _, _) ⇒ parseDate(s)
+    case ast.StringValue(s, _, _, _, _) ⇒ parseDate(s)
     case _ ⇒ Left(DateCoercionViolation)
   })
 ```
