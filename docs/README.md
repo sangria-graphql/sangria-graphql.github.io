@@ -13,5 +13,5 @@ And then point browser to [http://localhost:4000](http://localhost:4000). This w
 ## Build
 
 ```
-jekyll b -d docs
+jekyll -d docs
 ```
