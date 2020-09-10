@@ -1,10 +1,10 @@
 title: Sangria
 description: "Sangria - Scala GraphQL Implementation"
 baseurl: ""
-url: "http://sangria-graphql.org"
+url: "https://sangria-graphql.github.io"
 bootstrap-theme: flatly
 ga-code: UA-65759630-1
-domain: sangria-graphql.org
+domain: sangria-graphql.github.io
 
 version:
   sangria: 1.4.2
@@ -128,6 +128,6 @@ markdown: kramdown
 permalink: pretty
 highlighter: rouge
 
-gems:
-- jekyll-redirect-from
-- jekyll-sitemap
+plugins:
+  - jekyll-redirect-from
+  - jekyll-sitemap
