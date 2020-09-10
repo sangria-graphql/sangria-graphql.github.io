@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- meta stuff -->
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sangria - Scala GraphQL Implementation">
+  <meta name="keywords" content="sangria,scala,graphql" />
+
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+
+  <link rel="canonical" href="https://sangria-graphql.org" />
+
+  <meta name="description" content="Sangria - Scala GraphQL Implementation">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="http://sangria-graphql.org">
+  <meta property="og:title" content="Sangria - Scala GraphQL Implementation">
+  <meta property="og:description" content="Getting Started with Sangria">
+  <meta property="og:image:url" content="http://sangria-graphql.org/assets/img/share-sangria.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@easyangel">
+  <meta name="twitter:creator" content="@easyangel">
+  <meta name="twitter:title" content="Sangria - Scala GraphQL Implementation">
+  <meta name="twitter:description" content="Getting Started with Sangria">
+  <meta name="twitter:image" content="http://sangria-graphql.org/assets/img/share-sangria.png">
+
+  <!-- /meta stuff -->
+
+  <title>Getting Started with Sangria</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/assets/css/syntax.css" rel="stylesheet">
+  <link href="/assets/css/sidebar.css" rel="stylesheet">
+
+  
+    <link href="/assets/bootstrap/css/bootstrap-flatly.min.css"" rel="stylesheet">
+  
+
+  <link href="/assets/css/main.css" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i|Roboto:100,300,300i,700" rel="stylesheet">
+
+  <script src="//use.typekit.net/wng7fcn.js"></script>
+  <script>try{Typekit.load();}catch(e){}</script>
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+
+
+<body data-animate-header="false" class="">
+
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <a href="/">
+        <img class="logo" src="/assets/img/sangria-logo-1.svg" />
+      </a>
+
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+
+    <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="active "><a href="/getting-started">Getting Started</a></li>
+        <li class=""><a href="http://try.sangria-graphql.org">Try</a></li>
+        <li class=""><a href="http://toolbox.sangria-graphql.org">Toolbox</a></li>
+        <li class=" "><a href="/download">Download</a></li>
+        <li class=" "><a href="/learn">Learn</a></li>
+        <li class=" "><a href="/community">Community</a></li>
+        <li class=""><a target="_blank" href="https://github.com/sangria-graphql" title="Sangria at GitHub"><i class="fa fa-github fa-lg"></i></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+  <div class="secondary-spacer"></div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-9 main-content main-section">
+      <h2 id="getting-started-with-sangria">Getting Started with Sangria</h2>
+
+<p><strong>Sangria</strong> is a Scala <a href="http://facebook.github.io/graphql/">GraphQL</a> implementation.</p>
+
+<p>Here is how you can add it to your SBT project:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria"</span> <span class="o">%</span> <span class="s">"1.4.2"</span>
+</code></pre></div></div>
+
+<p>You can find an example application that uses akka-http with <em>sangria</em> here (it is also available as an <a href="https://www.typesafe.com/activator/template/sangria-akka-http-example">Activator template</a>):</p>
+
+<p><a href="https://github.com/sangria-graphql/sangria-akka-http-example">https://github.com/sangria-graphql/sangria-akka-http-example</a></p>
+
+<p>I would also recommend you to check out <a href="http://try.sangria-graphql.org">http://try.sangria-graphql.org</a>.
+It is an example of a GraphQL server written with the Play framework and Sangria. It also serves as a playground,
+where you can interactively execute GraphQL queries and play with some examples.</p>
+
+<p><a href="http://dev.apollodata.com/">Apollo Client</a> is a full featured, simple to use GraphQL client with convenient integrations for popular view layers. Apollo Client is an easy way to get started with Sangria as they’re 100% compatible.</p>
+
+<p>If you want to use sangria with the react-relay framework, then you also need to include <a href="https://github.com/sangria-graphql/sangria-relay">sangria-relay</a>:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-relay"</span> <span class="o">%</span> <span class="s">"1.4.2"</span>
+</code></pre></div></div>
+
+<p>Sangria-relay Playground (<a href="http://try-relay.sangria-graphql.org">http://try-relay.sangria-graphql.org</a>) is a nice place to start if you would like to see it in action.</p>
+
+<p>Before you start, you might want to check out <a href="/community/#videos">“Videos” section of the community page</a>.
+It has a lot of nice introduction videos.</p>
+
+<h2 id="graphql-introduction">GraphQL Introduction</h2>
+
+<p>GraphQL is a data query language. It was developed by Facebook and in July 2015 a first draft of the specification was released publicly.
+Here is an example of GraphQL client-server interaction:</p>
+
+<p><img src="/assets/img/graphql-api.svg" alt="Client-server interaction" /></p>
+
+<p>As you can see, it’s a typical HTTP-based client server interaction, where the client makes a POST HTTP request with GraphQL query in a post body
+and the server returns a JSON response. Though HTTP transport and JSON data format are not part of GraphQL specification and are not prescribed by it, 
+it’s the most popular option for GraphQL server, so next sections will use these for examples.</p>
+
+<p>Conceptually, during this interaction, both client and server provide important pieces of information to each other:</p>
+
+<p><img src="/assets/img/data-requirements.svg" alt="Data Requirements" /></p>
+
+<p>Since GraphQL has a type system, the server defines a schema which the client can query using the introspection API. This provides the client with a set of possibilities. After the client got this information and decided which parts of the data it needs, it is able to describe its data 
+requirements in form of GraphQL <em>query</em>.</p>
+
+<p>Important aspect of GraphQL is that it’s completely backend agnostic. This means that you are free to choose the transport protocol, 
+exposed data format, the data storage engine, etc. GraphQL and Sangria are just a thin layer inside of your Scala application that controls 
+the execution of your business logic:</p>
+
+<p><img src="/assets/img/stack.svg" alt="Sangria-based app stack" /></p>
+
+<p>In the next sections we will go through the steps that will help you to build your own GraphQL server with Scala and Sangria:</p>
+
+<ul>
+  <li>Define a GraphQL schema</li>
+  <li>Test the schema</li>
+  <li>Expose a GraphQL endpoint via HTTP (with akka-http and play)</li>
+</ul>
+
+<p>If you would like to learn more about GraphQL itself, I would highly recommend you to visit the <a href="http://graphql.org">official GraphQL website</a>.</p>
+
+<h2 id="define-a-graphql-schema">Define a GraphQL Schema</h2>
+
+<p>Just like Scala, GraphQL has a powerful type system behind it. This means that we need to define the meta-information about the schema in 
+our Scala code with abstractions provided in <code class="language-plaintext highlighter-rouge">sangria.schema</code> package.</p>
+
+<p>Here is an example schema that we will implement (described with GraphQL syntax):</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">type</span> <span class="nx">Picture</span> <span class="p">{</span>
+  <span class="nl">width</span><span class="p">:</span> <span class="nx">Int</span><span class="o">!</span>
+  <span class="nx">height</span><span class="p">:</span> <span class="nx">Int</span><span class="o">!</span>
+  <span class="nx">url</span><span class="p">:</span> <span class="nb">String</span>
+<span class="p">}</span>
+
+<span class="kr">interface</span> <span class="nx">Identifiable</span> <span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="nb">String</span><span class="o">!</span>
+<span class="p">}</span>
+
+<span class="nx">type</span> <span class="nx">Product</span> <span class="kr">implements</span> <span class="nx">Identifiable</span> <span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="nb">String</span><span class="o">!</span>
+  <span class="nx">name</span><span class="p">:</span> <span class="nb">String</span><span class="o">!</span>
+  <span class="nx">description</span><span class="p">:</span> <span class="nb">String</span>
+  <span class="nx">picture</span><span class="p">(</span><span class="nx">size</span><span class="p">:</span> <span class="nx">Int</span><span class="o">!</span><span class="p">):</span> <span class="nx">Picture</span>
+<span class="p">}</span>
+
+<span class="nx">type</span> <span class="nx">Query</span> <span class="p">{</span>
+  <span class="nx">product</span><span class="p">(</span><span class="nx">id</span><span class="p">:</span> <span class="nx">Int</span><span class="o">!</span><span class="p">):</span> <span class="nx">Product</span>
+  <span class="nx">products</span><span class="p">:</span> <span class="p">[</span><span class="nx">Product</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>As you can see, you can define types and interfaces in GraphQL, just like in Scala. Exclamation mark (<code class="language-plaintext highlighter-rouge">!</code>) means that field is mandatory and 
+cannot return <code class="language-plaintext highlighter-rouge">null</code> values. Square brackets (<code class="language-plaintext highlighter-rouge">[...]</code>) signify the list types. GraphQL type system has enums, union types, scalars 
+and input object types, but we will not go deeper into these in this particular example.</p>
+
+<p>Here is an example of GraphQL query that we will be able to execute against this schema:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">query</span> <span class="nx">MyProduct</span> <span class="p">{</span>
+  <span class="nx">product</span><span class="p">(</span><span class="nx">id</span><span class="p">:</span> <span class="dl">"</span><span class="s2">2</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">name</span>
+    <span class="nx">description</span>
+
+    <span class="nx">picture</span><span class="p">(</span><span class="nx">size</span><span class="p">:</span> <span class="mi">500</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">,</span> <span class="nx">url</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">products</span> <span class="p">{</span>
+    <span class="nx">name</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Note that we start the query with <code class="language-plaintext highlighter-rouge">product</code> and <code class="language-plaintext highlighter-rouge">products</code> fields. These fields are defined on a <code class="language-plaintext highlighter-rouge">Query</code> type and serve as a main entry point.
+We will discuss it in more detail later.</p>
+
+<h3 id="picture-type">Picture Type</h3>
+
+<p>First let’s define a <code class="language-plaintext highlighter-rouge">Picture</code> GraphQL type. In scala, you most probably will model it a simple case class like this one:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Picture</span><span class="o">(</span><span class="n">width</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">height</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">url</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span>
+</code></pre></div></div>
+
+<p>Let’s define a GraphQL object type for it:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">sangria.schema._</span>
+
+<span class="k">val</span> <span class="nv">PictureType</span> <span class="k">=</span> <span class="nc">ObjectType</span><span class="o">(</span>
+  <span class="s">"Picture"</span><span class="o">,</span>
+  <span class="s">"The product picture"</span><span class="o">,</span>
+
+  <span class="n">fields</span><span class="o">[</span><span class="kt">Unit</span>, <span class="kt">Picture</span><span class="o">](</span>
+    <span class="nc">Field</span><span class="o">(</span><span class="s">"width"</span><span class="o">,</span> <span class="nc">IntType</span><span class="o">,</span> <span class="n">resolve</span> <span class="k">=</span> <span class="nv">_</span><span class="o">.</span><span class="py">value</span><span class="o">.</span><span class="py">width</span><span class="o">),</span>
+    <span class="nc">Field</span><span class="o">(</span><span class="s">"height"</span><span class="o">,</span> <span class="nc">IntType</span><span class="o">,</span> <span class="n">resolve</span> <span class="k">=</span> <span class="nv">_</span><span class="o">.</span><span class="py">value</span><span class="o">.</span><span class="py">height</span><span class="o">),</span>
+    <span class="nc">Field</span><span class="o">(</span><span class="s">"url"</span><span class="o">,</span> <span class="nc">OptionType</span><span class="o">(</span><span class="nc">StringType</span><span class="o">),</span>
+      <span class="n">description</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="s">"Picture CDN URL"</span><span class="o">),</span>
+      <span class="n">resolve</span> <span class="k">=</span> <span class="nv">_</span><span class="o">.</span><span class="py">value</span><span class="o">.</span><span class="py">url</span><span class="o">)))</span>
+</code></pre></div></div>
+
+<p>This is the most common way to define the GraphQL schema with Sangria. An <code class="language-plaintext highlighter-rouge">ObjectType</code> allows you to specify name, description
+and a list of fields that describes the <code class="language-plaintext highlighter-rouge">Picture</code> type. We also have defined this GraphQL type in terms of our, previously defined, <code class="language-plaintext highlighter-rouge">Picture</code>
+case class. In order to identify what every GraphQL field should return during the query execution, we have provided a <code class="language-plaintext highlighter-rouge">resolve</code> function for
+every field. <code class="language-plaintext highlighter-rouge">resolve</code> function plays quite an important role since this is the place where you can define your own business logic. 
+In this simple example we just use the context <code class="language-plaintext highlighter-rouge">value</code> (which would be of type <code class="language-plaintext highlighter-rouge">Picture</code>) and extract specific property value from it. 
+But we can also perform more complex logic in this function, even access the data storage as we will see in the later example.</p>
+
+<p>You probably noticed that it requires a lot of extra code to define a GraphQL type, especially considering that we already have the <code class="language-plaintext highlighter-rouge">Picture</code> case class
+which already contains a lot of information about our domain object. For situations like this, Sangria provides a set of macros that help you 
+to derive GraphQL definitions based in Scala classes.</p>
+
+<p>Let’s simplify the GraphQL object type definition for <code class="language-plaintext highlighter-rouge">Picture</code> with <code class="language-plaintext highlighter-rouge">deriveObjectType</code> macro:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">sangria.macros.derive._</span>
+
+<span class="k">implicit</span> <span class="k">val</span> <span class="nv">PictureType</span> <span class="k">=</span>
+  <span class="n">deriveObjectType</span><span class="o">[</span><span class="kt">Unit</span>, <span class="kt">Picture</span><span class="o">](</span>
+    <span class="nc">ObjectTypeDescription</span><span class="o">(</span><span class="s">"The product picture"</span><span class="o">),</span>
+    <span class="nc">DocumentField</span><span class="o">(</span><span class="s">"url"</span><span class="o">,</span> <span class="s">"Picture CDN URL"</span><span class="o">))</span>
+</code></pre></div></div>
+
+<p>Macro allows you not only to derive the structure of the case class and appropriate <code class="language-plaintext highlighter-rouge">resolve</code> functions for all of the derived fields, 
+but it also allows you to customize different aspects of the generated GraphQL object through macro arguments. In this case we added 
+additional documentation to the object type itself and one of its fields, but you can also customize any aspect of generated GraphQL object this way.</p>
+
+<h3 id="product-type-and-identifiable-interface">Product Type and Identifiable Interface</h3>
+
+<p>Next let’s define an interface for all types that have an <code class="language-plaintext highlighter-rouge">id</code> field. Scala equivalent will look like this simple trait:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">Identifiable</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="nf">id</span><span class="k">:</span> <span class="kt">String</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>The GraphQL definition will look pretty similar to what we saw before, but we will use an <code class="language-plaintext highlighter-rouge">InterfaceType</code> instead:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">IdentifiableType</span> <span class="k">=</span> <span class="nc">InterfaceType</span><span class="o">(</span>
+  <span class="s">"Identifiable"</span><span class="o">,</span>
+  <span class="s">"Entity that can be identified"</span><span class="o">,</span>
+
+  <span class="n">fields</span><span class="o">[</span><span class="kt">Unit</span>, <span class="kt">Identifiable</span><span class="o">](</span>
+    <span class="nc">Field</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="nc">StringType</span><span class="o">,</span> <span class="n">resolve</span> <span class="k">=</span> <span class="nv">_</span><span class="o">.</span><span class="py">value</span><span class="o">.</span><span class="py">id</span><span class="o">)))</span>
+</code></pre></div></div>
+
+<p>Now that we have an <code class="language-plaintext highlighter-rouge">Identifiable</code> interface, let’s define a <code class="language-plaintext highlighter-rouge">Product</code> scala case class and equivalent GraphQL definition with 
+<code class="language-plaintext highlighter-rouge">deriveObjectType</code> macro:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Product</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">description</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Identifiable</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="nf">picture</span><span class="o">(</span><span class="n">size</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Picture</span> <span class="o">=</span>
+    <span class="nc">Picture</span><span class="o">(</span><span class="n">width</span> <span class="k">=</span> <span class="n">size</span><span class="o">,</span> <span class="n">height</span> <span class="k">=</span> <span class="n">size</span><span class="o">,</span> <span class="n">url</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="n">s</span><span class="s">"//cdn.com/$size/$id.jpg"</span><span class="o">))</span>
+<span class="o">}</span>
+
+<span class="k">val</span> <span class="nv">ProductType</span> <span class="k">=</span>
+  <span class="n">deriveObjectType</span><span class="o">[</span><span class="kt">Unit</span>, <span class="kt">Product</span><span class="o">](</span>
+    <span class="nc">Interfaces</span><span class="o">(</span><span class="nc">IdentifiableType</span><span class="o">),</span> 
+    <span class="nc">IncludeMethods</span><span class="o">(</span><span class="s">"picture"</span><span class="o">))</span>
+</code></pre></div></div>
+
+<p>By default, macro will only consider the case class fields. In this example we explicitly asked macro to include <code class="language-plaintext highlighter-rouge">picture</code> method. 
+We also defined an implemented interface since this does not happen by default. <code class="language-plaintext highlighter-rouge">deriveObjectType</code> macro is also able to handle method 
+arguments and translate them to GraphQL field arguments.</p>
+
+<h3 id="query-type">Query Type</h3>
+
+<p>Finally we need to define a <code class="language-plaintext highlighter-rouge">Query</code> type. <code class="language-plaintext highlighter-rouge">Query</code> type is a bit special because it will define the top-level fields. You will use these 
+fields as an entry point in your GraphQL queries. Otherwise <code class="language-plaintext highlighter-rouge">Query</code> is the same object type that we already defined several times earlier. 
+This time around, let’s define it as a normal <code class="language-plaintext highlighter-rouge">ObjectType</code>, but before we will do this, we need to define a product repository 
+which will be responsible for loading the product information from a database or external service. For a simplicity sake, let’s just use an in-memory 
+product list in this example:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ProductRepo</span> <span class="o">{</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="nv">Products</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span>
+    <span class="nc">Product</span><span class="o">(</span><span class="s">"1"</span><span class="o">,</span> <span class="s">"Cheesecake"</span><span class="o">,</span> <span class="s">"Tasty"</span><span class="o">),</span>
+    <span class="nc">Product</span><span class="o">(</span><span class="s">"2"</span><span class="o">,</span> <span class="s">"Health Potion"</span><span class="o">,</span> <span class="s">"+50 HP"</span><span class="o">))</span>
+
+  <span class="k">def</span> <span class="nf">product</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Product</span><span class="o">]</span> <span class="k">=</span>
+    <span class="nc">Products</span> <span class="nf">find</span> <span class="o">(</span><span class="nv">_</span><span class="o">.</span><span class="py">id</span> <span class="o">==</span> <span class="n">id</span><span class="o">)</span>
+
+  <span class="k">def</span> <span class="nf">products</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Product</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Products</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Now let’s define a <code class="language-plaintext highlighter-rouge">Query</code> type:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">Id</span> <span class="k">=</span> <span class="nc">Argument</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="nc">StringType</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">QueryType</span> <span class="k">=</span> <span class="nc">ObjectType</span><span class="o">(</span><span class="s">"Query"</span><span class="o">,</span> <span class="n">fields</span><span class="o">[</span><span class="kt">ProductRepo</span>, <span class="kt">Unit</span><span class="o">](</span>
+  <span class="nc">Field</span><span class="o">(</span><span class="s">"product"</span><span class="o">,</span> <span class="nc">OptionType</span><span class="o">(</span><span class="nc">ProductType</span><span class="o">),</span>
+    <span class="n">description</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="s">"Returns a product with specific `id`."</span><span class="o">),</span>
+    <span class="n">arguments</span> <span class="k">=</span> <span class="nc">Id</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">,</span>
+    <span class="n">resolve</span> <span class="k">=</span> <span class="n">c</span> <span class="k">⇒</span> <span class="nv">c</span><span class="o">.</span><span class="py">ctx</span><span class="o">.</span><span class="py">product</span><span class="o">(</span><span class="n">c</span> <span class="n">arg</span> <span class="nc">Id</span><span class="o">)),</span>
+
+  <span class="nc">Field</span><span class="o">(</span><span class="s">"products"</span><span class="o">,</span> <span class="nc">ListType</span><span class="o">(</span><span class="nc">ProductType</span><span class="o">),</span>
+    <span class="n">description</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="s">"Returns a list of all available products."</span><span class="o">),</span>
+    <span class="n">resolve</span> <span class="k">=</span> <span class="nv">_</span><span class="o">.</span><span class="py">ctx</span><span class="o">.</span><span class="py">products</span><span class="o">)))</span>
+</code></pre></div></div>
+
+<p>As you may noticed, we have defined <code class="language-plaintext highlighter-rouge">Query</code> type in terms of <code class="language-plaintext highlighter-rouge">ProductRepo</code>, but we have provided it as a first type argument this time around.
+We do not have a context value in this case because this type is an entry point for the whole query. Sangria allows you to provide user
+context object which is available to all GraphQL type fields within the schema. The type of this object is provided via the first type argument. 
+In most cases this user context object provides access to a data storage (like database or external service), auth information and generally information that is common 
+and may be useful to all of the fields in your GraphQL schema.</p>
+
+<p>Now that we have defined the <code class="language-plaintext highlighter-rouge">Query</code> type, the only thing we need to do is to define the schema itself:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">schema</span> <span class="k">=</span> <span class="nc">Schema</span><span class="o">(</span><span class="nc">QueryType</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h2 id="schema-execution">Schema Execution</h2>
+
+<p>Given this schema definition, we now can execute queries against it. Let’s write a small test and execute an example query against our schema.</p>
+
+<p>For testing purpose, Sangria provides very convenient <code class="language-plaintext highlighter-rouge">graphql</code> macro which parses a GraphQL query and reports all syntax errors as a 
+compile-time errors, if there are any:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">sangria.macros._</span>
+
+<span class="k">val</span> <span class="nv">query</span> <span class="k">=</span>
+  <span class="n">graphql</span><span class="s">"""
+    query MyProduct {
+      product(id: "2") {
+        name
+        description
+
+        picture(size: 500) {
+          width, height, url
+        }
+      }
+
+      products {
+        name
+      }
+    }
+  """</span>
+</code></pre></div></div>
+
+<p>For a query execution we will use <code class="language-plaintext highlighter-rouge">Executor.execute</code> method which will also require a user context object (<code class="language-plaintext highlighter-rouge">ProductRepo</code> in our case):</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">sangria.execution._</span>
+<span class="k">import</span> <span class="nn">sangria.marshalling.circe._</span>
+
+<span class="k">import</span> <span class="nn">io.circe.Json</span>
+
+<span class="k">val</span> <span class="nv">result</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Json</span><span class="o">]</span> <span class="k">=</span>
+  <span class="nv">Executor</span><span class="o">.</span><span class="py">execute</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">query</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ProductRepo</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>The result of this query execution would be following JSON:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"product"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Health Potion"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"description"</span><span class="w"> </span><span class="p">:</span><span class="s2">"+50 HP"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"picture"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"width"</span><span class="p">:</span><span class="w"> </span><span class="mi">500</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"height"</span><span class="p">:</span><span class="w"> </span><span class="mi">500</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"//cdn.com/500/2.jpg"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    
+    </span><span class="nl">"products"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Cheesecake"</span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Health Potion"</span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>In this particular example I decided to use <a href="http://circe.io">circe</a> JSON library. In order to use it you will also need to add following 
+library dependency in your SBT build:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-circe"</span> <span class="o">%</span> <span class="s">"1.2.1"</span>
+</code></pre></div></div>
+
+<p>Sangria supports most of the available JSON libraries, so you are not limited to a specific scala JSON implementation. In the next sections we will see an example of spray-json and play-json.</p>
+
+<p>Now that we know how to define the schema and execute queries against it, let’s expose it as an HTTP endpoint.</p>
+
+<h2 id="akka-http-graphql-endpoint">Akka-http GraphQL Endpoint</h2>
+
+<p>First we need some basic akka-http setup. In this example we will use spray-json, so let’s add following library dependency:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-spray-json"</span> <span class="o">%</span> <span class="s">"1.0.1"</span>
+</code></pre></div></div>
+
+<p>Here is the basic akka-http server setup:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">Server</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+  <span class="k">implicit</span> <span class="k">val</span> <span class="nv">system</span> <span class="k">=</span> <span class="nc">ActorSystem</span><span class="o">(</span><span class="s">"sangria-server"</span><span class="o">)</span>
+  <span class="k">implicit</span> <span class="k">val</span> <span class="nv">materializer</span> <span class="k">=</span> <span class="nc">ActorMaterializer</span><span class="o">()</span>
+
+  <span class="k">import</span> <span class="nn">system.dispatcher</span>
+  
+  <span class="k">val</span> <span class="nv">route</span><span class="k">:</span> <span class="kt">Route</span> <span class="o">=</span>
+    <span class="o">(</span><span class="n">post</span> <span class="o">&amp;</span> <span class="nf">path</span><span class="o">(</span><span class="s">"graphql"</span><span class="o">))</span> <span class="o">{</span>
+      <span class="nf">entity</span><span class="o">(</span><span class="n">as</span><span class="o">[</span><span class="kt">JsValue</span><span class="o">])</span> <span class="o">{</span> <span class="n">requestJson</span> <span class="k">⇒</span>
+        <span class="nf">graphQLEndpoint</span><span class="o">(</span><span class="n">requestJson</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="o">}</span> <span class="o">~</span>
+    <span class="n">get</span> <span class="o">{</span>
+      <span class="nf">getFromResource</span><span class="o">(</span><span class="s">"graphiql.html"</span><span class="o">)</span>
+    <span class="o">}</span>
+
+  <span class="nc">Http</span><span class="o">().</span><span class="py">bindAndHandle</span><span class="o">(</span><span class="n">route</span><span class="o">,</span> <span class="s">"0.0.0.0"</span><span class="o">,</span> <span class="mi">8080</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Nothing special here. I also added a static endpoint that serves a single <code class="language-plaintext highlighter-rouge">graphiql.html</code> page which you can
+find <a href="https://github.com/graphql/graphiql/blob/master/example/index.html">on GitHub</a> (or use already
+prepared <a href="https://github.com/sangria-graphql/sangria-akka-http-example/blob/master/src/main/resources/graphiql.html"><code class="language-plaintext highlighter-rouge">graphiql.html</code> from akka-http example</a>).
+It is a great tool that allows you edit and execute GraphQL queries directly in your browser.</p>
+
+<p>Now that we have a basic setup, let’s define <code class="language-plaintext highlighter-rouge">graphQLEndpoint</code> method:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">graphQLEndpoint</span><span class="o">(</span><span class="n">requestJson</span><span class="k">:</span> <span class="kt">JsValue</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="nv">JsObject</span><span class="o">(</span><span class="n">fields</span><span class="o">)</span> <span class="k">=</span> <span class="n">requestJson</span>
+
+  <span class="k">val</span> <span class="nv">JsString</span><span class="o">(</span><span class="n">query</span><span class="o">)</span> <span class="k">=</span> <span class="nf">fields</span><span class="o">(</span><span class="s">"query"</span><span class="o">)</span>
+
+  <span class="k">val</span> <span class="nv">operation</span> <span class="k">=</span> <span class="nv">fields</span><span class="o">.</span><span class="py">get</span><span class="o">(</span><span class="s">"operationName"</span><span class="o">)</span> <span class="n">collect</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="nc">JsString</span><span class="o">(</span><span class="n">op</span><span class="o">)</span> <span class="k">⇒</span> <span class="n">op</span>
+  <span class="o">}</span>
+
+  <span class="k">val</span> <span class="nv">vars</span> <span class="k">=</span> <span class="nv">fields</span><span class="o">.</span><span class="py">get</span><span class="o">(</span><span class="s">"variables"</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">obj</span><span class="k">:</span> <span class="kt">JsObject</span><span class="o">)</span> <span class="k">⇒</span> <span class="n">obj</span>
+    <span class="k">case</span> <span class="k">_</span> <span class="k">⇒</span> <span class="nv">JsObject</span><span class="o">.</span><span class="py">empty</span>
+  <span class="o">}</span>
+
+  <span class="nv">QueryParser</span><span class="o">.</span><span class="py">parse</span><span class="o">(</span><span class="n">query</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+
+    <span class="c1">// query parsed successfully, time to execute it!</span>
+    <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">queryAst</span><span class="o">)</span> <span class="k">⇒</span>
+      <span class="nf">complete</span><span class="o">(</span><span class="nf">executeGraphQLQuery</span><span class="o">(</span><span class="n">queryAst</span><span class="o">,</span> <span class="n">operation</span><span class="o">,</span> <span class="n">vars</span><span class="o">))</span>
+
+    <span class="c1">// can't parse GraphQL query, return error</span>
+    <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">error</span><span class="o">)</span> <span class="k">⇒</span>
+      <span class="nf">complete</span><span class="o">(</span><span class="nc">BadRequest</span><span class="o">,</span> <span class="nc">JsObject</span><span class="o">(</span><span class="s">"error"</span> <span class="o">→</span> <span class="nc">JsString</span><span class="o">(</span><span class="nv">error</span><span class="o">.</span><span class="py">getMessage</span><span class="o">)))</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>According to <a href="http://graphql.org/learn/serving-over-http/#post-request">GraphQL best practices</a> we need to handle 3 fields 
+in a request JSON body:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">query</code> - <code class="language-plaintext highlighter-rouge">String</code> - a GraphQL query as a string</li>
+  <li><code class="language-plaintext highlighter-rouge">variables</code> - <code class="language-plaintext highlighter-rouge">Object</code> - defines variables for your query (optional)</li>
+  <li><code class="language-plaintext highlighter-rouge">operationName</code> - <code class="language-plaintext highlighter-rouge">String</code> - a name of an operation, in case you defined several of them in the query (optional)</li>
+</ul>
+
+<p>After we extracted these fields, we parse the query and execute it:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">sangria.marshalling.sprayJson._</span>
+
+<span class="k">def</span> <span class="nf">executeGraphQLQuery</span><span class="o">(</span><span class="n">query</span><span class="k">:</span> <span class="kt">Document</span><span class="o">,</span> <span class="n">op</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span> <span class="n">vars</span><span class="k">:</span> <span class="kt">JsObject</span><span class="o">)</span> <span class="k">=</span>
+  <span class="nv">Executor</span><span class="o">.</span><span class="py">execute</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">query</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ProductRepo</span><span class="o">,</span> <span class="n">variables</span> <span class="k">=</span> <span class="n">vars</span><span class="o">,</span> <span class="n">operationName</span> <span class="k">=</span> <span class="n">op</span><span class="o">)</span>
+    <span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nc">OK</span> <span class="o">→</span> <span class="k">_</span><span class="o">)</span>
+    <span class="o">.</span><span class="py">recover</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">QueryAnalysisError</span> <span class="k">⇒</span> <span class="kt">BadRequest</span> <span class="kt">→</span> <span class="kt">error.resolveError</span>
+      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">ErrorWithResolver</span> <span class="k">⇒</span> <span class="kt">InternalServerError</span> <span class="kt">→</span> <span class="kt">error.resolveError</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>After you have defined all these methods, your akka-http based GraphQL server is ready to rock! 
+Just start it and point your browser to <a href="http://localhost:8080">http://localhost:8080</a>. You will see GraphiQL console:</p>
+
+<p><img src="/assets/img/graphiql.gif" alt="GraphiQL" /></p>
+
+<p>The GraphQL endpoint itself is exposed under <code class="language-plaintext highlighter-rouge">http://localhost:8080/graphql</code>.</p>
+
+<p>You can find the full example on the GitHub: <a href="https://github.com/sangria-graphql/sangria-akka-http-example">https://github.com/sangria-graphql/sangria-akka-http-example</a>.</p>
+
+<h2 id="play-graphql-endpoint">Play GraphQL Endpoint</h2>
+
+<p>The play implementation is very similar to akka-http. First we will use a different JSON implementation:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-play-json"</span> <span class="o">%</span> <span class="s">"1.0.5"</span>
+</code></pre></div></div>
+
+<p>Now you need to define a new route in your <code class="language-plaintext highlighter-rouge">/conf/routes</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>POST  /graphql  controllers.Application.graphql
+</code></pre></div></div>
+
+<p>In <code class="language-plaintext highlighter-rouge">Application</code> controller we need to define an action which is very similar to akka-http route and it will do following things:</p>
+
+<ul>
+  <li>Extract <code class="language-plaintext highlighter-rouge">query</code>, <code class="language-plaintext highlighter-rouge">operationName</code> and <code class="language-plaintext highlighter-rouge">variables</code> from request JSON body</li>
+  <li>Parse the <code class="language-plaintext highlighter-rouge">query</code></li>
+  <li>Execute it against previously defined schema</li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Application</span> <span class="k">extends</span> <span class="nc">Controller</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="nf">graphql</span> <span class="k">=</span> <span class="nv">Action</span><span class="o">.</span><span class="py">async</span><span class="o">(</span><span class="nv">parse</span><span class="o">.</span><span class="py">json</span><span class="o">)</span> <span class="o">{</span> <span class="n">request</span> <span class="k">⇒</span>
+    <span class="k">val</span> <span class="nv">query</span> <span class="k">=</span> <span class="o">(</span><span class="nv">request</span><span class="o">.</span><span class="py">body</span> <span class="o">\</span> <span class="s">"query"</span><span class="o">).</span><span class="py">as</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+    <span class="k">val</span> <span class="nv">operation</span> <span class="k">=</span> <span class="o">(</span><span class="nv">request</span><span class="o">.</span><span class="py">body</span> <span class="o">\</span> <span class="s">"operationName"</span><span class="o">).</span><span class="py">asOpt</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+    <span class="k">val</span> <span class="nv">variables</span> <span class="k">=</span> <span class="o">(</span><span class="nv">request</span><span class="o">.</span><span class="py">body</span> <span class="o">\</span> <span class="s">"variables"</span><span class="o">).</span><span class="py">toOption</span><span class="o">.</span><span class="py">flatMap</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">JsString</span><span class="o">(</span><span class="n">vars</span><span class="o">)</span> <span class="k">⇒</span> <span class="nf">parseVariables</span><span class="o">(</span><span class="n">vars</span><span class="o">)</span>
+      <span class="k">case</span> <span class="n">obj</span><span class="k">:</span> <span class="kt">JsObject</span> <span class="k">⇒</span> <span class="kt">obj</span>
+      <span class="k">case</span> <span class="k">_</span> <span class="k">⇒</span> <span class="nv">Json</span><span class="o">.</span><span class="py">obj</span><span class="o">()</span>
+    <span class="o">}</span>
+
+    <span class="k">def</span> <span class="nf">parseVariables</span><span class="o">(</span><span class="n">variables</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span>
+      <span class="nf">if</span> <span class="o">(</span><span class="nv">variables</span><span class="o">.</span><span class="py">trim</span> <span class="o">==</span> <span class="s">""</span> <span class="o">||</span> <span class="nv">variables</span><span class="o">.</span><span class="py">trim</span> <span class="o">==</span> <span class="s">"null"</span><span class="o">)</span> <span class="nv">Json</span><span class="o">.</span><span class="py">obj</span><span class="o">()</span> <span class="k">else</span> <span class="nv">Json</span><span class="o">.</span><span class="py">parse</span><span class="o">(</span><span class="n">variables</span><span class="o">).</span><span class="py">as</span><span class="o">[</span><span class="kt">JsObject</span><span class="o">]</span>
+
+    <span class="nv">QueryParser</span><span class="o">.</span><span class="py">parse</span><span class="o">(</span><span class="n">query</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="c1">// query parsed successfully, time to execute it!</span>
+      <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">queryAst</span><span class="o">)</span> <span class="k">⇒</span>
+        <span class="nf">executeGraphQLQuery</span><span class="o">(</span><span class="n">queryAst</span><span class="o">,</span> <span class="n">operation</span><span class="o">,</span> <span class="n">variables</span><span class="o">)</span>
+
+      <span class="c1">// can't parse GraphQL query, return error</span>
+      <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">error</span><span class="k">:</span> <span class="kt">SyntaxError</span><span class="o">)</span> <span class="k">⇒</span>
+        <span class="nv">Future</span><span class="o">.</span><span class="py">successful</span><span class="o">(</span><span class="nc">BadRequest</span><span class="o">(</span><span class="nv">Json</span><span class="o">.</span><span class="py">obj</span><span class="o">(</span><span class="s">"error"</span> <span class="o">→</span> <span class="nv">error</span><span class="o">.</span><span class="py">getMessage</span><span class="o">)))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>We are using different response types here, but otherwise the query execution code is similar as well:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">sangria.marshalling.playJson._</span>
+
+<span class="k">def</span> <span class="nf">executeGraphQLQuery</span><span class="o">(</span><span class="n">query</span><span class="k">:</span> <span class="kt">Document</span><span class="o">,</span> <span class="n">op</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span> <span class="n">vars</span><span class="k">:</span> <span class="kt">JsObject</span><span class="o">)</span> <span class="k">=</span>
+  <span class="nv">Executor</span><span class="o">.</span><span class="py">execute</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">query</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ProductRepo</span><span class="o">,</span> <span class="n">operationName</span> <span class="k">=</span> <span class="n">op</span><span class="o">,</span> <span class="n">variables</span> <span class="k">=</span> <span class="n">vars</span><span class="o">)</span>
+    <span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
+    <span class="o">.</span><span class="py">recover</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">QueryAnalysisError</span> <span class="k">⇒</span> <span class="kt">BadRequest</span><span class="o">(</span><span class="kt">error.resolveError</span><span class="o">)</span>
+      <span class="kt">case</span> <span class="kt">error:</span> <span class="kt">ErrorWithResolver</span> <span class="k">⇒</span> <span class="kt">InternalServerError</span><span class="o">(</span><span class="kt">error.resolveError</span><span class="o">)</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>I recommend you to check out <a href="http://try.sangria-graphql.org">http://try.sangria-graphql.org</a> for more detailed example of a Play application.</p>
+
+<h2 id="next-steps">Next steps</h2>
+
+<p>This page highlights only a small subset of sangria capabilities and features. I would recommend you to:</p>
+
+<ul>
+  <li>Check out more advanced sangria tutorial available at <a href="https://www.howtographql.com/graphql-scala/0-introduction/">“How To GraphQL”</a>.</li>
+  <li>Check <a href="/learn/">in-depth sangria documentation</a>.</li>
+  <li>Play with <a href="http://try.sangria-graphql.org">sangria-playground</a> mentioned above.</li>
+  <li>Try out <a href="https://github.com/sangria-graphql/sangria-akka-http-example">sangria-akka-http-example</a>.</li>
+  <li>Try out <a href="https://github.com/steveluscher/zero-to-graphql/tree/master/zero-scala">“Zero To GraphQL” example</a>.</li>
+</ul>
+
+    </div>
+
+    <nav class="col-md-3 bs-docs-sidebar" id="sidebar"></nav>
+  </div>
+</div>
+
+<script>
+  ((window.gitter = {}).chat = {}).options = {
+    room: 'sangria-graphql/sangria'
+  };
+</script>
+<script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+
+
+  <!-- Placed at the end of the document so the pages load faster -->
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/js/main.js"></script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-65759630-1', 'sangria-graphql.org');
+  ga('send', 'pageview');
+
+</script>
+
+
+</body>
+</html>
