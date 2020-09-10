@@ -3,7 +3,7 @@
   <channel>
     <title>Sangria</title>
     <description>Sangria - Scala GraphQL Implementation</description>
-    <link>https://sangria-graphql.github.io</link>
+    <link>https://sangria-graphql.github.io/</link>
     <atom:link href="https://sangria-graphql.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
   </channel>
