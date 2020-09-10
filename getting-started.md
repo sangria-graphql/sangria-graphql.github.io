@@ -16,7 +16,7 @@ Here is how you can add it to your SBT project:
 libraryDependencies += "{{site.groupId}}" %% "sangria" % "{{site.version.sangria}}"
 ```
 
-You can find an example application that uses akka-http with _sangria_ here (it is also available as an [Activator template]({{site.link.akka-http-example.activator}})):
+You can find an example application that uses akka-http with _sangria_ here:
 
 [{{site.link.akka-http-example.github}}]({{site.link.akka-http-example.github}})
 

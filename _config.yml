@@ -117,7 +117,6 @@ link:
   graphql: http://facebook.github.io/graphql/
   akka-http-example:
     github: https://github.com/sangria-graphql/sangria-akka-http-example
-    activator: https://www.typesafe.com/activator/template/sangria-akka-http-example
   try: https://github.com/sangria-graphql/sangria-playground
   toolbox: https://github.com/OlegIlyenko/graphql-toolbox
   try-relay: https://github.com/sangria-graphql/sangria-relay-playground

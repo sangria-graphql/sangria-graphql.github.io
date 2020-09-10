@@ -20,8 +20,6 @@ You can find an example application that uses akka-http with _sangria_ here:
 
 [{{site.link.akka-http-example.github}}]({{site.link.akka-http-example.github}})
 
-It is also available as an [Activator template]({{site.link.akka-http-example.activator}}).
-
 I would also recommend that you check out [{{site.link.try}}]({{site.link.try}}).
 It is an example of a GraphQL server written with Play framework and Sangria. It also serves as a playground,
 where you can interactively execute GraphQL queries and play with some examples.
@@ -2687,7 +2685,7 @@ val DateTimeType = ScalarType[DateTime]("DateTime",
     case _ ⇒ Left(DateCoercionViolation)
   },
   coerceInput = {
-    case ast.StringValue(s, _, _) ⇒ parseDate(s)
+    case ast.StringValue(s, _, _, _, _) ⇒ parseDate(s)
     case _ ⇒ Left(DateCoercionViolation)
   })
 ```
