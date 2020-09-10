@@ -108,8 +108,6 @@
 
 <p><a href="https://github.com/sangria-graphql/sangria-akka-http-example">https://github.com/sangria-graphql/sangria-akka-http-example</a></p>
 
-<p>It is also available as an <a href="https://www.typesafe.com/activator/template/sangria-akka-http-example">Activator template</a>.</p>
-
 <p>I would also recommend that you check out <a href="https://github.com/sangria-graphql/sangria-playground">https://github.com/sangria-graphql/sangria-playground</a>.
 It is an example of a GraphQL server written with Play framework and Sangria. It also serves as a playground,
 where you can interactively execute GraphQL queries and play with some examples.</p>
@@ -2737,7 +2735,7 @@ number, boolean, etc. Here is an example of a <code class="language-plaintext hi
     <span class="kt">case</span> <span class="k">_</span> <span class="k">⇒</span> <span class="kt">Left</span><span class="o">(</span><span class="kt">DateCoercionViolation</span><span class="o">)</span>
   <span class="o">},</span>
   <span class="n">coerceInput</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="nv">ast</span><span class="o">.</span><span class="py">StringValue</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">⇒</span> <span class="nf">parseDate</span><span class="o">(</span><span class="n">s</span><span class="o">)</span>
+    <span class="k">case</span> <span class="nv">ast</span><span class="o">.</span><span class="py">StringValue</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">⇒</span> <span class="nf">parseDate</span><span class="o">(</span><span class="n">s</span><span class="o">)</span>
     <span class="k">case</span> <span class="k">_</span> <span class="k">⇒</span> <span class="nc">Left</span><span class="o">(</span><span class="nc">DateCoercionViolation</span><span class="o">)</span>
   <span class="o">})</span>
 </code></pre></div></div>
