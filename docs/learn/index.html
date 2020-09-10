@@ -12,22 +12,22 @@
 
   <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
 
-  <link rel="canonical" href="https://sangria-graphql.org" />
+  <link rel="canonical" href="https://sangria-graphql.github.io" />
 
   <meta name="description" content="Sangria - Scala GraphQL Implementation">
 
   <meta property="og:type" content="article">
-  <meta property="og:url" content="http://sangria-graphql.org">
+  <meta property="og:url" content="http://sangria-graphql.github.io">
   <meta property="og:title" content="Sangria - Scala GraphQL Implementation">
   <meta property="og:description" content="Learn Sangria">
-  <meta property="og:image:url" content="http://sangria-graphql.org/assets/img/share-sangria.png">
+  <meta property="og:image:url" content="http://sangria-graphql.github.io/assets/img/share-sangria.png">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@easyangel">
   <meta name="twitter:creator" content="@easyangel">
   <meta name="twitter:title" content="Sangria - Scala GraphQL Implementation">
   <meta name="twitter:description" content="Learn Sangria">
-  <meta name="twitter:image" content="http://sangria-graphql.org/assets/img/share-sangria.png">
+  <meta name="twitter:image" content="http://sangria-graphql.github.io/assets/img/share-sangria.png">
 
   <!-- /meta stuff -->
 
@@ -79,8 +79,8 @@
     <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
         <li class=" "><a href="/getting-started">Getting Started</a></li>
-        <li class=""><a href="http://try.sangria-graphql.org">Try</a></li>
-        <li class=""><a href="http://toolbox.sangria-graphql.org">Toolbox</a></li>
+        <li class=""><a href="https://github.com/sangria-graphql/sangria-playground">Try</a></li>
+        <li class=""><a href="https://github.com/OlegIlyenko/graphql-toolbox">Toolbox</a></li>
         <li class=" "><a href="/download">Download</a></li>
         <li class="active "><a href="/learn">Learn</a></li>
         <li class=" "><a href="/community">Community</a></li>
@@ -101,16 +101,14 @@
 
 <p>Here is how you can add it to your SBT project:</p>
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria"</span> <span class="o">%</span> <span class="s">"1.4.2"</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria"</span> <span class="o">%</span> <span class="s">"2.0.0"</span>
 </code></pre></div></div>
 
 <p>You can find an example application that uses akka-http with <em>sangria</em> here:</p>
 
 <p><a href="https://github.com/sangria-graphql/sangria-akka-http-example">https://github.com/sangria-graphql/sangria-akka-http-example</a></p>
 
-<p>It is also available as an <a href="https://www.typesafe.com/activator/template/sangria-akka-http-example">Activator template</a>.</p>
-
-<p>I would also recommend that you check out <a href="http://try.sangria-graphql.org">http://try.sangria-graphql.org</a>.
+<p>I would also recommend that you check out <a href="https://github.com/sangria-graphql/sangria-playground">https://github.com/sangria-graphql/sangria-playground</a>.
 It is an example of a GraphQL server written with Play framework and Sangria. It also serves as a playground,
 where you can interactively execute GraphQL queries and play with some examples.</p>
 
@@ -118,10 +116,10 @@ where you can interactively execute GraphQL queries and play with some examples.
 
 <p>If you want to use sangria with the react-relay framework, then you also need to include <a href="https://github.com/sangria-graphql/sangria-relay">sangria-relay</a>:</p>
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-relay"</span> <span class="o">%</span> <span class="s">"1.4.2"</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-relay"</span> <span class="o">%</span> <span class="s">"2.0.0"</span>
 </code></pre></div></div>
 
-<p>Sangria-relay Playground (<a href="http://try-relay.sangria-graphql.org">http://try-relay.sangria-graphql.org</a>) is a nice place to start if you would like to see it in action.</p>
+<p>Sangria-relay Playground (<a href="https://github.com/sangria-graphql/sangria-relay-playground">https://github.com/sangria-graphql/sangria-relay-playground</a>) is a nice place to start if you would like to see it in action.</p>
 
 <p>I would also recommend that you check out <a href="/community/#videos">“Videos” section of the community page</a>.
 It has a lot of nice introduction videos.</p>
@@ -1552,7 +1550,7 @@ In order to use it, you first need to choose one of available stream implementat
 <ul>
   <li><code class="language-plaintext highlighter-rouge">sangria.streaming.akkaStreams._</code> - <a href="http://doc.akka.io/docs/akka/current/scala/stream/index.html">akka-streams</a> implementation based on <code class="language-plaintext highlighter-rouge">Source[T, NotUsed]</code>
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-akka-streams" % "1.0.1"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-akka-streams" % "1.0.2"</code></li>
       <li>Requires an implicit <code class="language-plaintext highlighter-rouge">akka.stream.Materializer</code> to be available in scope</li>
     </ul>
   </li>
@@ -1564,7 +1562,7 @@ In order to use it, you first need to choose one of available stream implementat
   </li>
   <li><code class="language-plaintext highlighter-rouge">sangria.streaming.monix._</code> - <a href="https://monix.io">monix</a> implementation based on <code class="language-plaintext highlighter-rouge">Observable[T]</code>
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-monix" % "1.0.0"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-monix" % "2.0.0"</code></li>
       <li>Requires an implicit <code class="language-plaintext highlighter-rouge">monix.execution.Scheduler</code> to be available in scope</li>
     </ul>
   </li>
@@ -2153,42 +2151,42 @@ Sangria does not hard-code the serialization mechanism. Instead it provides two 
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.queryAst._</code> - native Query Value AST serialization</li>
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.sprayJson._</code> - spray-json serialization
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-spray-json" % "1.0.1"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-spray-json" % "1.0.2"</code></li>
     </ul>
   </li>
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.playJson._</code> - play-json serialization
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-play-json" % "1.0.5"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-play-json" % "2.0.1"</code></li>
     </ul>
   </li>
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.circe._</code> - circe serialization
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-circe" % "1.2.1"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-circe" % "1.3.0"</code></li>
     </ul>
   </li>
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.argonaut._</code> - argonaut serialization
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-argonaut" % "1.0.0"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-argonaut" % "1.0.1"</code></li>
     </ul>
   </li>
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.json4s.native._</code> - json4s-native serialization
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-json4s-native" % "1.0.0"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-json4s-native" % "1.0.1"</code></li>
     </ul>
   </li>
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.json4s.jackson._</code> - json4s-jackson serialization
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-json4s-jackson" % "1.0.0"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-json4s-jackson" % "1.0.1"</code></li>
     </ul>
   </li>
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.msgpack._</code> - <a href="http://msgpack.org/">MessagePack</a> serialization
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-msgpack" % "1.0.0"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-msgpack" % "2.0.0"</code></li>
     </ul>
   </li>
   <li><code class="language-plaintext highlighter-rouge">sangria.marshalling.ion._</code> - <a href="http://amznlabs.github.io/ion-docs/index.html">Amazon Ion</a> serialization
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-ion" % "1.0.0"</code></li>
+      <li><code class="language-plaintext highlighter-rouge">"org.sangria-graphql" %% "sangria-ion" % "2.0.0"</code></li>
     </ul>
   </li>
 </ul>
@@ -2370,8 +2368,8 @@ of GraphQL query execution.</p>
 <p>If your favorite library is not supported yet, then it’s pretty easy to create an integration library yourself. All marshalling libraries depend on and implement <code class="language-plaintext highlighter-rouge">sangria-marshalling-api</code>. You can include it together with the testkit like this:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">++=</span> <span class="nc">Seq</span><span class="o">(</span>
-  <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-marshalling-api"</span> <span class="o">%</span> <span class="s">"1.0.3"</span><span class="o">,</span>
-  <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-marshalling-testkit"</span> <span class="o">%</span> <span class="s">"1.0.1"</span> <span class="o">%</span> <span class="s">"test"</span><span class="o">)</span>
+  <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-marshalling-api"</span> <span class="o">%</span> <span class="s">"1.0.4"</span><span class="o">,</span>
+  <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-marshalling-testkit"</span> <span class="o">%</span> <span class="s">"1.0.3"</span> <span class="o">%</span> <span class="s">"test"</span><span class="o">)</span>
 </code></pre></div></div>
 
 <p>After you implemented the actual integration code, you test whether it’s semantically correct with the help of a testkit. Testkit provides a set of ScalaTest-based tests to verify an implementation of marshalling library (so that you don’t need to write tests yourself). Here is an example from spray-json integration library that uses a testkit tests:</p>
@@ -2550,7 +2548,7 @@ These are quite useful for things like debug and profiling information, for exam
 <p>With middleware, Sangria provides a very convenient way to instrument GraphQL query execution and introduce profiling logic. Out-of-the-box
 Sangria provides a simple mechanism to log slow queries and show profiling information. To use it, your need to add <code class="language-plaintext highlighter-rouge">sangria-slowlog</code> dependency:</p>
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-slowlog"</span> <span class="o">%</span> <span class="s">"0.1.8"</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-slowlog"</span> <span class="o">%</span> <span class="s">"2.0.0-M1"</span>
 </code></pre></div></div>
 
 <p>Library provides a middleware that logs instrumented query information if execution exceeds specific threshold. An example:</p>
@@ -2737,7 +2735,7 @@ number, boolean, etc. Here is an example of a <code class="language-plaintext hi
     <span class="kt">case</span> <span class="k">_</span> <span class="k">⇒</span> <span class="kt">Left</span><span class="o">(</span><span class="kt">DateCoercionViolation</span><span class="o">)</span>
   <span class="o">},</span>
   <span class="n">coerceInput</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="nv">ast</span><span class="o">.</span><span class="py">StringValue</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">⇒</span> <span class="nf">parseDate</span><span class="o">(</span><span class="n">s</span><span class="o">)</span>
+    <span class="k">case</span> <span class="nv">ast</span><span class="o">.</span><span class="py">StringValue</span><span class="o">(</span><span class="n">s</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">⇒</span> <span class="nf">parseDate</span><span class="o">(</span><span class="n">s</span><span class="o">)</span>
     <span class="k">case</span> <span class="k">_</span> <span class="k">⇒</span> <span class="nc">Left</span><span class="o">(</span><span class="nc">DateCoercionViolation</span><span class="o">)</span>
   <span class="o">})</span>
 </code></pre></div></div>
@@ -3037,7 +3035,7 @@ like this possible:</p>
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-65759630-1', 'sangria-graphql.org');
+  ga('create', 'UA-65759630-1', 'sangria-graphql.github.io');
   ga('send', 'pageview');
 
 </script>

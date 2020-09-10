@@ -1,0 +1,1 @@
+Sitemap: https://sangria-graphql.github.io/sitemap.xml

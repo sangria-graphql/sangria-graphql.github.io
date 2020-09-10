@@ -1,17 +1,29 @@
-The website for the http://sangria-graphql.org
+The website for the https://sangria-graphql.github.io
 
-## Local Development
+## Prerequisites
 
-If you would like to work on it locally, then you would need to [setup Jekyll](https://help.github.com/articles/setting-up-your-pages-site-locally-with-jekyll/). After Jekyll is installed, you can start local server with:
+- install [Ruby](https://www.ruby-lang.org/en/)
+- install [Bundler](https://bundler.io/)
+  ```
+  gem install bundler
+  ```
+- install local dependencies
+  ```
+  bundle install
+  ```
+
+## Local development
+
+Start local server with:
 
 ```bash
-jekyll serve --watch
+bundle exec jekyll serve --watch
 ```
 
 And then point browser to [http://localhost:4000](http://localhost:4000). This will also automatically pickup all changes you make.
 
-## Build
+## Build for GitHub Pages
 
-```
-jekyll -d docs
+```bash
+bundle exec jekyll b -d docs
 ```
