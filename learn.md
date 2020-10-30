@@ -2449,10 +2449,10 @@ You can find another example of `FieldTag` and `Middleware` usage in [Authentica
 ### Middleware Extensions
 
 GraphQL spec allows [free-form extensions](https://facebook.github.io/graphql/#sec-Response-Format) to be added in the GraphQL response.
-These are quite useful for things like debug and profiling information, for example. Sangria provides and special middleware trait
+These are quite useful for things like debug and profiling information, for example. Sangria provides a special middleware trait
 `MiddlewareExtension` which provides an easy way for `Middleware` to add extensions in the GraphQL response.
 
-Here is am example of very simple middleware that adds a formatted query in the response:
+Here is an example of a very simple middleware that adds a formatted query in the response:
 
 ```scala
 object Formatted extends Middleware[Any] with MiddlewareExtension[Any] {
