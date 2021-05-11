@@ -326,7 +326,7 @@ product list in this example:</p>
   <span class="nc">Field</span><span class="o">(</span><span class="s">"product"</span><span class="o">,</span> <span class="nc">OptionType</span><span class="o">(</span><span class="nc">ProductType</span><span class="o">),</span>
     <span class="n">description</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="s">"Returns a product with specific `id`."</span><span class="o">),</span>
     <span class="n">arguments</span> <span class="k">=</span> <span class="nc">Id</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">,</span>
-    <span class="n">resolve</span> <span class="k">=</span> <span class="n">c</span> <span class="k">⇒</span> <span class="nv">c</span><span class="o">.</span><span class="py">ctx</span><span class="o">.</span><span class="py">product</span><span class="o">(</span><span class="n">c</span> <span class="n">arg</span> <span class="nc">Id</span><span class="o">)),</span>
+    <span class="n">resolve</span> <span class="k">=</span> <span class="n">c</span> <span class="k">=&gt;</span> <span class="nv">c</span><span class="o">.</span><span class="py">ctx</span><span class="o">.</span><span class="py">product</span><span class="o">(</span><span class="n">c</span> <span class="n">arg</span> <span class="nc">Id</span><span class="o">)),</span>
 
   <span class="nc">Field</span><span class="o">(</span><span class="s">"products"</span><span class="o">,</span> <span class="nc">ListType</span><span class="o">(</span><span class="nc">ProductType</span><span class="o">),</span>
     <span class="n">description</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="s">"Returns a list of all available products."</span><span class="o">),</span>
@@ -432,7 +432,7 @@ library dependency in your SBT build:</p>
   
   <span class="k">val</span> <span class="nv">route</span><span class="k">:</span> <span class="kt">Route</span> <span class="o">=</span>
     <span class="o">(</span><span class="n">post</span> <span class="o">&amp;</span> <span class="nf">path</span><span class="o">(</span><span class="s">"graphql"</span><span class="o">))</span> <span class="o">{</span>
-      <span class="nf">entity</span><span class="o">(</span><span class="n">as</span><span class="o">[</span><span class="kt">JsValue</span><span class="o">])</span> <span class="o">{</span> <span class="n">requestJson</span> <span class="k">⇒</span>
+      <span class="nf">entity</span><span class="o">(</span><span class="n">as</span><span class="o">[</span><span class="kt">JsValue</span><span class="o">])</span> <span class="o">{</span> <span class="n">requestJson</span> <span class="k">=&gt;</span>
         <span class="nf">graphQLEndpoint</span><span class="o">(</span><span class="n">requestJson</span><span class="o">)</span>
       <span class="o">}</span>
     <span class="o">}</span> <span class="o">~</span>
@@ -457,23 +457,23 @@ It is a great tool that allows you edit and execute GraphQL queries directly in 
   <span class="k">val</span> <span class="nv">JsString</span><span class="o">(</span><span class="n">query</span><span class="o">)</span> <span class="k">=</span> <span class="nf">fields</span><span class="o">(</span><span class="s">"query"</span><span class="o">)</span>
 
   <span class="k">val</span> <span class="nv">operation</span> <span class="k">=</span> <span class="nv">fields</span><span class="o">.</span><span class="py">get</span><span class="o">(</span><span class="s">"operationName"</span><span class="o">)</span> <span class="n">collect</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="nc">JsString</span><span class="o">(</span><span class="n">op</span><span class="o">)</span> <span class="k">⇒</span> <span class="n">op</span>
+    <span class="k">case</span> <span class="nc">JsString</span><span class="o">(</span><span class="n">op</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">op</span>
   <span class="o">}</span>
 
   <span class="k">val</span> <span class="nv">vars</span> <span class="k">=</span> <span class="nv">fields</span><span class="o">.</span><span class="py">get</span><span class="o">(</span><span class="s">"variables"</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">obj</span><span class="k">:</span> <span class="kt">JsObject</span><span class="o">)</span> <span class="k">⇒</span> <span class="n">obj</span>
-    <span class="k">case</span> <span class="k">_</span> <span class="k">⇒</span> <span class="nv">JsObject</span><span class="o">.</span><span class="py">empty</span>
+    <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">obj</span><span class="k">:</span> <span class="kt">JsObject</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">obj</span>
+    <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="nv">JsObject</span><span class="o">.</span><span class="py">empty</span>
   <span class="o">}</span>
 
   <span class="nv">QueryParser</span><span class="o">.</span><span class="py">parse</span><span class="o">(</span><span class="n">query</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
 
     <span class="c1">// query parsed successfully, time to execute it!</span>
-    <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">queryAst</span><span class="o">)</span> <span class="k">⇒</span>
+    <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">queryAst</span><span class="o">)</span> <span class="k">=&gt;</span>
       <span class="nf">complete</span><span class="o">(</span><span class="nf">executeGraphQLQuery</span><span class="o">(</span><span class="n">queryAst</span><span class="o">,</span> <span class="n">operation</span><span class="o">,</span> <span class="n">vars</span><span class="o">))</span>
 
     <span class="c1">// can't parse GraphQL query, return error</span>
-    <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">error</span><span class="o">)</span> <span class="k">⇒</span>
-      <span class="nf">complete</span><span class="o">(</span><span class="nc">BadRequest</span><span class="o">,</span> <span class="nc">JsObject</span><span class="o">(</span><span class="s">"error"</span> <span class="o">→</span> <span class="nc">JsString</span><span class="o">(</span><span class="nv">error</span><span class="o">.</span><span class="py">getMessage</span><span class="o">)))</span>
+    <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">error</span><span class="o">)</span> <span class="k">=&gt;</span>
+      <span class="nf">complete</span><span class="o">(</span><span class="nc">BadRequest</span><span class="o">,</span> <span class="nc">JsObject</span><span class="o">(</span><span class="s">"error"</span> <span class="o">-&gt;</span> <span class="nc">JsString</span><span class="o">(</span><span class="nv">error</span><span class="o">.</span><span class="py">getMessage</span><span class="o">)))</span>
   <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -493,10 +493,10 @@ in a request JSON body:</p>
 
 <span class="k">def</span> <span class="nf">executeGraphQLQuery</span><span class="o">(</span><span class="n">query</span><span class="k">:</span> <span class="kt">Document</span><span class="o">,</span> <span class="n">op</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span> <span class="n">vars</span><span class="k">:</span> <span class="kt">JsObject</span><span class="o">)</span> <span class="k">=</span>
   <span class="nv">Executor</span><span class="o">.</span><span class="py">execute</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">query</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ProductRepo</span><span class="o">,</span> <span class="n">variables</span> <span class="k">=</span> <span class="n">vars</span><span class="o">,</span> <span class="n">operationName</span> <span class="k">=</span> <span class="n">op</span><span class="o">)</span>
-    <span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nc">OK</span> <span class="o">→</span> <span class="k">_</span><span class="o">)</span>
+    <span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nc">OK</span> <span class="o">-&gt;</span> <span class="k">_</span><span class="o">)</span>
     <span class="o">.</span><span class="py">recover</span> <span class="o">{</span>
-      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">QueryAnalysisError</span> <span class="k">⇒</span> <span class="kt">BadRequest</span> <span class="kt">→</span> <span class="kt">error.resolveError</span>
-      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">ErrorWithResolver</span> <span class="k">⇒</span> <span class="kt">InternalServerError</span> <span class="kt">→</span> <span class="kt">error.resolveError</span>
+      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">QueryAnalysisError</span> <span class="o">=&gt;</span> <span class="nc">BadRequest</span> <span class="o">-&gt;</span> <span class="nv">error</span><span class="o">.</span><span class="py">resolveError</span>
+      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">ErrorWithResolver</span> <span class="o">=&gt;</span> <span class="nc">InternalServerError</span> <span class="o">-&gt;</span> <span class="nv">error</span><span class="o">.</span><span class="py">resolveError</span>
     <span class="o">}</span>
 </code></pre></div></div>
 
@@ -530,13 +530,13 @@ Just start it and point your browser to <a href="http://localhost:8080">http://l
 </ul>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Application</span> <span class="k">extends</span> <span class="nc">Controller</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="nf">graphql</span> <span class="k">=</span> <span class="nv">Action</span><span class="o">.</span><span class="py">async</span><span class="o">(</span><span class="nv">parse</span><span class="o">.</span><span class="py">json</span><span class="o">)</span> <span class="o">{</span> <span class="n">request</span> <span class="k">⇒</span>
+  <span class="k">def</span> <span class="nf">graphql</span> <span class="k">=</span> <span class="nv">Action</span><span class="o">.</span><span class="py">async</span><span class="o">(</span><span class="nv">parse</span><span class="o">.</span><span class="py">json</span><span class="o">)</span> <span class="o">{</span> <span class="n">request</span> <span class="k">=&gt;</span>
     <span class="k">val</span> <span class="nv">query</span> <span class="k">=</span> <span class="o">(</span><span class="nv">request</span><span class="o">.</span><span class="py">body</span> <span class="o">\</span> <span class="s">"query"</span><span class="o">).</span><span class="py">as</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
     <span class="k">val</span> <span class="nv">operation</span> <span class="k">=</span> <span class="o">(</span><span class="nv">request</span><span class="o">.</span><span class="py">body</span> <span class="o">\</span> <span class="s">"operationName"</span><span class="o">).</span><span class="py">asOpt</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
     <span class="k">val</span> <span class="nv">variables</span> <span class="k">=</span> <span class="o">(</span><span class="nv">request</span><span class="o">.</span><span class="py">body</span> <span class="o">\</span> <span class="s">"variables"</span><span class="o">).</span><span class="py">toOption</span><span class="o">.</span><span class="py">flatMap</span> <span class="o">{</span>
-      <span class="k">case</span> <span class="nc">JsString</span><span class="o">(</span><span class="n">vars</span><span class="o">)</span> <span class="k">⇒</span> <span class="nf">parseVariables</span><span class="o">(</span><span class="n">vars</span><span class="o">)</span>
-      <span class="k">case</span> <span class="n">obj</span><span class="k">:</span> <span class="kt">JsObject</span> <span class="k">⇒</span> <span class="kt">obj</span>
-      <span class="k">case</span> <span class="k">_</span> <span class="k">⇒</span> <span class="nv">Json</span><span class="o">.</span><span class="py">obj</span><span class="o">()</span>
+      <span class="k">case</span> <span class="nc">JsString</span><span class="o">(</span><span class="n">vars</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nf">parseVariables</span><span class="o">(</span><span class="n">vars</span><span class="o">)</span>
+      <span class="k">case</span> <span class="n">obj</span><span class="k">:</span> <span class="kt">JsObject</span> <span class="o">=&gt;</span> <span class="n">obj</span>
+      <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="nv">Json</span><span class="o">.</span><span class="py">obj</span><span class="o">()</span>
     <span class="o">}</span>
 
     <span class="k">def</span> <span class="nf">parseVariables</span><span class="o">(</span><span class="n">variables</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span>
@@ -544,12 +544,12 @@ Just start it and point your browser to <a href="http://localhost:8080">http://l
 
     <span class="nv">QueryParser</span><span class="o">.</span><span class="py">parse</span><span class="o">(</span><span class="n">query</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
       <span class="c1">// query parsed successfully, time to execute it!</span>
-      <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">queryAst</span><span class="o">)</span> <span class="k">⇒</span>
+      <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">queryAst</span><span class="o">)</span> <span class="k">=&gt;</span>
         <span class="nf">executeGraphQLQuery</span><span class="o">(</span><span class="n">queryAst</span><span class="o">,</span> <span class="n">operation</span><span class="o">,</span> <span class="n">variables</span><span class="o">)</span>
 
       <span class="c1">// can't parse GraphQL query, return error</span>
-      <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">error</span><span class="k">:</span> <span class="kt">SyntaxError</span><span class="o">)</span> <span class="k">⇒</span>
-        <span class="nv">Future</span><span class="o">.</span><span class="py">successful</span><span class="o">(</span><span class="nc">BadRequest</span><span class="o">(</span><span class="nv">Json</span><span class="o">.</span><span class="py">obj</span><span class="o">(</span><span class="s">"error"</span> <span class="o">→</span> <span class="nv">error</span><span class="o">.</span><span class="py">getMessage</span><span class="o">)))</span>
+      <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">error</span><span class="k">:</span> <span class="kt">SyntaxError</span><span class="o">)</span> <span class="k">=&gt;</span>
+        <span class="nv">Future</span><span class="o">.</span><span class="py">successful</span><span class="o">(</span><span class="nc">BadRequest</span><span class="o">(</span><span class="nv">Json</span><span class="o">.</span><span class="py">obj</span><span class="o">(</span><span class="s">"error"</span> <span class="o">-&gt;</span> <span class="nv">error</span><span class="o">.</span><span class="py">getMessage</span><span class="o">)))</span>
     <span class="o">}</span>
   <span class="o">}</span>
 <span class="o">}</span>
@@ -563,8 +563,8 @@ Just start it and point your browser to <a href="http://localhost:8080">http://l
   <span class="nv">Executor</span><span class="o">.</span><span class="py">execute</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">query</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ProductRepo</span><span class="o">,</span> <span class="n">operationName</span> <span class="k">=</span> <span class="n">op</span><span class="o">,</span> <span class="n">variables</span> <span class="k">=</span> <span class="n">vars</span><span class="o">)</span>
     <span class="o">.</span><span class="py">map</span><span class="o">(</span><span class="nc">Ok</span><span class="o">(</span><span class="k">_</span><span class="o">))</span>
     <span class="o">.</span><span class="py">recover</span> <span class="o">{</span>
-      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">QueryAnalysisError</span> <span class="k">⇒</span> <span class="kt">BadRequest</span><span class="o">(</span><span class="kt">error.resolveError</span><span class="o">)</span>
-      <span class="kt">case</span> <span class="kt">error:</span> <span class="kt">ErrorWithResolver</span> <span class="k">⇒</span> <span class="kt">InternalServerError</span><span class="o">(</span><span class="kt">error.resolveError</span><span class="o">)</span>
+      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">QueryAnalysisError</span> <span class="o">=&gt;</span> <span class="nc">BadRequest</span><span class="o">(</span><span class="nv">error</span><span class="o">.</span><span class="py">resolveError</span><span class="o">)</span>
+      <span class="k">case</span> <span class="n">error</span><span class="k">:</span> <span class="kt">ErrorWithResolver</span> <span class="o">=&gt;</span> <span class="nc">InternalServerError</span><span class="o">(</span><span class="nv">error</span><span class="o">.</span><span class="py">resolveError</span><span class="o">)</span>
     <span class="o">}</span>
 </code></pre></div></div>
 

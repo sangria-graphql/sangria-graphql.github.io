@@ -247,7 +247,7 @@ val QueryType = ObjectType("Query", fields[ProductRepo, Unit](
   Field("product", OptionType(ProductType),
     description = Some("Returns a product with specific `id`."),
     arguments = Id :: Nil,
-    resolve = c ⇒ c.ctx.product(c arg Id)),
+    resolve = c => c.ctx.product(c arg Id)),
 
   Field("products", ListType(ProductType),
     description = Some("Returns a list of all available products."),
@@ -360,7 +360,7 @@ object Server extends App {
   
   val route: Route =
     (post & path("graphql")) {
-      entity(as[JsValue]) { requestJson ⇒
+      entity(as[JsValue]) { requestJson =>
         graphQLEndpoint(requestJson)
       }
     } ~
@@ -386,23 +386,23 @@ def graphQLEndpoint(requestJson: JsValue) = {
   val JsString(query) = fields("query")
 
   val operation = fields.get("operationName") collect {
-    case JsString(op) ⇒ op
+    case JsString(op) => op
   }
 
   val vars = fields.get("variables") match {
-    case Some(obj: JsObject) ⇒ obj
-    case _ ⇒ JsObject.empty
+    case Some(obj: JsObject) => obj
+    case _ => JsObject.empty
   }
 
   QueryParser.parse(query) match {
 
     // query parsed successfully, time to execute it!
-    case Success(queryAst) ⇒
+    case Success(queryAst) =>
       complete(executeGraphQLQuery(queryAst, operation, vars))
 
     // can't parse GraphQL query, return error
-    case Failure(error) ⇒
-      complete(BadRequest, JsObject("error" → JsString(error.getMessage)))
+    case Failure(error) =>
+      complete(BadRequest, JsObject("error" -> JsString(error.getMessage)))
   }
 }
 ``` 
@@ -421,10 +421,10 @@ import sangria.marshalling.sprayJson._
 
 def executeGraphQLQuery(query: Document, op: Option[String], vars: JsObject) =
   Executor.execute(schema, query, new ProductRepo, variables = vars, operationName = op)
-    .map(OK → _)
+    .map(OK -> _)
     .recover {
-      case error: QueryAnalysisError ⇒ BadRequest → error.resolveError
-      case error: ErrorWithResolver ⇒ InternalServerError → error.resolveError
+      case error: QueryAnalysisError => BadRequest -> error.resolveError
+      case error: ErrorWithResolver => InternalServerError -> error.resolveError
     }
 ``` 
 
@@ -459,13 +459,13 @@ In `Application` controller we need to define an action which is very similar to
 
 ```scala
 class Application extends Controller {
-  def graphql = Action.async(parse.json) { request ⇒
+  def graphql = Action.async(parse.json) { request =>
     val query = (request.body \ "query").as[String]
     val operation = (request.body \ "operationName").asOpt[String]
     val variables = (request.body \ "variables").toOption.flatMap {
-      case JsString(vars) ⇒ parseVariables(vars)
-      case obj: JsObject ⇒ obj
-      case _ ⇒ Json.obj()
+      case JsString(vars) => parseVariables(vars)
+      case obj: JsObject => obj
+      case _ => Json.obj()
     }
 
     def parseVariables(variables: String) =
@@ -473,12 +473,12 @@ class Application extends Controller {
 
     QueryParser.parse(query) match {
       // query parsed successfully, time to execute it!
-      case Success(queryAst) ⇒
+      case Success(queryAst) =>
         executeGraphQLQuery(queryAst, operation, variables)
 
       // can't parse GraphQL query, return error
-      case Failure(error: SyntaxError) ⇒
-        Future.successful(BadRequest(Json.obj("error" → error.getMessage)))
+      case Failure(error: SyntaxError) =>
+        Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
     }
   }
 }
@@ -493,8 +493,8 @@ def executeGraphQLQuery(query: Document, op: Option[String], vars: JsObject) =
   Executor.execute(schema, query, new ProductRepo, operationName = op, variables = vars)
     .map(Ok(_))
     .recover {
-      case error: QueryAnalysisError ⇒ BadRequest(error.resolveError)
-      case error: ErrorWithResolver ⇒ InternalServerError(error.resolveError)
+      case error: QueryAnalysisError => BadRequest(error.resolveError)
+      case error: ErrorWithResolver => InternalServerError(error.resolveError)
     }
 ```
 
