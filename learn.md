@@ -75,11 +75,11 @@ val query =
 
 // Parse GraphQL query
 QueryParser.parse(query) match {
-  case Success(document) ⇒ 
+  case Success(document) => 
     // Pretty rendering of the GraphQL query as a `String`
     println(document.renderPretty)
     
-  case Failure(error) ⇒ 
+  case Failure(error) => 
     println(s"Syntax error: ${error.getMessage}")
 }
 ```
@@ -147,7 +147,7 @@ val Character: InterfaceType[Unit, TestData.Character] =
   InterfaceType(
     "Character",
     "A character in the Star Wars Trilogy",
-    () ⇒ fields[Unit, TestData.Character](
+    () => fields[Unit, TestData.Character](
       Field("id", StringType,
         Some("The id of the character."),
         resolve = _.value.id),
@@ -156,10 +156,10 @@ val Character: InterfaceType[Unit, TestData.Character] =
         resolve = _.value.name),
       Field("friends", OptionType(ListType(OptionType(Character))),
         Some("The friends of the character, or an empty list if they have none."),
-        resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
+        resolve = ctx => DeferFriends(ctx.value.friends)),
       Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
         Some("Which movies they appear in."),
-        resolve = _.value.appearsIn map (e ⇒ Some(e)))
+        resolve = _.value.appearsIn map (e => Some(e)))
     ))
 
 val Human =
@@ -176,10 +176,10 @@ val Human =
         resolve = _.value.name),
       Field("friends", OptionType(ListType(OptionType(Character))),
         Some("The friends of the human, or an empty list if they have none."),
-        resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
+        resolve = ctx => DeferFriends(ctx.value.friends)),
       Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
         Some("Which movies they appear in."),
-        resolve = _.value.appearsIn map (e ⇒ Some(e))),
+        resolve = _.value.appearsIn map (e => Some(e))),
       Field("homePlanet", OptionType(StringType),
         Some("The home planet of the human, or null if unknown."),
         resolve = _.value.homePlanet)
@@ -196,13 +196,13 @@ val Droid = ObjectType(
       resolve = _.value.id),
     Field("name", OptionType(StringType),
       Some("The name of the droid."),
-      resolve = ctx ⇒ Future.successful(ctx.value.name)),
+      resolve = ctx => Future.successful(ctx.value.name)),
     Field("friends", OptionType(ListType(OptionType(Character))),
       Some("The friends of the droid, or an empty list if they have none."),
-      resolve = ctx ⇒ DeferFriends(ctx.value.friends)),
+      resolve = ctx => DeferFriends(ctx.value.friends)),
     Field("appearsIn", OptionType(ListType(OptionType(EpisodeEnum))),
       Some("Which movies they appear in."),
-      resolve = _.value.appearsIn map (e ⇒ Some(e))),
+      resolve = _.value.appearsIn map (e => Some(e))),
     Field("primaryFunction", OptionType(StringType),
       Some("The primary function of the droid."),
       resolve = _.value.primaryFunction)
@@ -217,13 +217,13 @@ val Query = ObjectType[CharacterRepo, Unit](
   "Query", fields[CharacterRepo, Unit](
     Field("hero", Character,
       arguments = EpisodeArg :: Nil,
-      resolve = ctx ⇒ ctx.ctx.getHero(ctx.argOpt(EpisodeArg))),
+      resolve = ctx => ctx.ctx.getHero(ctx.argOpt(EpisodeArg))),
     Field("human", OptionType(Human),
       arguments = ID :: Nil,
-      resolve = ctx ⇒ ctx.ctx.getHuman(ctx arg ID)),
+      resolve = ctx => ctx.ctx.getHuman(ctx arg ID)),
     Field("droid", Droid,
       arguments = ID :: Nil,
-      resolve = Projector((ctx, f) ⇒ ctx.ctx.getDroid(ctx arg ID).get))
+      resolve = Projector((ctx, f) => ctx.ctx.getDroid(ctx arg ID).get))
   ))
 
 val StarWarsSchema = Schema(Query)
@@ -231,7 +231,7 @@ val StarWarsSchema = Schema(Query)
 
 ### Actions
 
-The `resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] ⇒ Action[Ctx, Res]`.
+The `resolve` argument of a `Field` expects a function of type `Context[Ctx, Val] => Action[Ctx, Res]`.
 As you can see, the result of the `resolve` is an `Action` type which can take different shapes.
 Here is the list of supported actions:
 
@@ -279,7 +279,7 @@ val HeroOnlyQuery = ObjectType[CharacterRepo, Unit](
   "HeroOnlyQuery", fields[CharacterRepo, Unit](
     Field("hero", TestSchema.Character,
       arguments = TestSchema.EpisodeArg :: Nil,
-      resolve = ctx ⇒ ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
+      resolve = ctx => ctx.ctx.getHero(ctx.argOpt(TestSchema.EpisodeArg)))
   ))
 
 val heroOnlySchema = Schema(HeroOnlyQuery,
@@ -297,11 +297,11 @@ by allowing you to provide a no-arg function that creates `ObjectType` fields in
 case class A(b: Option[B], name: String)
 case class B(a: A, size: Int)
 
-lazy val AType: ObjectType[Unit, A] = ObjectType("A", () ⇒ fields[Unit, A](
+lazy val AType: ObjectType[Unit, A] = ObjectType("A", () => fields[Unit, A](
   Field("name", StringType, resolve = _.value.name),
   Field("b", OptionType(BType), resolve = _.value.b)))
 
-lazy val BType: ObjectType[Unit, B] = ObjectType("B", () ⇒ fields[Unit, B](
+lazy val BType: ObjectType[Unit, B] = ObjectType("B", () => fields[Unit, B](
   Field("size", IntType, resolve = _.value.size),
   Field("a", AType, resolve = _.value.a)))
 ```
@@ -362,7 +362,7 @@ Defining schema with `ObjectType`, `InputObjectType` and `EnumType` can become q
 For this, sangria provides a set of macros that are able to derive GraphQL types from normal Scala classes, case classes and enums:
 
 * `deriveObjectType[Ctx, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Val` class (case class accessors and members annotated with `@GraphQLField`)
-* `deriveContextObjectType[Ctx, Target, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Target` class (case class accessors and members annotated with `@GraphQLField`). You also need to provide it a function `Ctx ⇒ Target` which the macro will use to get an instance of `Target` type from a user context.
+* `deriveContextObjectType[Ctx, Target, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Target` class (case class accessors and members annotated with `@GraphQLField`). You also need to provide it a function `Ctx => Target` which the macro will use to get an instance of `Target` type from a user context.
 * `deriveInputObjectType[T]` - constructs an `InputObjectType[T]` with fields found in `T` case class (only supports case class accessors)
 * `deriveEnumType[T]` - constructs an `EnumType[T]` with values found in `T` enumeration. It supports Scala `Enumeration` as well as sealed hierarchies of case objects.
 
@@ -447,7 +447,7 @@ val LastNameArg = Argument("lastName", OptionInputType(StringType))
 val MutationType = ObjectType("Mutation", fields[MyCtx, Unit](
   Field("addUser", UserType,
     arguments = FirstNameArg :: LastNameArg :: Nil,
-    resolve = c ⇒ c.ctx.mutation.addUser(
+    resolve = c => c.ctx.mutation.addUser(
       c.arg(FirstNameArg), c.arg(LastNameArg)))))
 ```
 
@@ -760,14 +760,14 @@ val builder = AstSchemaBuilder.resolverBased[Unit](
   InstanceCheck.field[Unit, JsValue],
 
   // Requirement #2 - defined a resolution logic based on the `@generateBananas` directive
-  DirectiveResolver(GenerateBananasDir, c ⇒
-    (1 to c.arg(CountArg)) map (id ⇒ JsObject(
-      "type" → JsString("Banana"),
-      "id" → JsString(id.toString),
-      "length" → JsNumber(id * 10)))),
+  DirectiveResolver(GenerateBananasDir, c =>
+    (1 to c.arg(CountArg)) map (id => JsObject(
+      "type" -> JsString("Banana"),
+      "id" -> JsString(id.toString),
+      "length" -> JsNumber(id * 10)))),
 
   // Requirement #3 - add extra field based on the `@addSpecial` directive
-  DirectiveFieldProvider(AddSpecialDir, c ⇒
+  DirectiveFieldProvider(AddSpecialDir, c =>
     MaterializedField(StandaloneOrigin,
       Field("specialFruit", c.objectType("Banana"), resolve =
         ResolverBasedAstSchemaBuilder.extractFieldValue[Unit, JsValue])) :: Nil),
@@ -856,7 +856,7 @@ val NumDir = Directive("num",
   locations = Set(DirectiveLocation.Schema, DirectiveLocation.Object))
 
 val collectedValue = schemaAst.analyzer.resolveDirectives(
-  GenericDirectiveResolver(NumDir, resolve = c ⇒ Some(c arg ValueArg))).sum
+  GenericDirectiveResolver(NumDir, resolve = c => Some(c arg ValueArg))).sum
 ```
 
 In this example, the resulting `collectedValue` will contain the sum of all numbers collected via `@num` directive.
@@ -872,13 +872,13 @@ resolve functions. You can achieve the same in sangria by using `FieldResolver`:
 ```scala
 val builder = resolverBased[Any](
   FieldResolver.map(
-    "Query" → Map(
-      "posts" → (context ⇒ ...)),
-    "Mutation" → Map(
-      "upvotePost" → (context ⇒ ...)),
-    "Post" → Map(
-      "author" → (context ⇒ ...),
-      "comments" → (context ⇒ ...))),
+    "Query" -> Map(
+      "posts" -> (context => ...)),
+    "Mutation" -> Map(
+      "upvotePost" -> (context => ...)),
+    "Post" -> Map(
+      "author" -> (context => ...),
+      "comments" -> (context => ...))),
   AnyFieldResolver.defaultInput[Any, JsValue])
 ```
 
@@ -901,11 +901,11 @@ class Repo {
 
   def loadComments: List[JsValue] =
     List(JsObject(
-      "text" → JsString("First!"),
-      "author" → JsObject(
-        "name" → JsString("Jane"),
-        "lastComment" → JsObject(
-          "text" → JsString("Boring...")))))
+      "text" -> JsString("First!"),
+      "author" -> JsObject(
+        "name" -> JsString("Jane"),
+        "lastComment" -> JsObject(
+          "text" -> JsString("Boring...")))))
 }
 ```
 
@@ -922,7 +922,7 @@ val IdArg = Argument("id", StringType)
 val QueryType = ObjectType("Query", fields[Repo, Unit](
   Field("article", OptionType(ArticleType),
     arguments = IdArg :: Nil,
-    resolve = c ⇒ c.ctx.loadArticle(c arg IdArg))))
+    resolve = c => c.ctx.loadArticle(c arg IdArg))))
 
 val staticSchema = Schema(QueryType)
 ```
@@ -965,7 +965,7 @@ val builder = AstSchemaBuilder.resolverBased[Repo](
 
 As you can see, we are using `@loadComments` directive to define a special `resolve` function logic that loads all of the comments.
 In general it is recommended approach to handle field logic in the builder
-(an alternative would be to rely of the field/type names with `FieldResolver {case (TypeName("Article"), FieldName("comments")) ⇒ ...}` which is quite fragile).
+(an alternative would be to rely of the field/type names with `FieldResolver {case (TypeName("Article"), FieldName("comments")) => ...}` which is quite fragile).
 
 All other fields are defined in terms of `resolveJson` function. It just adopts contextual value (which is JSON in our example)
 to the field's return type. This implementation is by no means complete - it just shows a short example.
@@ -1044,7 +1044,7 @@ val preparedQueryFuture = Executor.prepare(StarWarsSchema, query,
   new CharacterRepo,
   deferredResolver = new FriendsResolver)
 
-preparedQueryFuture.map(preparedQuery ⇒
+preparedQueryFuture.map(preparedQuery =>
   preparedQuery.execute(userContext = someCustomCtx, root = event))
 ```
 
@@ -1317,15 +1317,15 @@ Here is how you can ensure that query complexity does not exceed the threshold:
 val variables: Json =  ...
 
 val prepared =
-  query.operations.keySet.map { operationName ⇒
+  query.operations.keySet.map { operationName =>
     Executor.prepare(schema, query,
       operationName = operationName,
       variables = variables,
       queryReducers =
-        QueryReducer.rejectComplexQueries(1000, (_, _) ⇒ TooExpansiveQuery)) :: Nil
+        QueryReducer.rejectComplexQueries(1000, (_, _) => TooExpansiveQuery)) :: Nil
   }
 
-val validated = Future.sequence(prepared).map(_ ⇒ Done)
+val validated = Future.sequence(prepared).map(_ => Done)
 ```
 
 You will need to initialize all required variable values with some stubs. All variable variable values that represent things that potentially
@@ -1343,7 +1343,7 @@ being analyzed ahead of time (e.g. in the context of persistent queries).
 ```scala
 val queryWithoutComments =
   AstVisitor.visit(query, AstVisitor {
-    case _: Comment ⇒ VisitorCommand.Delete
+    case _: Comment => VisitorCommand.Delete
   })
 ```
 
@@ -1389,7 +1389,7 @@ val query =
     }
   """
 
-query.analyzer.separateOperations.values.foreach { document ⇒
+query.analyzer.separateOperations.values.foreach { document =>
   println(document.renderPretty)
 }
 ```
@@ -1466,7 +1466,7 @@ val breakingChanges = changes.filter(_.breakingChange)
 
 if (breakingChanges.nonEmpty) {
   val rendered = breakingChanges
-    .map(change ⇒ s" * ${change.description}")
+    .map(change => s" * ${change.description}")
     .mkString("\n", "\n", "")
 
   throw new IllegalStateException(
@@ -1480,7 +1480,7 @@ You can also create **release notes** for all of the changes:
 val releaseNotes =
   if (changes.nonEmpty) {
     val rendered = changes
-      .map { change ⇒
+      .map { change =>
         val breaking =
           if(change.breakingChange) " (breaking change)"
           else ""
@@ -1529,10 +1529,10 @@ import monix.reactive.Observable
 import sangria.streaming.monix._
 
 val SubscriptionType = ObjectType("Subscription", fields[Unit, Unit](
-  Field.subs("userEvents", UserEventType, resolve = _ ⇒
+  Field.subs("userEvents", UserEventType, resolve = _ =>
     Observable(UserCreated(1, "Bob"), UserNameChanged(1, "John")).map(action(_))),
 
-  Field.subs("messageEvents", MessageEventType, resolve = _ ⇒
+  Field.subs("messageEvents", MessageEventType, resolve = _ =>
     Observable(MessagePosted(userId = 20, text = "Hello!")).map(action(_)))
 ))
 ```
@@ -1696,9 +1696,9 @@ with `map` method on the `DeferredValue` action. here is an example:
 
 ```scala
 Field("products", ListType(ProductType),
-  resolve = c ⇒
+  resolve = c =>
     DeferredValue(fetcherProd.deferSeqOpt(c.value.products))
-      .map(fetchedProducts ⇒ ...)),
+      .map(fetchedProducts => ...)),
 ```
 
 In some cases you need to report errors that happened during deferred value resolution, but still preserving successful result. You can do
@@ -1818,11 +1818,11 @@ First of all you need to define a Fetcher:
 
 ```scala
 val products =
-  Fetcher((ctx: MyCtx, ids: Seq[Int]) ⇒ 
+  Fetcher((ctx: MyCtx, ids: Seq[Int]) => 
     ctx.loadProductsById(ids))
 
 val categories =
-  Fetcher((ctx: MyCtx, ids: Seq[Int]) ⇒ 
+  Fetcher((ctx: MyCtx, ids: Seq[Int]) => 
     ctx.loadCategoriesById(ids))
 ```
 
@@ -1838,14 +1838,14 @@ Every time you need to load a particular entity by ID, you can use the fetcher t
 ```scala
 Field("category", CategoryType,
   arguments = Argument("id", IntType) :: Nil,
-  resolve = c ⇒ categories.defer(c.arg[Int]("id")))
+  resolve = c => categories.defer(c.arg[Int]("id")))
   
 Field("categoryMaybe", OptionType(CategoryType),
   arguments = Argument("id", IntType) :: Nil,
-  resolve = c ⇒ categories.deferOpt(c.arg[Int]("id")))
+  resolve = c => categories.deferOpt(c.arg[Int]("id")))
 
 Field("productsWithinCategory", ListType(ProductType),
-  resolve = c ⇒ categories.deferSeqOpt(c.value.products))
+  resolve = c => categories.deferSeqOpt(c.value.products))
 ```
 
 The deferred resolution mechanism will take care of the rest and will fetch products and categories in the most efficient way.
@@ -1858,7 +1858,7 @@ method.
 
 ```scala
 Field("categoryName", OptionType(StringType),
-  resolve = c ⇒ DeferredValue(categories.deferOpt(c.value.categoryId)).map(_.name))
+  resolve = c => DeferredValue(categories.deferOpt(c.value.categoryId)).map(_.name))
 ```
 
 #### HasId Type Class
@@ -1876,7 +1876,7 @@ object Product {
 If you don't want to define an implicit instance, you can also provide it directly to the fetcher like this:
 
 ```scala
-Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ ctx.loadProductsById(ids))(HasId(_.id))
+Fetcher((ctx: MyCtx, ids: Seq[String]) => ctx.loadProductsById(ids))(HasId(_.id))
 ```
 
 #### Fetching Relations
@@ -1884,16 +1884,16 @@ Fetcher((ctx: MyCtx, ids: Seq[String]) ⇒ ctx.loadProductsById(ids))(HasId(_.id
 The Fetch API is also able to fetch entities based on their relation to other entities. In our example category has 2 relations, so let's define these relations:
   
 ```scala
-val byParent = Relation[Category, Int]("byParent", c ⇒ Seq(c.parent))
-val byProduct = Relation[Category, Int]("byProduct", c ⇒ c.products)
+val byParent = Relation[Category, Int]("byParent", c => Seq(c.parent))
+val byProduct = Relation[Category, Int]("byProduct", c => c.products)
 ```
 
 You need to use `Fetcher.rel` to define a `Fetcher` that supports relations:
 
 ```scala
 val categories = Fetcher.rel(
-  (repo, ids) ⇒ repo.loadCategories(ids),
-  (repo, ids) ⇒ repo.loadCategoriesByRelation(ids))
+  (repo, ids) => repo.loadCategories(ids),
+  (repo, ids) => repo.loadCategoriesByRelation(ids))
 ```
 
 In case of relation batch function `ids` would be of type `RelationIds[Res]` which contains the list of IDs for every relation type.
@@ -1903,10 +1903,10 @@ Now you should be able to use the category fetcher to create `Deferred` values l
 ```scala
 Field("categoriesByProduct", ListType(CategoryType),
   arguments = Argument("productId", IntType) :: Nil,
-  resolve = c ⇒ categories.deferRelSeq(byProduct, c.arg[Int]("productId")))
+  resolve = c => categories.deferRelSeq(byProduct, c.arg[Int]("productId")))
   
 Field("categoryChildren", ListType(CategoryType),
-  resolve = c ⇒ categories.deferRelSeq(byParent, c.value.id))
+  resolve = c => categories.deferRelSeq(byParent, c.value.id))
 ```
 
 #### Caching
@@ -1921,7 +1921,7 @@ val cache = FetcherCache.simple
 
 val categories = Fetcher(
   config = FetcherConfig.caching(cache),
-  fetch = (ctx, ids) ⇒ ctx.loadCategoriesById(ids))
+  fetch = (ctx, ids) => ctx.loadCategoriesById(ids))
 ```
 
 The `FetcherCache` will cache not only the entities themselves, but also relation information between entities. 
@@ -1935,7 +1935,7 @@ val cache = FetcherCache.simple
 
 val categories = Fetcher(
   config = FetcherConfig.maxBatchSize(10),
-  fetch = (repo, ids) ⇒ repo.loadCategories(ids))
+  fetch = (repo, ids) => repo.loadCategories(ids))
 ```
 
 #### Fallback to Existing DeferredResolver
@@ -1986,8 +1986,8 @@ You can customize the field score with a `complexity` argument in order to solve
 ```scala
 Field("pets", OptionType(ListType(PetType)),
   arguments = Argument("limit", IntType) :: Nil,
-  complexity = Some((ctx, args, childScore) ⇒ 25.0D + args.arg[Int]("limit") * childScore),
-  resolve = ctx ⇒ ...)
+  complexity = Some((ctx, args, childScore) => 25.0D + args.arg[Int]("limit") * childScore),
+  resolve = ctx => ...)
 ```
 
 Now the query will get a score of `68` which is a much better estimation.
@@ -1996,7 +1996,7 @@ In order to analyze the complexity of a query, you need to add a corresponding `
 In this example `rejectComplexQueries` will reject all queries with complexity higher than `1000`:
 
 ```scala
-val rejectComplexQueries = QueryReducer.rejectComplexQueries[Any](1000, (c, ctx) ⇒
+val rejectComplexQueries = QueryReducer.rejectComplexQueries[Any](1000, (c, ctx) =>
   new IllegalArgumentException(s"Too complex query"))
 
 Executor.execute(schema, query, queryReducers = rejectComplexQueries :: Nil)
@@ -2005,7 +2005,7 @@ Executor.execute(schema, query, queryReducers = rejectComplexQueries :: Nil)
 If you just want to estimate the complexity and then perform different actions, then there is another helper function for this:
 
 ```scala
-val complReducer = QueryReducer.measureComplexity[MyCtx] { (c, ctx) ⇒
+val complReducer = QueryReducer.measureComplexity[MyCtx] { (c, ctx) =>
   // do some analysis
   ctx
 }
@@ -2038,8 +2038,8 @@ Let's see how you can handle these error in a small example. In most cases it ma
 executor.execute(query, ...)
   .map(Ok(_))
   .recover {
-    case error: QueryAnalysisError ⇒ BadRequest(error.resolveError)
-    case error: ErrorWithResolver ⇒ InternalServerError(error.resolveError)
+    case error: QueryAnalysisError => BadRequest(error.resolveError)
+    case error: ErrorWithResolver => InternalServerError(error.resolveError)
   }
 ```
 
@@ -2055,7 +2055,7 @@ In order to define custom error handling mechanisms, you need to provide an `Exc
 
 ```scala
 val exceptionHandler = ExceptionHandler {
-  case (m, e: IllegalStateException) ⇒ HandledException(e.getMessage)
+  case (m, e: IllegalStateException) => HandledException(e.getMessage)
 }
 
 Executor(schema, exceptionHandler = exceptionHandler).execute(doc)
@@ -2067,13 +2067,13 @@ You can also add additional fields in the error object like this:
 
 ```scala
 val exceptionHandler = ExceptionHandler {
-  case (m, e: IllegalStateException) ⇒
+  case (m, e: IllegalStateException) =>
     HandledException(e.getMessage,
       Map(
-      "foo" → m.arrayNode(Seq(
+      "foo" -> m.arrayNode(Seq(
         m.scalarNode("bar", "String", Set.empty),
         m.scalarNode("1234", "Int", Set.empty))),
-      "baz" → m.scalarNode("Test", "String", Set.empty)))
+      "baz" -> m.scalarNode("Test", "String", Set.empty)))
 }
 ```
 
@@ -2089,11 +2089,11 @@ Here is an example if handling a violation, changing the message and adding extr
 
 ```scala
 val exceptionHandler = ExceptionHandler (onViolation = {
-  case (m, v: UndefinedFieldViolation) ⇒
+  case (m, v: UndefinedFieldViolation) =>
     HandledException("Field is missing!!! D:",
       Map(
-        "fieldName" → m.scalarNode(v.fieldName, "String", Set.empty),
-        "errorCode" → m.scalarNode("OOPS", "String", Set.empty)))
+        "fieldName" -> m.scalarNode(v.fieldName, "String", Set.empty),
+        "errorCode" -> m.scalarNode("OOPS", "String", Set.empty)))
 })
 ```
 
@@ -2273,7 +2273,7 @@ val document = QueryParser.parseInputDocumentWithVariables(
   """)
 
 val vars = scalaInput(Map(
-  "comm" → "from variable"
+  "comm" -> "from variable"
 ))
 
 val articles: Vector[Article] = document.to(ArticleType, vars)
@@ -2303,7 +2303,7 @@ import sangria.marshalling.MarshallingUtil._
 val circeJson = Json.array(
   Json.empty,
   Json.int(123),
-  Json.array(Json.obj("foo" → Json.string("bar"))))
+  Json.array(Json.obj("foo" -> Json.string("bar"))))
 
 val sprayJson = circeJson.convertMarshaled[JsValue]
 ```
@@ -2426,8 +2426,8 @@ case class Suffixer(suffix: String) extends Middleware[Any] with MiddlewareAfter
 
  def afterField(cache: QueryVal, fromCache: FieldVal, value: Any, mctx: MiddlewareQueryContext[Any, _, _], ctx: Context[Any, _]) =
    value match {
-     case s: String ⇒ Some(s + suffix)
-     case _ ⇒ None
+     case s: String => Some(s + suffix)
+     case _ => None
    }
 }
 ```
@@ -2637,12 +2637,12 @@ Here is a small example of `QueryReducer.collectTags`:
 
 ```scala
 val fetchUserProfile = QueryReducer.collectTags[MyContext, String] {
-  case Permission(name) ⇒ name
-} { (permissionNames, ctx) ⇒
+  case Permission(name) => name
+} { (permissionNames, ctx) =>
   if (permissionNames.nonEmpty) {
     val userProfile: Future[UserProfile] = externalService.getUserProfile()
 
-    userProfile.map(profile ⇒ ctx.copy(profile = Some(profile))
+    userProfile.map(profile => ctx.copy(profile = Some(profile))
   } else
     ctx
 }
@@ -2672,21 +2672,21 @@ number, boolean, etc. Here is an example of a `DateTime` (from joda-time) scalar
 case object DateCoercionViolation extends ValueCoercionViolation("Date value expected")
 
 def parseDate(s: String) = Try(new DateTime(s, DateTimeZone.UTC)) match {
-  case Success(date) ⇒ Right(date)
-  case Failure(_) ⇒ Left(DateCoercionViolation)
+  case Success(date) => Right(date)
+  case Failure(_) => Left(DateCoercionViolation)
 }
 
 val DateTimeType = ScalarType[DateTime]("DateTime",
-  coerceOutput = (d, caps) ⇒
+  coerceOutput = (d, caps) =>
     if (caps.contains(DateSupport)) d.toDate
     else ISODateTimeFormat.dateTime().print(d),
   coerceUserInput = {
-    case s: String ⇒ parseDate(s)
-    case _ ⇒ Left(DateCoercionViolation)
+    case s: String => parseDate(s)
+    case _ => Left(DateCoercionViolation)
   },
   coerceInput = {
-    case ast.StringValue(s, _, _, _, _) ⇒ parseDate(s)
-    case _ ⇒ Left(DateCoercionViolation)
+    case ast.StringValue(s, _, _, _, _) => parseDate(s)
+    case _ => Left(DateCoercionViolation)
   })
 ```
 
@@ -2702,10 +2702,10 @@ This is exactly what scalar aliases allow you to do. Here is how you can define 
 
 ```scala
 implicit val UserIdType = ScalarAlias[UserId, String](
-  StringType, _.id, id ⇒ Right(UserId(id)))
+  StringType, _.id, id => Right(UserId(id)))
 
 implicit val PositiveIntType = ScalarAlias[Int Refined Positive, Int](
-  IntType, _.value, i ⇒ refineV[Positive](i).left.map(RefineViolation))
+  IntType, _.value, i => refineV[Positive](i).left.map(RefineViolation))
 ```
 
 You can use `UserIdType` and `PositiveIntType` in all places where you can use a scalar types. In introspection results they would be seen as
@@ -2758,8 +2758,8 @@ We also want the user to see proper error messages in a response, so let's defin
 
 ```scala
 val errorHandler = ExceptionHandler {
-  case (m, AuthenticationException(message)) ⇒ HandledException(message)
-  case (m, AuthorisationException(message)) ⇒ HandledException(message)
+  case (m, AuthenticationException(message)) => HandledException(message)
+  case (m, AuthorisationException(message)) => HandledException(message)
 }
 ```
 
@@ -2770,14 +2770,14 @@ case class SecureContext(token: Option[String], userRepo: UserRepo, colorRepo: C
   def login(userName: String, password: String) = userRepo.authenticate(userName, password) getOrElse (
       throw new AuthenticationException("UserName or password is incorrect"))
 
-  def authorised[T](permissions: String*)(fn: User ⇒ T) =
-    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user ⇒
+  def authorised[T](permissions: String*)(fn: User => T) =
+    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user =>
       if (permissions.forall(user.permissions.contains)) fn(user)
       else throw AuthorisationException("You do not have permission to do this operation")
     }
 
   def ensurePermissions(permissions: List[String]): Unit =
-    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user ⇒
+    token.flatMap(userRepo.authorise).fold(throw AuthorisationException("Invalid token")) { user =>
       if (!permissions.forall(user.permissions.contains))
         throw AuthorisationException("You do not have permission to do this operation")
     }
@@ -2809,15 +2809,15 @@ val ColorArg = Argument("color", StringType)
 val UserType = ObjectType("User", fields[SecureContext, User](
   Field("userName", StringType, resolve = _.value.userName),
   Field("permissions", OptionType(ListType(StringType)),
-    resolve = ctx ⇒ ctx.ctx.authorised("VIEW_PERMISSIONS") { _ ⇒
+    resolve = ctx => ctx.ctx.authorised("VIEW_PERMISSIONS") { _ =>
       ctx.value.permissions
     })
 ))
 
 val QueryType = ObjectType("Query", fields[SecureContext, Unit](
-  Field("me", OptionType(UserType), resolve = ctx ⇒ ctx.ctx.authorised()(user ⇒ user)),
+  Field("me", OptionType(UserType), resolve = ctx => ctx.ctx.authorised()(user => user)),
   Field("colors", OptionType(ListType(StringType)),
-    resolve = ctx ⇒ ctx.ctx.authorised("VIEW_COLORS") { _ ⇒
+    resolve = ctx => ctx.ctx.authorised("VIEW_COLORS") { _ =>
       ctx.ctx.colorRepo.colors
     })
 ))
@@ -2825,12 +2825,12 @@ val QueryType = ObjectType("Query", fields[SecureContext, Unit](
 val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
   Field("login", OptionType(StringType),
     arguments = UserNameArg :: PasswordArg :: Nil,
-    resolve = ctx ⇒ UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token ⇒
+    resolve = ctx => UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token =>
       ctx.ctx.copy(token = Some(token))
     }),
   Field("addColor", OptionType(ListType(StringType)),
     arguments = ColorArg :: Nil,
-    resolve = ctx ⇒ ctx.ctx.authorised("EDIT_COLORS") { _ ⇒
+    resolve = ctx => ctx.ctx.authorised("EDIT_COLORS") { _ =>
       ctx.ctx.colorRepo.addColor(ctx.arg(ColorArg))
       ctx.ctx.colorRepo.colors
     })
@@ -2916,13 +2916,13 @@ val QueryType = ObjectType("Query", fields[SecureContext, Unit](
 val MutationType = ObjectType("Mutation", fields[SecureContext, Unit](
   Field("login", OptionType(StringType),
     arguments = UserNameArg :: PasswordArg :: Nil,
-    resolve = ctx ⇒ UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token ⇒
+    resolve = ctx => UpdateCtx(ctx.ctx.login(ctx.arg(UserNameArg), ctx.arg(PasswordArg))) { token =>
       ctx.ctx.copy(token = Some(token))
     }),
   Field("addColor", OptionType(ListType(StringType)),
     arguments = ColorArg :: Nil,
     tags = Permission("EDIT_COLORS") :: Nil,
-    resolve = ctx ⇒ {
+    resolve = ctx => {
       ctx.ctx.colorRepo.addColor(ctx.arg(ColorArg))
       ctx.ctx.colorRepo.colors
     })
@@ -2942,7 +2942,7 @@ object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeF
   def afterQuery(queryVal: QueryVal, context: MiddlewareQueryContext[SecureContext, _, _]) = ()
 
   def beforeField(queryVal: QueryVal, mctx: MiddlewareQueryContext[SecureContext, _, _], ctx: Context[SecureContext, _]) = {
-    val permissions = ctx.field.tags.collect {case Permission(p) ⇒ p}
+    val permissions = ctx.field.tags.collect {case Permission(p) => p}
     val requireAuth = ctx.field.tags contains Authorised
     val securityCtx = ctx.ctx
 
