@@ -54,10 +54,13 @@ In case you need some help or support, then you can use [StackOverflow]({{site.l
 When you are [asking a question]({{site.link.stack-overflow-ask}}),
 be sure to add <span class="class-name">scala</span>, <span class="class-name">graphql</span> and <span class="class-name">sangria</span> tags, so that other people can easily find them.
 
-### Gitter & Mailing List 
+### Gitter
 
 For more general, lengthy discussions or pretty much anything else please join us in the 
-[gitter chat](https://gitter.im/sangria-graphql/sangria) (you also use a button at the bottom right) and [google groups]({{site.link.google-groups}}).
+[gitter chat]({{site.link.gitter}}).
+
+We no longer use the [Google Group]({{site.link.google-groups}}).
+It's kept for historical reference.
 
 ### Contribute
 
