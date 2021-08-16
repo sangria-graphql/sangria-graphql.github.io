@@ -36,5 +36,5 @@ bundle exec jekyll b -d docs
 
 ```
 docker build -t sangria-doc .
-docker run --rm --volume=$(pwd):/src sangria-doc "exec jekyll b -d docs"
+docker run --rm --volume=$(pwd):/src sangria-doc exec jekyll b -d docs
 ```
