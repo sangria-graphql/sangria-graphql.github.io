@@ -1,0 +1,9 @@
+version: '3'
+services:
+  webapp:
+    build: .
+    ports:
+      - 4000:4000
+    volumes:
+          - .:/src:cached
+    command: exec jekyll serve
