@@ -20,10 +20,21 @@ Start local server with:
 bundle exec jekyll serve --watch
 ```
 
+or with docker:
+```
+docker-compose up
+```
+
+
 And then point browser to [http://localhost:4000](http://localhost:4000). This will also automatically pickup all changes you make.
 
 ## Build for GitHub Pages
 
 ```bash
 bundle exec jekyll b -d docs
+```
+
+```
+docker build -t sangria-doc .
+docker run --rm --volume=$(pwd):/src sangria-doc exec jekyll b -d docs
 ```
