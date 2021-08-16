@@ -1,4 +1,12 @@
 _site
-.idea
 *.iml
 .jekyll-cache
+
+# IntelliJ IDEA
+/.idea/
+
+# Ruby `bundle`
+/.bundle/
+
+# for overriding the `bundle` path to store gems locally
+/vendor/bundle/
