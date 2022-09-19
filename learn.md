@@ -2957,6 +2957,11 @@ object SecurityEnforcer extends Middleware[SecureContext] with MiddlewareBeforeF
 }
 ```
 
+## GraphQL federation
+
+If we want to use [GraphQL federation](https://www.apollographql.com/docs/federation/), you can use sangria to provide a service subgraph.
+For that, use the [sangria-federated](https://github.com/sangria-graphql/sangria-federated/) library that supports Federation v1 and v2.
+
 ## Helpers
 
 There are quite a few helpers available which you may find useful in different situations.
