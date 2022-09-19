@@ -15,13 +15,13 @@
 
     <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li class="{% if page.url == "/getting-started/" %}active{% endif %} {% if page.url == "/" %}fade-in f1{% endif %}"><a href="{{"/getting-started" | prepend: site.baseurl}}">Getting Started</a></li>
-        <li class="{% if page.url == "/" %}fade-in f2{% endif %}"><a href="{{site.link.try}}">Try</a></li>
-        <li class="{% if page.url == "/" %}fade-in f3{% endif %}"><a href="{{site.link.toolbox}}">Toolbox</a></li>
-        <li class="{% if page.url == "/download/" %}active{% endif %} {% if page.url == "/" %}fade-in f4{% endif %}"><a href="{{"/download" | prepend: site.baseurl}}">Download</a></li>
-        <li class="{% if page.url == "/learn/" %}active{% endif %} {% if page.url == "/" %}fade-in f5{% endif %}"><a href="{{"/learn" | prepend: site.baseurl}}">Learn</a></li>
-        <li class="{% if page.url == "/community/" %}active{% endif %} {% if page.url == "/" %}fade-in f6{% endif %}"><a href="{{"/community" | prepend: site.baseurl}}">Community</a></li>
-        <li class="{% if page.url == "/" %}fade-in f7{% endif %}"><a target="_blank" href="{{site.link.sangria-github}}" title="Sangria at GitHub"><i class="fa fa-github fa-lg"></i></a></li>
+        <li class="{% if page.url == "/getting-started/" %}active{% endif %}"><a href="{{"/getting-started" | prepend: site.baseurl}}">Getting Started</a></li>
+        <li><a href="{{site.link.try}}">Try</a></li>
+        <li><a href="{{site.link.toolbox}}">Toolbox</a></li>
+        <li class="{% if page.url == "/download/" %}active{% endif %}"><a href="{{"/download" | prepend: site.baseurl}}">Download</a></li>
+        <li class="{% if page.url == "/learn/" %}active{% endif %}"><a href="{{"/learn" | prepend: site.baseurl}}">Learn</a></li>
+        <li class="{% if page.url == "/community/" %}active{% endif %}"><a href="{{"/community" | prepend: site.baseurl}}">Community</a></li>
+        <li><a target="_blank" href="{{site.link.sangria-github}}" title="Sangria at GitHub"><i class="fa fa-github fa-lg"></i></a></li>
       </ul>
     </div>
   </div>
