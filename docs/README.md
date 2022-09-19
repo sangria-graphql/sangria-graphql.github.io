@@ -38,3 +38,5 @@ bundle exec jekyll b -d docs
 docker build -t sangria-doc .
 docker run --rm --volume=$(pwd):/src sangria-doc exec jekyll b -d docs
 ```
+
+The files in `/doc` is used by Github. You have to push the changes manually for now.

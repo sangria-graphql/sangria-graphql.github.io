@@ -78,17 +78,18 @@
 
     <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li class=" "><a href="/getting-started">Getting Started</a></li>
-        <li class=""><a href="https://github.com/sangria-graphql/sangria-playground">Try</a></li>
-        <li class=""><a href="https://github.com/OlegIlyenko/graphql-toolbox">Toolbox</a></li>
-        <li class=" "><a href="/download">Download</a></li>
-        <li class="active "><a href="/learn">Learn</a></li>
-        <li class=" "><a href="/community">Community</a></li>
-        <li class=""><a target="_blank" href="https://github.com/sangria-graphql" title="Sangria at GitHub"><i class="fa fa-github fa-lg"></i></a></li>
+        <li class=""><a href="/getting-started">Getting Started</a></li>
+        <li><a href="https://github.com/sangria-graphql/sangria-playground">Try</a></li>
+        <li><a href="https://github.com/OlegIlyenko/graphql-toolbox">Toolbox</a></li>
+        <li class=""><a href="/download">Download</a></li>
+        <li class="active"><a href="/learn">Learn</a></li>
+        <li class=""><a href="/community">Community</a></li>
+        <li><a target="_blank" href="https://github.com/sangria-graphql" title="Sangria at GitHub"><i class="fa fa-github fa-lg"></i></a></li>
       </ul>
     </div>
   </div>
 </div>
+
 
   <div class="secondary-spacer"></div>
 
@@ -101,7 +102,7 @@
 
 <p>Here is how you can add it to your SBT project:</p>
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria"</span> <span class="o">%</span> <span class="s">"2.0.0"</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria"</span> <span class="o">%</span> <span class="s">"3.2.0"</span>
 </code></pre></div></div>
 
 <p>You can find an example application that uses akka-http with <em>sangria</em> here:</p>
@@ -161,11 +162,11 @@ It has a lot of nice introduction videos.</p>
 
 <span class="c1">// Parse GraphQL query</span>
 <span class="nv">QueryParser</span><span class="o">.</span><span class="py">parse</span><span class="o">(</span><span class="n">query</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
-  <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">document</span><span class="o">)</span> <span class="k">=&gt;</span> 
+  <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">document</span><span class="o">)</span> <span class="k">=&gt;</span>
     <span class="c1">// Pretty rendering of the GraphQL query as a `String`</span>
     <span class="nf">println</span><span class="o">(</span><span class="nv">document</span><span class="o">.</span><span class="py">renderPretty</span><span class="o">)</span>
-    
-  <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">error</span><span class="o">)</span> <span class="k">=&gt;</span> 
+
+  <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">error</span><span class="o">)</span> <span class="k">=&gt;</span>
     <span class="nf">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Syntax error: ${error.getMessage}"</span><span class="o">)</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -610,7 +611,7 @@ The <code class="language-plaintext highlighter-rouge">@GraphQLDefault</code> an
 </code></pre></div></div>
 
 <div class="bs-callout bs-callout-info"><h4>Co-locate deriveEnumType with actual sealed trait</h4><p>
-It is important to use <code class="language-plaintext highlighter-rouge">deriveEnumType</code> in the <strong>same source file</strong> where you have defined your sealed trait <strong>after</strong> all trait children are defined! 
+It is important to use <code class="language-plaintext highlighter-rouge">deriveEnumType</code> in the <strong>same source file</strong> where you have defined your sealed trait <strong>after</strong> all trait children are defined!
 Otherwise macro will not be able to find all of the enum values.<br />
 </p></div>
 
@@ -898,13 +899,9 @@ GraphQL representation.</li>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"fruit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w"> </span><span class="nl">"color"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">},</span><span class="w">
-    </span><span class="nl">"bananas"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="p">{</span><span class="nl">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">},</span><span class="w">
-      </span><span class="p">{</span><span class="nl">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">},</span><span class="w">
-      </span><span class="p">{</span><span class="nl">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">}</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nl">"specialFruit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"42"</span><span class="p">}</span><span class="w">
+    </span><span class="nl">"fruit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w"> </span><span class="nl">"color"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"bananas"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nl">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"length"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="p">}],</span><span class="w">
+    </span><span class="nl">"specialFruit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"42"</span><span class="w"> </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
@@ -1063,15 +1060,17 @@ For production application you would need to improve this logic according to the
     </span><span class="nl">"article"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test Article #42"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"blah blah blah..."</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"comments"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
-        </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"First!"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-          </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jane"</span><span class="p">,</span><span class="w">
-          </span><span class="nl">"lastComment"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Boring..."</span><span class="w">
+      </span><span class="nl">"comments"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"First!"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jane"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"lastComment"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+              </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Boring..."</span><span class="w">
+            </span><span class="p">}</span><span class="w">
           </span><span class="p">}</span><span class="w">
         </span><span class="p">}</span><span class="w">
-      </span><span class="p">}]</span><span class="w">
+      </span><span class="p">]</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -1109,12 +1108,12 @@ For production application you would need to improve this logic according to the
 
 <h3 id="alternative-execution-scheme">Alternative Execution Scheme</h3>
 
-<p>The <code class="language-plaintext highlighter-rouge">Future</code> of marshaled result is not the only possible result of a query execution. By importing different implementation of <code class="language-plaintext highlighter-rouge">ExecutionScheme</code> you can 
+<p>The <code class="language-plaintext highlighter-rouge">Future</code> of marshaled result is not the only possible result of a query execution. By importing different implementation of <code class="language-plaintext highlighter-rouge">ExecutionScheme</code> you can
 change the result type of an execution. Here is an example:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">sangria.execution.ExecutionScheme.Extended</span>
 
-<span class="k">val</span> <span class="nv">result</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">ExecutionResult</span><span class="o">[</span><span class="kt">Ctx</span>, <span class="kt">JsValue</span><span class="o">]]</span> <span class="k">=</span> 
+<span class="k">val</span> <span class="nv">result</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">ExecutionResult</span><span class="o">[</span><span class="kt">Ctx</span>, <span class="kt">JsValue</span><span class="o">]]</span> <span class="k">=</span>
   <span class="k">val</span> <span class="nv">Executor</span><span class="o">.</span><span class="py">execute</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">query</span><span class="o">)</span>
 </code></pre></div></div>
 
@@ -1540,11 +1539,11 @@ to production if staging environment contains <strong>breaking changes</strong> 
 
 <h2 id="stream-based-subscriptions">Stream-based Subscriptions</h2>
 
-<p>As described in <a href="#prepared-queries">previous section</a>, you can handle subscription queries with prepared queries. 
-This approach provides a lot of flexibility, but also means that you need to manually analyze subscription fields and appropriately 
+<p>As described in <a href="#prepared-queries">previous section</a>, you can handle subscription queries with prepared queries.
+This approach provides a lot of flexibility, but also means that you need to manually analyze subscription fields and appropriately
 execute query for every event.</p>
 
-<p>Stream-based subscriptions provide much easier and, in many respects, superior approach of handling subscription queries. 
+<p>Stream-based subscriptions provide much easier and, in many respects, superior approach of handling subscription queries.
 In order to use it, you first need to choose one of available stream implementations:</p>
 
 <ul>
@@ -1579,7 +1578,7 @@ In order to use it, you first need to choose one of available stream implementat
 If you prefer a hands-on approach, then you can take a look at <a href="https://github.com/sangria-graphql/sangria-subscriptions-example">sangria-subscriptions-example</a> project. It demonstrates most of the concepts that are described in this section.
 </p></div>
 
-<p>After you have imported a concrete stream implementation, you can define a subscription type fields with <code class="language-plaintext highlighter-rouge">Field.subs</code>. 
+<p>After you have imported a concrete stream implementation, you can define a subscription type fields with <code class="language-plaintext highlighter-rouge">Field.subs</code>.
 Here is an example that uses monix:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">monix.execution.Scheduler.Implicits.global</span>
@@ -1595,7 +1594,7 @@ Here is an example that uses monix:</p>
 <span class="o">))</span>
 </code></pre></div></div>
 
-<p>Please note that every element in a stream should be an <code class="language-plaintext highlighter-rouge">Action[Ctx, Val]</code>. An <code class="language-plaintext highlighter-rouge">action</code> helper function is used in this case to 
+<p>Please note that every element in a stream should be an <code class="language-plaintext highlighter-rouge">Action[Ctx, Val]</code>. An <code class="language-plaintext highlighter-rouge">action</code> helper function is used in this case to
 transform every element of a stream into an <code class="language-plaintext highlighter-rouge">Action</code>. Also, it is important that either all fields of a <code class="language-plaintext highlighter-rouge">SubscriptionType</code> or none of them are
 created with the <code class="language-plaintext highlighter-rouge">Field.subs</code> function (otherwise it would not be possible to merge them in a single stream).</p>
 
@@ -1607,32 +1606,32 @@ created with the <code class="language-plaintext highlighter-rouge">Field.subs</
 
 <span class="k">val</span> <span class="nv">schema</span> <span class="k">=</span> <span class="nc">Schema</span><span class="o">(</span><span class="nc">QueryType</span><span class="o">,</span> <span class="n">subscription</span> <span class="k">=</span> <span class="nc">Some</span><span class="o">(</span><span class="nc">SubscriptionType</span><span class="o">))</span>
 
-<span class="k">val</span> <span class="nv">query</span> <span class="k">=</span> 
+<span class="k">val</span> <span class="nv">query</span> <span class="k">=</span>
   <span class="n">graphql</span><span class="s">"""
-    subscription { 
+    subscription {
       userEvents {
         id
         __typename
-        
+
         ... on UserCreated {
           name
         }
       }
-      
+
       messageEvents {
         __typename
-        
+
         ... on MessagePosted {
           user {
             id
             name
           }
-          
+
           text
         }
       }
     }
-  """</span>  
+  """</span>
 
 <span class="k">val</span> <span class="nv">stream</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">JsValue</span><span class="o">]</span> <span class="k">=</span> <span class="nv">Executor</span><span class="o">.</span><span class="py">execute</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">query</span><span class="o">)</span>
 </code></pre></div></div>
@@ -1643,7 +1642,7 @@ The stream will emit the following elements (the order may be different):</p>
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="nl">"userEvents"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">          
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
       </span><span class="nl">"__typename"</span><span class="p">:</span><span class="w"> </span><span class="s2">"UserCreated"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bob"</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -1652,11 +1651,11 @@ The stream will emit the following elements (the order may be different):</p>
 
 </span><span class="p">{</span><span class="w">
   </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"messageEvents"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">          
+    </span><span class="nl">"messageEvents"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="nl">"__typename"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MessagePosted"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">      
-        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test User"</span><span class="w">      
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test User"</span><span class="w">
       </span><span class="p">},</span><span class="w">
       </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello!"</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -1666,7 +1665,7 @@ The stream will emit the following elements (the order may be different):</p>
 </span><span class="p">{</span><span class="w">
   </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="nl">"userEvents"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">          
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
       </span><span class="nl">"__typename"</span><span class="p">:</span><span class="w"> </span><span class="s2">"UserNameChanged"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John"</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -1675,11 +1674,11 @@ The stream will emit the following elements (the order may be different):</p>
 </span></code></pre></div></div>
 
 <p>Only the top-level subscription fields have special semantics associated with them (in this respect it is similar to the mutation queries).
-The execution engine merges the requested field streams into a single stream which is then returned as a result of the execution. 
+The execution engine merges the requested field streams into a single stream which is then returned as a result of the execution.
 All other fields (2nd level, 3rd level, etc.) have normal semantics and would be fully resolved.</p>
 
 <div class="bs-callout bs-callout-info"><h4>Work In Progress</h4><p>
-Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.    <br />
+Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.<br />
 </p></div>
 
 <h2 id="deferred-value-resolution">Deferred Value Resolution</h2>
@@ -1693,11 +1692,11 @@ Please note, that the semantics of subscription queries is not standardized or f
 This can be very useful when you want to avoid an N+1 problem. In the example schema all of the characters have a list of friends, but they only have their IDs.
 You need to fetch them from somewhere in order to progress query execution.
 Retrieving every friend one-by-one would be very inefficient, since you potentially need to access an external database
-in order to do so. The defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. 
+in order to do so. The defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB.
 In order to do it, you need to implement a <code class="language-plaintext highlighter-rouge">DeferredResolver</code> that will get a list of deferred values:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">FriendsResolver</span> <span class="k">extends</span> <span class="nc">DeferredResolver</span><span class="o">[</span><span class="kt">Any</span><span class="o">]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="nf">resolve</span><span class="o">(</span><span class="n">deferred</span><span class="k">:</span> <span class="kt">Vector</span><span class="o">[</span><span class="kt">Deferred</span><span class="o">[</span><span class="kt">Any</span><span class="o">]],</span> <span class="n">ctx</span><span class="k">:</span> <span class="kt">Any</span><span class="o">,</span> <span class="n">queryState</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">ec</span><span class="k">:</span> <span class="kt">ExecutionContext</span><span class="o">)</span> <span class="k">=</span> 
+  <span class="k">def</span> <span class="nf">resolve</span><span class="o">(</span><span class="n">deferred</span><span class="k">:</span> <span class="kt">Vector</span><span class="o">[</span><span class="kt">Deferred</span><span class="o">[</span><span class="kt">Any</span><span class="o">]],</span> <span class="n">ctx</span><span class="k">:</span> <span class="kt">Any</span><span class="o">,</span> <span class="n">queryState</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">ec</span><span class="k">:</span> <span class="kt">ExecutionContext</span><span class="o">)</span> <span class="k">=</span>
     <span class="c1">// Here goes your resolution logic</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -1725,7 +1724,7 @@ between deferred values and results. The order of results also plays an importan
           <span class="p">}</span>
         <span class="p">}</span>
       <span class="p">}</span>
-      
+
       <span class="nl">more</span><span class="p">:</span> <span class="nx">friends</span> <span class="p">{</span>
         <span class="nx">friends</span> <span class="p">{</span>
           <span class="nx">friends</span> <span class="p">{</span>
@@ -1768,14 +1767,14 @@ state by overriding the <code class="language-plaintext highlighter-rouge">initi
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyResolver</span><span class="o">[</span><span class="kt">Ctx</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">DeferredResolver</span><span class="o">[</span><span class="kt">Ctx</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="nf">initialQueryState</span><span class="k">:</span> <span class="kt">Any</span> <span class="o">=</span> <span class="nc">TrieMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Any</span><span class="o">]()</span>
 
-  <span class="k">def</span> <span class="nf">resolve</span><span class="o">(</span><span class="n">deferred</span><span class="k">:</span> <span class="kt">Vector</span><span class="o">[</span><span class="kt">Deferred</span><span class="o">[</span><span class="kt">Any</span><span class="o">]],</span> <span class="n">ctx</span><span class="k">:</span> <span class="kt">Ctx</span><span class="o">,</span> <span class="n">queryState</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">ec</span><span class="k">:</span> <span class="kt">ExecutionContext</span><span class="o">)</span> <span class="k">=</span> 
-    <span class="c1">// resolve deferred values by using cache from `queryState`     </span>
+  <span class="k">def</span> <span class="nf">resolve</span><span class="o">(</span><span class="n">deferred</span><span class="k">:</span> <span class="kt">Vector</span><span class="o">[</span><span class="kt">Deferred</span><span class="o">[</span><span class="kt">Any</span><span class="o">]],</span> <span class="n">ctx</span><span class="k">:</span> <span class="kt">Ctx</span><span class="o">,</span> <span class="n">queryState</span><span class="k">:</span> <span class="kt">Any</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">ec</span><span class="k">:</span> <span class="kt">ExecutionContext</span><span class="o">)</span> <span class="k">=</span>
+    <span class="c1">// resolve deferred values by using cache from `queryState`</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <h3 id="customizing-deferredresolver-behaviour">Customizing DeferredResolver Behaviour</h3>
 
-<p>As was mentioned before, <code class="language-plaintext highlighter-rouge">DeferredResolver</code> will do its best to collect and batch as many <code class="language-plaintext highlighter-rouge">Deferred</code> values as possible. This means that it 
+<p>As was mentioned before, <code class="language-plaintext highlighter-rouge">DeferredResolver</code> will do its best to collect and batch as many <code class="language-plaintext highlighter-rouge">Deferred</code> values as possible. This means that it
 will even wait for a <code class="language-plaintext highlighter-rouge">Future</code> to produce some values in order to find out whether they produce some deferred values.</p>
 
 <p>In some cases this is not desired. You can override the following methods in order to customize this behaviour and define independent
@@ -1793,7 +1792,7 @@ very low-level, unsafe, but efficient API for this. You certainly can use it dir
 you probably will work with isolated entity objects which you would like to load by ID or some relation to other entities. This is where <code class="language-plaintext highlighter-rouge">Fetcher</code>
 comes into play.</p>
 
-<p><code class="language-plaintext highlighter-rouge">Fetcher</code> provides a high-level API for deferred value resolution and is implemented as a specialized version of <code class="language-plaintext highlighter-rouge">DeferredResolver</code>. 
+<p><code class="language-plaintext highlighter-rouge">Fetcher</code> provides a high-level API for deferred value resolution and is implemented as a specialized version of <code class="language-plaintext highlighter-rouge">DeferredResolver</code>.
 This API provides the following features:</p>
 
 <ul>
@@ -1871,11 +1870,11 @@ First let’s look at how we can fetch entities by ID, and then we will look at 
 <p>First of all you need to define a Fetcher:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">products</span> <span class="k">=</span>
-  <span class="nc">Fetcher</span><span class="o">((</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">MyCtx</span><span class="o">,</span> <span class="n">ids</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span> <span class="k">=&gt;</span> 
+  <span class="nc">Fetcher</span><span class="o">((</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">MyCtx</span><span class="o">,</span> <span class="n">ids</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span> <span class="k">=&gt;</span>
     <span class="nv">ctx</span><span class="o">.</span><span class="py">loadProductsById</span><span class="o">(</span><span class="n">ids</span><span class="o">))</span>
 
 <span class="k">val</span> <span class="nv">categories</span> <span class="k">=</span>
-  <span class="nc">Fetcher</span><span class="o">((</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">MyCtx</span><span class="o">,</span> <span class="n">ids</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span> <span class="k">=&gt;</span> 
+  <span class="nc">Fetcher</span><span class="o">((</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">MyCtx</span><span class="o">,</span> <span class="n">ids</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span> <span class="k">=&gt;</span>
     <span class="nv">ctx</span><span class="o">.</span><span class="py">loadCategoriesById</span><span class="o">(</span><span class="n">ids</span><span class="o">))</span>
 </code></pre></div></div>
 
@@ -1890,7 +1889,7 @@ First let’s look at how we can fetch entities by ID, and then we will look at 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Field</span><span class="o">(</span><span class="s">"category"</span><span class="o">,</span> <span class="nc">CategoryType</span><span class="o">,</span>
   <span class="n">arguments</span> <span class="k">=</span> <span class="nc">Argument</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="nc">IntType</span><span class="o">)</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">,</span>
   <span class="n">resolve</span> <span class="k">=</span> <span class="n">c</span> <span class="k">=&gt;</span> <span class="nv">categories</span><span class="o">.</span><span class="py">defer</span><span class="o">(</span><span class="nv">c</span><span class="o">.</span><span class="py">arg</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="s">"id"</span><span class="o">)))</span>
-  
+
 <span class="nc">Field</span><span class="o">(</span><span class="s">"categoryMaybe"</span><span class="o">,</span> <span class="nc">OptionType</span><span class="o">(</span><span class="nc">CategoryType</span><span class="o">),</span>
   <span class="n">arguments</span> <span class="k">=</span> <span class="nc">Argument</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="nc">IntType</span><span class="o">)</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">,</span>
   <span class="n">resolve</span> <span class="k">=</span> <span class="n">c</span> <span class="k">=&gt;</span> <span class="nv">categories</span><span class="o">.</span><span class="py">deferOpt</span><span class="o">(</span><span class="nv">c</span><span class="o">.</span><span class="py">arg</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="s">"id"</span><span class="o">)))</span>
@@ -1949,7 +1948,7 @@ method.</p>
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Field</span><span class="o">(</span><span class="s">"categoriesByProduct"</span><span class="o">,</span> <span class="nc">ListType</span><span class="o">(</span><span class="nc">CategoryType</span><span class="o">),</span>
   <span class="n">arguments</span> <span class="k">=</span> <span class="nc">Argument</span><span class="o">(</span><span class="s">"productId"</span><span class="o">,</span> <span class="nc">IntType</span><span class="o">)</span> <span class="o">::</span> <span class="nc">Nil</span><span class="o">,</span>
   <span class="n">resolve</span> <span class="k">=</span> <span class="n">c</span> <span class="k">=&gt;</span> <span class="nv">categories</span><span class="o">.</span><span class="py">deferRelSeq</span><span class="o">(</span><span class="n">byProduct</span><span class="o">,</span> <span class="nv">c</span><span class="o">.</span><span class="py">arg</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="s">"productId"</span><span class="o">)))</span>
-  
+
 <span class="nc">Field</span><span class="o">(</span><span class="s">"categoryChildren"</span><span class="o">,</span> <span class="nc">ListType</span><span class="o">(</span><span class="nc">CategoryType</span><span class="o">),</span>
   <span class="n">resolve</span> <span class="k">=</span> <span class="n">c</span> <span class="k">=&gt;</span> <span class="nv">categories</span><span class="o">.</span><span class="py">deferRelSeq</span><span class="o">(</span><span class="n">byParent</span><span class="o">,</span> <span class="nv">c</span><span class="o">.</span><span class="py">value</span><span class="o">.</span><span class="py">id</span><span class="o">))</span>
 </code></pre></div></div>
@@ -2532,14 +2531,14 @@ These are quite useful for things like debug and profiling information, for exam
 <p>Here is an example of execution result JSON:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-   </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"human"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-         </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Luke Skywalker"</span><span class="w">
-      </span><span class="p">}</span><span class="w">
-   </span><span class="p">},</span><span class="w">
-   </span><span class="nl">"extensions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"formattedQuery"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{</span><span class="se">\n</span><span class="s2">  human(id: </span><span class="se">\"</span><span class="s2">1000</span><span class="se">\"</span><span class="s2">) {</span><span class="se">\n</span><span class="s2">    name</span><span class="se">\n</span><span class="s2">  }</span><span class="se">\n</span><span class="s2">}"</span><span class="w">
-   </span><span class="p">}</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"human"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Luke Skywalker"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"extensions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"formattedQuery"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{</span><span class="se">\n</span><span class="s2">  human(id: </span><span class="se">\"</span><span class="s2">1000</span><span class="se">\"</span><span class="s2">) {</span><span class="se">\n</span><span class="s2">    name</span><span class="se">\n</span><span class="s2">  }</span><span class="se">\n</span><span class="s2">}"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
@@ -2602,10 +2601,10 @@ query Test<span class="o">(</span><span class="nv">$id</span>: String!<span clas
       </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Luke Skywalker"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"appearsIn"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"NEWHOPE"</span><span class="p">,</span><span class="w"> </span><span class="s2">"EMPIRE"</span><span class="p">,</span><span class="w"> </span><span class="s2">"JEDI"</span><span class="p">],</span><span class="w">
       </span><span class="nl">"friends"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="p">{</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Han Solo"</span><span class="p">},</span><span class="w">
-        </span><span class="p">{</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Leia Organa"</span><span class="p">},</span><span class="w">
-        </span><span class="p">{</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C-3PO"</span><span class="p">},</span><span class="w">
-        </span><span class="p">{</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"R2-D2"</span><span class="p">}</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Han Solo"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Leia Organa"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C-3PO"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"R2-D2"</span><span class="w"> </span><span class="p">}</span><span class="w">
       </span><span class="p">]</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -2618,28 +2617,53 @@ query Test<span class="o">(</span><span class="nv">$id</span>: String!<span clas
       </span><span class="nl">"types"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"Human"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
           </span><span class="nl">"friends"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w"> </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w"> </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w"> </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w"> </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="w">
+            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">358</span><span class="w">
           </span><span class="p">},</span><span class="w">
           </span><span class="nl">"appearsIn"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w"> </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w"> </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w"> </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w"> </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="w">
+            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">216</span><span class="w">
           </span><span class="p">},</span><span class="w">
           </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
           </span><span class="p">}</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="nl">"Query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
           </span><span class="nl">"human"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
           </span><span class="p">}</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="nl">"Droid"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
           </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+            </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"minMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"maxMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"meanMs"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p75Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p95Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"p99Ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
           </span><span class="p">}</span><span class="w">
         </span><span class="p">}</span><span class="w">
       </span><span class="p">}</span><span class="w">
@@ -2898,10 +2922,10 @@ like this possible:</p>
 <p>Here we login and add colors in the same GraphQL query. It will produce a result like this one:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"data"</span><span class="p">:{</span><span class="w">
-   </span><span class="nl">"login"</span><span class="p">:</span><span class="s2">"a4d7fc91-e490-446e-9d4c-90b5bb22e51d"</span><span class="p">,</span><span class="w">
-   </span><span class="nl">"withMagenta"</span><span class="p">:[</span><span class="s2">"red"</span><span class="p">,</span><span class="s2">"green"</span><span class="p">,</span><span class="s2">"blue"</span><span class="p">,</span><span class="s2">"magenta"</span><span class="p">],</span><span class="w">
-   </span><span class="nl">"withOrange"</span><span class="p">:[</span><span class="s2">"red"</span><span class="p">,</span><span class="s2">"green"</span><span class="p">,</span><span class="s2">"blue"</span><span class="p">,</span><span class="s2">"magenta"</span><span class="p">,</span><span class="s2">"orange"</span><span class="p">]</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"login"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a4d7fc91-e490-446e-9d4c-90b5bb22e51d"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"withMagenta"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"red"</span><span class="p">,</span><span class="w"> </span><span class="s2">"green"</span><span class="p">,</span><span class="w"> </span><span class="s2">"blue"</span><span class="p">,</span><span class="w"> </span><span class="s2">"magenta"</span><span class="p">],</span><span class="w">
+    </span><span class="nl">"withOrange"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"red"</span><span class="p">,</span><span class="w"> </span><span class="s2">"green"</span><span class="p">,</span><span class="w"> </span><span class="s2">"blue"</span><span class="p">,</span><span class="w"> </span><span class="s2">"magenta"</span><span class="p">,</span><span class="w"> </span><span class="s2">"orange"</span><span class="p">]</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
@@ -2909,21 +2933,25 @@ like this possible:</p>
 <p>If the user does not have sufficient permissions, they will see a result like this:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"data"</span><span class="p">:{</span><span class="w">
-    </span><span class="nl">"me"</span><span class="p">:{</span><span class="w">
-      </span><span class="nl">"userName"</span><span class="p">:</span><span class="s2">"john"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"permissions"</span><span class="p">:</span><span class="kc">null</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"me"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"userName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"john"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
     </span><span class="p">},</span><span class="w">
-    </span><span class="nl">"colors"</span><span class="p">:[</span><span class="s2">"red"</span><span class="p">,</span><span class="s2">"green"</span><span class="p">,</span><span class="s2">"blue"</span><span class="p">]</span><span class="w">
+    </span><span class="nl">"colors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"red"</span><span class="p">,</span><span class="w"> </span><span class="s2">"green"</span><span class="p">,</span><span class="w"> </span><span class="s2">"blue"</span><span class="p">]</span><span class="w">
   </span><span class="p">},</span><span class="w">
-  </span><span class="nl">"errors"</span><span class="p">:[{</span><span class="w">
-    </span><span class="nl">"message"</span><span class="p">:</span><span class="s2">"You do not have permission to do this operation"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"field"</span><span class="p">:</span><span class="s2">"me.permissions"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"locations"</span><span class="p">:[{</span><span class="w">
-      </span><span class="nl">"line"</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"column"</span><span class="p">:</span><span class="mi">25</span><span class="w">
-    </span><span class="p">}]</span><span class="w">
-  </span><span class="p">}]</span><span class="w">
+  </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"You do not have permission to do this operation"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"me.permissions"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"locations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"line"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
@@ -2995,6 +3023,11 @@ like this possible:</p>
 <span class="o">}</span>
 </code></pre></div></div>
 
+<h2 id="graphql-federation">GraphQL federation</h2>
+
+<p>If we want to use <a href="https://www.apollographql.com/docs/federation/">GraphQL federation</a>, you can use sangria to provide a service subgraph.
+For that, use the <a href="https://github.com/sangria-graphql/sangria-federated/">sangria-federated</a> library that supports Federation v1 and v2.</p>
+
 <h2 id="helpers">Helpers</h2>
 
 <p>There are quite a few helpers available which you may find useful in different situations.</p>
@@ -3002,7 +3035,7 @@ like this possible:</p>
 <h3 id="introspection-result-parsing">Introspection Result Parsing</h3>
 
 <p>Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of working
- directly with JSON (or other raw representations), you can parse it into a set of case classes that allow you to easily work with the whole schema introspection.</p>
+directly with JSON (or other raw representations), you can parse it into a set of case classes that allow you to easily work with the whole schema introspection.</p>
 
 <p>You can find a parser function in <code class="language-plaintext highlighter-rouge">sangria.introspection.IntrospectionParser</code>.</p>
 
