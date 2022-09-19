@@ -75,11 +75,11 @@ val query =
 
 // Parse GraphQL query
 QueryParser.parse(query) match {
-  case Success(document) => 
+  case Success(document) =>
     // Pretty rendering of the GraphQL query as a `String`
     println(document.renderPretty)
-    
-  case Failure(error) => 
+
+  case Failure(error) =>
     println(s"Syntax error: ${error.getMessage}")
 }
 ```
@@ -235,14 +235,14 @@ The `resolve` argument of a `Field` expects a function of type `Context[Ctx, Val
 As you can see, the result of the `resolve` is an `Action` type which can take different shapes.
 Here is the list of supported actions:
 
-* `Value` - a simple value result. If you want to indicate an error, you need to throw an exception
-* `TryValue` - a `scala.util.Try` result
-* `FutureValue` - a `Future` result
-* `PartialValue` - a partially successful result with a list of errors
-* `PartialFutureValue` - a `Future` of partially successful result
-* `DeferredValue` - used to return a `Deferred` result (see the [Deferred Values and Resolver](#deferred-value-resolution) section for more details)
-* `DeferredFutureValue` - the same as `DeferredValue` but allows you to return `Deferred` inside of a `Future`
-* `UpdateCtx` - allows you to transform a `Ctx` object. The transformed context object would be available for nested sub-objects and subsequent sibling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of its usage in the [Authentication and Authorisation](#authentication-and-authorisation) section.
+- `Value` - a simple value result. If you want to indicate an error, you need to throw an exception
+- `TryValue` - a `scala.util.Try` result
+- `FutureValue` - a `Future` result
+- `PartialValue` - a partially successful result with a list of errors
+- `PartialFutureValue` - a `Future` of partially successful result
+- `DeferredValue` - used to return a `Deferred` result (see the [Deferred Values and Resolver](#deferred-value-resolution) section for more details)
+- `DeferredFutureValue` - the same as `DeferredValue` but allows you to return `Deferred` inside of a `Future`
+- `UpdateCtx` - allows you to transform a `Ctx` object. The transformed context object would be available for nested sub-objects and subsequent sibling fields in case of mutation (since execution of mutation queries is strictly sequential). You can find an example of its usage in the [Authentication and Authorisation](#authentication-and-authorisation) section.
 
 Normally the library is able to automatically infer the `Action` type, so that you don't need to specify it explicitly.
 
@@ -260,9 +260,9 @@ The `ProjectionExclude` field tag, on the other hand, allows you to exclude a fi
 
 Many schema elements, like `ObjectType`, `Field` or `Schema` itself, take two type parameters: `Ctx` and `Val`:
 
-* `Val` - represent values that are returned by the `resolve` function and given to the `resolve` function as a part of the `Context`. In the schema example,
+- `Val` - represent values that are returned by the `resolve` function and given to the `resolve` function as a part of the `Context`. In the schema example,
   `Val` can be a `Human`, `Droid`, `String`, etc.
-* `Ctx` - represents some contextual object that flows across the whole execution (and doesn't change in most of the cases). It can be provided to execution by the user
+- `Ctx` - represents some contextual object that flows across the whole execution (and doesn't change in most of the cases). It can be provided to execution by the user
   in order to help fulfill the GraphQL query. A typical example of such a context object is a service or repository object that is able to access
   a database. In the example schema, some of the fields (like `droid` or `human`) make use of it in order to access the character repository.
 
@@ -361,10 +361,10 @@ Defining schema with `ObjectType`, `InputObjectType` and `EnumType` can become q
 
 For this, sangria provides a set of macros that are able to derive GraphQL types from normal Scala classes, case classes and enums:
 
-* `deriveObjectType[Ctx, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Val` class (case class accessors and members annotated with `@GraphQLField`)
-* `deriveContextObjectType[Ctx, Target, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Target` class (case class accessors and members annotated with `@GraphQLField`). You also need to provide it a function `Ctx => Target` which the macro will use to get an instance of `Target` type from a user context.
-* `deriveInputObjectType[T]` - constructs an `InputObjectType[T]` with fields found in `T` case class (only supports case class accessors)
-* `deriveEnumType[T]` - constructs an `EnumType[T]` with values found in `T` enumeration. It supports Scala `Enumeration` as well as sealed hierarchies of case objects.
+- `deriveObjectType[Ctx, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Val` class (case class accessors and members annotated with `@GraphQLField`)
+- `deriveContextObjectType[Ctx, Target, Val]` - constructs an `ObjectType[Ctx, Val]` with fields found in `Target` class (case class accessors and members annotated with `@GraphQLField`). You also need to provide it a function `Ctx => Target` which the macro will use to get an instance of `Target` type from a user context.
+- `deriveInputObjectType[T]` - constructs an `InputObjectType[T]` with fields found in `T` case class (only supports case class accessors)
+- `deriveEnumType[T]` - constructs an `EnumType[T]` with values found in `T` enumeration. It supports Scala `Enumeration` as well as sealed hierarchies of case objects.
 
 You need the following import to use them:
 
@@ -536,7 +536,7 @@ EnumType("Foo", Some("It's foo"), List(
 ```
 
 {% include ext.html type="info" title="Co-locate deriveEnumType with actual sealed trait" %}
-It is important to use `deriveEnumType` in the **same source file** where you have defined your sealed trait **after** all trait children are defined! 
+It is important to use `deriveEnumType` in the **same source file** where you have defined your sealed trait **after** all trait children are defined!
 Otherwise macro will not be able to find all of the enum values.  
 {% include cend.html %}
 
@@ -576,13 +576,13 @@ implicit lazy val BType: InputObjectType[B] = deriveInputObjectType[B](
 
 You can use the following annotations to change different aspects of the resulting GraphQL types:
 
-* `@GraphQLName` - use a different name for a type, field, enum value or an argument
-* `@GraphQLDescription` - provide a description for a type, field, enum value or an argument
-* `@GraphQLDeprecated` - deprecate an `ObjectType` field or an enum value
-* `@GraphQLFieldTags` - provide field tags or an `ObjectType` field
-* `@GraphQLExclude` - exclude a field, enum value or an argument
-* `@GraphQLField` - include a member of a class (`val` or `def`) in the resulting `ObjectType`. This will also create the appropriate `Argument` list if the method takes some arguments
-* `@GraphQLDefault` - provide a default value for an `InputField` or an `Argument`
+- `@GraphQLName` - use a different name for a type, field, enum value or an argument
+- `@GraphQLDescription` - provide a description for a type, field, enum value or an argument
+- `@GraphQLDeprecated` - deprecate an `ObjectType` field or an enum value
+- `@GraphQLFieldTags` - provide field tags or an `ObjectType` field
+- `@GraphQLExclude` - exclude a field, enum value or an argument
+- `@GraphQLField` - include a member of a class (`val` or `def`) in the resulting `ObjectType`. This will also create the appropriate `Argument` list if the method takes some arguments
+- `@GraphQLDefault` - provide a default value for an `InputField` or an `Argument`
 
 Here is an example:
 
@@ -831,13 +831,9 @@ The result of an execution would be JSON like this one:
 ```json
 {
   "data": {
-    "fruit": {"id": "1", "color": "Red"},
-    "bananas": [
-      {"length": 10},
-      {"length": 20},
-      {"length": 30}
-    ],
-    "specialFruit": {"id": "42"}
+    "fruit": { "id": "1", "color": "Red" },
+    "bananas": [{ "length": 10 }, { "length": 20 }, { "length": 30 }],
+    "specialFruit": { "id": "42" }
   }
 }
 ```
@@ -1004,15 +1000,17 @@ Result of the execution would look like this:
     "article": {
       "title": "Test Article #42",
       "text": "blah blah blah...",
-      "comments": [{
-        "text": "First!",
-        "author": {
-          "name": "Jane",
-          "lastComment": {
-            "text": "Boring..."
+      "comments": [
+        {
+          "text": "First!",
+          "author": {
+            "name": "Jane",
+            "lastComment": {
+              "text": "Boring..."
+            }
           }
         }
-      }]
+      ]
     }
   }
 }
@@ -1052,13 +1050,13 @@ preparedQueryFuture.map(preparedQuery =>
 
 ### Alternative Execution Scheme
 
-The `Future` of marshaled result is not the only possible result of a query execution. By importing different implementation of `ExecutionScheme` you can 
+The `Future` of marshaled result is not the only possible result of a query execution. By importing different implementation of `ExecutionScheme` you can
 change the result type of an execution. Here is an example:
 
 ```scala
 import sangria.execution.ExecutionScheme.Extended
 
-val result: Future[ExecutionResult[Ctx, JsValue]] = 
+val result: Future[ExecutionResult[Ctx, JsValue]] =
   val Executor.execute(schema, query)
 ```
 
@@ -1066,10 +1064,10 @@ val result: Future[ExecutionResult[Ctx, JsValue]] =
 
 Following execution schemes are available:
 
-* `Default` - The default one. Returns a `Future` of marshaled result 
-* `Extended` - Returns a `Future` containing `ExecutionResult`. 
-* `Stream` - Returns a stream of results. Very useful for subscription and batch queries, where the result is an `Observable` or a `Source`
-* `StreamExtended` - Returns a stream of `ExecutionResult`s
+- `Default` - The default one. Returns a `Future` of marshaled result
+- `Extended` - Returns a `Future` containing `ExecutionResult`.
+- `Stream` - Returns a stream of results. Very useful for subscription and batch queries, where the result is an `Observable` or a `Source`
+- `StreamExtended` - Returns a stream of `ExecutionResult`s
 
 ### Batch Executor
 
@@ -1080,14 +1078,14 @@ Please use this feature with caution! It might be removed in future releases or 
 Batch executor allow you to execute several inter-dependent queries and get an execution result as a stream.
 Dependencies are expressed via variables and `@export` directive. It provides following features:
 
-* Allows specifying multiple `operationNames` when executing a GraphQL query document.
+- Allows specifying multiple `operationNames` when executing a GraphQL query document.
   All operations would be executed in order inferred from the dependencies between queries.
-* Support for `@export(as: "foo")` directive. This directive allows you to save the results of
+- Support for `@export(as: "foo")` directive. This directive allows you to save the results of
   the query execution and then use it as a variable in a different query within the same document.
   This provides a way to define data dependencies between queries.
-* When used with `@export` directive, the variables would be automatically inferred by the execution
+- When used with `@export` directive, the variables would be automatically inferred by the execution
   engine, so you don't need to declare them explicitly
-* You still can declare variables explicitly and completely disable variable inference with `inferVariableDefinitions` flag
+- You still can declare variables explicitly and completely disable variable inference with `inferVariableDefinitions` flag
 
 Batch executor implementation is inspired by this talk:
 
@@ -1495,34 +1493,34 @@ val releaseNotes =
 
 ## Stream-based Subscriptions
 
-As described in [previous section](#prepared-queries), you can handle subscription queries with prepared queries. 
-This approach provides a lot of flexibility, but also means that you need to manually analyze subscription fields and appropriately 
+As described in [previous section](#prepared-queries), you can handle subscription queries with prepared queries.
+This approach provides a lot of flexibility, but also means that you need to manually analyze subscription fields and appropriately
 execute query for every event.
 
-Stream-based subscriptions provide much easier and, in many respects, superior approach of handling subscription queries. 
+Stream-based subscriptions provide much easier and, in many respects, superior approach of handling subscription queries.
 In order to use it, you first need to choose one of available stream implementations:
 
-* `sangria.streaming.akkaStreams._` - [akka-streams](http://doc.akka.io/docs/akka/current/scala/stream/index.html) implementation based on `Source[T, NotUsed]` 
-  * `"{{site.groupId}}" %% "sangria-akka-streams" % "{{site.version.sangria-akka-streams}}"`
-  * Requires an implicit `akka.stream.Materializer` to be available in scope
-* `sangria.streaming.rxscala._` - [RxScala](http://reactivex.io/rxscala) implementation based on `Observable[T]` 
-  * `"{{site.groupId}}" %% "sangria-rxscala" % "{{site.version.sangria-rxscala}}"`
-  * Requires an implicit `scala.concurrent.ExecutionContext` to be available in scope
-* `sangria.streaming.monix._` - [monix](https://monix.io) implementation based on `Observable[T]` 
-  * `"{{site.groupId}}" %% "sangria-monix" % "{{site.version.sangria-monix}}"`
-  * Requires an implicit `monix.execution.Scheduler` to be available in scope
-* `sangria.streaming.future._` - very simple implementation based on `Future[T]` which is treated as a stream with a single element 
-  * Requires an implicit `scala.concurrent.ExecutionContext` to be available in scope
+- `sangria.streaming.akkaStreams._` - [akka-streams](http://doc.akka.io/docs/akka/current/scala/stream/index.html) implementation based on `Source[T, NotUsed]`
+  - `"{{site.groupId}}" %% "sangria-akka-streams" % "{{site.version.sangria-akka-streams}}"`
+  - Requires an implicit `akka.stream.Materializer` to be available in scope
+- `sangria.streaming.rxscala._` - [RxScala](http://reactivex.io/rxscala) implementation based on `Observable[T]`
+  - `"{{site.groupId}}" %% "sangria-rxscala" % "{{site.version.sangria-rxscala}}"`
+  - Requires an implicit `scala.concurrent.ExecutionContext` to be available in scope
+- `sangria.streaming.monix._` - [monix](https://monix.io) implementation based on `Observable[T]`
+  - `"{{site.groupId}}" %% "sangria-monix" % "{{site.version.sangria-monix}}"`
+  - Requires an implicit `monix.execution.Scheduler` to be available in scope
+- `sangria.streaming.future._` - very simple implementation based on `Future[T]` which is treated as a stream with a single element
+  - Requires an implicit `scala.concurrent.ExecutionContext` to be available in scope
 
 You can also easily create your own integration by implementing and providing an implicit instance of `SubscriptionStream[S]` type class.
 
 {% include ext.html type="info" title="Example project" %}
 If you prefer a hands-on approach, then you can take a look at [sangria-subscriptions-example](https://github.com/sangria-graphql/sangria-subscriptions-example) project. It demonstrates most of the concepts that are described in this section.
 {% include cend.html %}
- 
-After you have imported a concrete stream implementation, you can define a subscription type fields with `Field.subs`. 
+
+After you have imported a concrete stream implementation, you can define a subscription type fields with `Field.subs`.
 Here is an example that uses monix:
-  
+
 ```scala
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.Observable
@@ -1537,7 +1535,7 @@ val SubscriptionType = ObjectType("Subscription", fields[Unit, Unit](
 ))
 ```
 
-Please note that every element in a stream should be an `Action[Ctx, Val]`. An `action` helper function is used in this case to 
+Please note that every element in a stream should be an `Action[Ctx, Val]`. An `action` helper function is used in this case to
 transform every element of a stream into an `Action`. Also, it is important that either all fields of a `SubscriptionType` or none of them are
 created with the `Field.subs` function (otherwise it would not be possible to merge them in a single stream).
 
@@ -1550,32 +1548,32 @@ import sangria.execution.ExecutionScheme.Stream
 
 val schema = Schema(QueryType, subscription = Some(SubscriptionType))
 
-val query = 
+val query =
   graphql"""
-    subscription { 
+    subscription {
       userEvents {
         id
         __typename
-        
+
         ... on UserCreated {
           name
         }
       }
-      
+
       messageEvents {
         __typename
-        
+
         ... on MessagePosted {
           user {
             id
             name
           }
-          
+
           text
         }
       }
     }
-  """  
+  """
 
 val stream: Observable[JsValue] = Executor.execute(schema, query)
 ```
@@ -1587,7 +1585,7 @@ The stream will emit the following elements (the order may be different):
 {
   "data": {
     "userEvents": {
-      "id": 1,          
+      "id": 1,
       "__typename": "UserCreated",
       "name": "Bob"
     }
@@ -1596,11 +1594,11 @@ The stream will emit the following elements (the order may be different):
 
 {
   "data": {
-    "messageEvents": {          
+    "messageEvents": {
       "__typename": "MessagePosted",
       "user": {
-        "id": 20,      
-        "name": "Test User"      
+        "id": 20,
+        "name": "Test User"
       },
       "text": "Hello!"
     }
@@ -1610,7 +1608,7 @@ The stream will emit the following elements (the order may be different):
 {
   "data": {
     "userEvents": {
-      "id": 1,          
+      "id": 1,
       "__typename": "UserNameChanged",
       "name": "John"
     }
@@ -1619,11 +1617,11 @@ The stream will emit the following elements (the order may be different):
 ```
 
 Only the top-level subscription fields have special semantics associated with them (in this respect it is similar to the mutation queries).
-The execution engine merges the requested field streams into a single stream which is then returned as a result of the execution. 
-All other fields (2nd level, 3rd level, etc.) have normal semantics and would be fully resolved.   
+The execution engine merges the requested field streams into a single stream which is then returned as a result of the execution.
+All other fields (2nd level, 3rd level, etc.) have normal semantics and would be fully resolved.
 
 {% include ext.html type="info" title="Work In Progress" %}
-Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.      
+Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.  
 {% include cend.html %}
 
 ## Deferred Value Resolution
@@ -1638,17 +1636,17 @@ The defer mechanism allows you to postpone the execution of particular fields an
 This can be very useful when you want to avoid an N+1 problem. In the example schema all of the characters have a list of friends, but they only have their IDs.
 You need to fetch them from somewhere in order to progress query execution.
 Retrieving every friend one-by-one would be very inefficient, since you potentially need to access an external database
-in order to do so. The defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB. 
+in order to do so. The defer mechanism allows you to batch all these friend list retrieval requests in one efficient request to the DB.
 In order to do it, you need to implement a `DeferredResolver` that will get a list of deferred values:
 
 ```scala
 class FriendsResolver extends DeferredResolver[Any] {
-  def resolve(deferred: Vector[Deferred[Any]], ctx: Any, queryState: Any)(implicit ec: ExecutionContext) = 
+  def resolve(deferred: Vector[Deferred[Any]], ctx: Any, queryState: Any)(implicit ec: ExecutionContext) =
     // Here goes your resolution logic
 }
 ```
 
-The `resolve` function gives you a list of `Deferred[A]` values and expects you to return a list of resolved values `Future[B]`. 
+The `resolve` function gives you a list of `Deferred[A]` values and expects you to return a list of resolved values `Future[B]`.
 
 It is important to note that the resulting list must have the same size. This allows an executor to figure out the relation
 between deferred values and results. The order of results also plays an important role.
@@ -1661,7 +1659,7 @@ Executor.execute(schema, query, deferredResolver = new FriendsResolver)
 ```
 
 `DeferredResolver` will do its best to batch as many deferred values as possible. Let's look at this example query to see how it works:
- 
+
 ```js
 {
   hero {
@@ -1673,7 +1671,7 @@ Executor.execute(schema, query, deferredResolver = new FriendsResolver)
           }
         }
       }
-      
+
       more: friends {
         friends {
           friends {
@@ -1687,7 +1685,7 @@ Executor.execute(schema, query, deferredResolver = new FriendsResolver)
 ```
 
 During an execution of this query, the amount of produced `Deferred` values grows exponentially. Still `DeferredResolver.resolve` method
-would be called only **4** times by the executor because the query has only 4 levels of fields that return deferred values (`friends` in this case).  
+would be called only **4** times by the executor because the query has only 4 levels of fields that return deferred values (`friends` in this case).
 
 ### Transforming the Deferred Value
 
@@ -1718,38 +1716,38 @@ state by overriding the `initialQueryState` method:
 class MyResolver[Ctx] extends DeferredResolver[Ctx] {
   def initialQueryState: Any = TrieMap[String, Any]()
 
-  def resolve(deferred: Vector[Deferred[Any]], ctx: Ctx, queryState: Any)(implicit ec: ExecutionContext) = 
-    // resolve deferred values by using cache from `queryState`     
+  def resolve(deferred: Vector[Deferred[Any]], ctx: Ctx, queryState: Any)(implicit ec: ExecutionContext) =
+    // resolve deferred values by using cache from `queryState`
 }
 ```
 
 ### Customizing DeferredResolver Behaviour
 
-As was mentioned before, `DeferredResolver` will do its best to collect and batch as many `Deferred` values as possible. This means that it 
-will even wait for a `Future` to produce some values in order to find out whether they produce some deferred values. 
+As was mentioned before, `DeferredResolver` will do its best to collect and batch as many `Deferred` values as possible. This means that it
+will even wait for a `Future` to produce some values in order to find out whether they produce some deferred values.
 
 In some cases this is not desired. You can override the following methods in order to customize this behaviour and define independent
 deferred value groups:
 
-* `includeDeferredFromField` - A function that decides whether deferred values from a particular field should be collected or processed independently.   
-* `groupDeferred` - Provides a way to group deferred values in batches that would be processed independently. Useful for separating cheap and expensive deferred values.
+- `includeDeferredFromField` - A function that decides whether deferred values from a particular field should be collected or processed independently.
+- `groupDeferred` - Provides a way to group deferred values in batches that would be processed independently. Useful for separating cheap and expensive deferred values.
 
 ### High-level Fetch API
- 
+
 `DeferredResolver` provides a very flexible mechanism to batch retrieval of objects from the external services or databases, but it provides a
 very low-level, unsafe, but efficient API for this. You certainly can use it directly, especially in more non-trivial cases, but most of the time
 you probably will work with isolated entity objects which you would like to load by ID or some relation to other entities. This is where `Fetcher`
 comes into play.
 
-`Fetcher` provides a high-level API for deferred value resolution and is implemented as a specialized version of `DeferredResolver`. 
+`Fetcher` provides a high-level API for deferred value resolution and is implemented as a specialized version of `DeferredResolver`.
 This API provides the following features:
 
-* Deferred value resolution based on entity IDs
-* Deferred value resolution based on entity relations
-* Deduplication of the entities based on the ID
-* Caching support
-* Support for `maxBatchSize`
-* Supports a fallback to an existing `DeferredResolver`
+- Deferred value resolution based on entity IDs
+- Deferred value resolution based on entity relations
+- Deduplication of the entities based on the ID
+- Caching support
+- Support for `maxBatchSize`
+- Supports a fallback to an existing `DeferredResolver`
 
 Examples in this section will use the following data model of products and categories:
 
@@ -1812,17 +1810,17 @@ Examples in this section will use the following data model of products and categ
 
 As you can see, the product table (which also can be a document in a document DB or just JSON which is returned from an external service call)
 just has product information. Category, on the the other hand, also contains 2 relations - to the products within this category and to a parent category.
-First let's look at how we can fetch entities by ID, and then we will look at how we can use a relation information for this. 
+First let's look at how we can fetch entities by ID, and then we will look at how we can use a relation information for this.
 
 First of all you need to define a Fetcher:
 
 ```scala
 val products =
-  Fetcher((ctx: MyCtx, ids: Seq[Int]) => 
+  Fetcher((ctx: MyCtx, ids: Seq[Int]) =>
     ctx.loadProductsById(ids))
 
 val categories =
-  Fetcher((ctx: MyCtx, ids: Seq[Int]) => 
+  Fetcher((ctx: MyCtx, ids: Seq[Int]) =>
     ctx.loadCategoriesById(ids))
 ```
 
@@ -1839,7 +1837,7 @@ Every time you need to load a particular entity by ID, you can use the fetcher t
 Field("category", CategoryType,
   arguments = Argument("id", IntType) :: Nil,
   resolve = c => categories.defer(c.arg[Int]("id")))
-  
+
 Field("categoryMaybe", OptionType(CategoryType),
   arguments = Argument("id", IntType) :: Nil,
   resolve = c => categories.deferOpt(c.arg[Int]("id")))
@@ -1864,7 +1862,7 @@ Field("categoryName", OptionType(StringType),
 #### HasId Type Class
 
 In order to extract the ID from entities, the Fetch API uses the `HasId` type class:
- 
+
 ```scala
 case class Product(id: String, name: String)
 
@@ -1882,7 +1880,7 @@ Fetcher((ctx: MyCtx, ids: Seq[String]) => ctx.loadProductsById(ids))(HasId(_.id)
 #### Fetching Relations
 
 The Fetch API is also able to fetch entities based on their relation to other entities. In our example category has 2 relations, so let's define these relations:
-  
+
 ```scala
 val byParent = Relation[Category, Int]("byParent", c => Seq(c.parent))
 val byProduct = Relation[Category, Int]("byProduct", c => c.products)
@@ -1899,12 +1897,12 @@ val categories = Fetcher.rel(
 In case of relation batch function `ids` would be of type `RelationIds[Res]` which contains the list of IDs for every relation type.
 
 Now you should be able to use the category fetcher to create `Deferred` values like this:
- 
+
 ```scala
 Field("categoriesByProduct", ListType(CategoryType),
   arguments = Argument("productId", IntType) :: Nil,
   resolve = c => categories.deferRelSeq(byProduct, c.arg[Int]("productId")))
-  
+
 Field("categoryChildren", ListType(CategoryType),
   resolve = c => categories.deferRelSeq(byParent, c.value.id))
 ```
@@ -1924,7 +1922,7 @@ val categories = Fetcher(
   fetch = (ctx, ids) => ctx.loadCategoriesById(ids))
 ```
 
-The `FetcherCache` will cache not only the entities themselves, but also relation information between entities. 
+The `FetcherCache` will cache not only the entities themselves, but also relation information between entities.
 
 #### Limiting Batch Size
 
@@ -1940,7 +1938,7 @@ val categories = Fetcher(
 
 #### Fallback to Existing DeferredResolver
 
-If you already have an existing `DeferredResolver`, you can still use it in combination with fetchers: 
+If you already have an existing `DeferredResolver`, you can still use it in combination with fetchers:
 
 ```scala
 DeferredResolver.fetchersWithFallback(new ExitingDeferredResolver, products, categoies)
@@ -2026,9 +2024,9 @@ val executor = Executor(schema = MySchema, maxQueryDepth = Some(7))
 
 Bad things can happen during the query execution. When errors happen, then `Future` would be resolved with some exception. Sangria allows you to distinguish between different types of errors that happen before actual query execution:
 
-* `QueryReducingError` - an error happened in the query reducer. If you are throwing some exceptions within a custom `QueryReducer`, then they would be wrapped in `QueryReducingError`
-* `QueryAnalysisError` - signifies issues in the query or variables. This means that client has made some error. If you are exposing a GraphQL HTTP endpoint, then you may want to return a 400 status code in this case.
-* `ErrorWithResolver` - unexpected errors before query execution
+- `QueryReducingError` - an error happened in the query reducer. If you are throwing some exceptions within a custom `QueryReducer`, then they would be wrapped in `QueryReducingError`
+- `QueryAnalysisError` - signifies issues in the query or variables. This means that client has made some error. If you are exposing a GraphQL HTTP endpoint, then you may want to return a 400 status code in this case.
+- `ErrorWithResolver` - unexpected errors before query execution
 
 All mentioned, exception classes expose a `resolveError` method which you can use to render an error in GraphQL-compliant format.
 
@@ -2081,9 +2079,9 @@ You can also provide a list of handled errors to `HandledException`. This will r
 
 In addition to handling errors coming from `resolve` function, `ExceptionHandler` also allows to handle `Violation`s and `UserFacingError`s:
 
-* `onException` - all unexpected exceptions coming from the `resolve` functions
-* `onViolation` - handles violations (things like validation errors, argument/variable coercion, etc.)
-* `onUserFacingError` - handles standard sangria errors (errors like invalid operation name, max query depth, etc.)
+- `onException` - all unexpected exceptions coming from the `resolve` functions
+- `onViolation` - handles violations (things like validation errors, argument/variable coercion, etc.)
+- `onUserFacingError` - handles standard sangria errors (errors like invalid operation name, max query depth, etc.)
 
 Here is an example if handling a violation, changing the message and adding extra fields:
 
@@ -2103,29 +2101,28 @@ GraphQL query execution needs to know how to serialize the result of execution a
 The specification itself does not define the data format, instead it uses abstract concepts like map and list.
 Sangria does not hard-code the serialization mechanism. Instead it provides two traits for this:
 
-* `ResultMarshaller` - knows how to serialize results of execution
-* `InputUnmarshaller[Node]` - knows how to deserialize the arguments/variables
+- `ResultMarshaller` - knows how to serialize results of execution
+- `InputUnmarshaller[Node]` - knows how to deserialize the arguments/variables
 
 At the moment Sangria provides implementations for these libraries:
 
-* `sangria.marshalling.queryAst._` - native Query Value AST serialization
-* `sangria.marshalling.sprayJson._` - spray-json serialization
-  * `"{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"`
-* `sangria.marshalling.playJson._` - play-json serialization
-  * `"{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"`
-* `sangria.marshalling.circe._` - circe serialization
-  * `"{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"`
-* `sangria.marshalling.argonaut._` - argonaut serialization
-  * `"{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"`
-* `sangria.marshalling.json4s.native._` - json4s-native serialization
-  * `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
-* `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization
-  * `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`
-* `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization
-  * `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`
-* `sangria.marshalling.ion._` - [Amazon Ion](http://amznlabs.github.io/ion-docs/index.html) serialization
-  * `"{{site.groupId}}" %% "sangria-ion" % "{{site.version.sangria-ion}}"`
-
+- `sangria.marshalling.queryAst._` - native Query Value AST serialization
+- `sangria.marshalling.sprayJson._` - spray-json serialization
+  - `"{{site.groupId}}" %% "sangria-spray-json" % "{{site.version.sangria-spray-json}}"`
+- `sangria.marshalling.playJson._` - play-json serialization
+  - `"{{site.groupId}}" %% "sangria-play-json" % "{{site.version.sangria-play-json}}"`
+- `sangria.marshalling.circe._` - circe serialization
+  - `"{{site.groupId}}" %% "sangria-circe" % "{{site.version.sangria-circe}}"`
+- `sangria.marshalling.argonaut._` - argonaut serialization
+  - `"{{site.groupId}}" %% "sangria-argonaut" % "{{site.version.sangria-argonaut}}"`
+- `sangria.marshalling.json4s.native._` - json4s-native serialization
+  - `"{{site.groupId}}" %% "sangria-json4s-native" % "{{site.version.sangria-json4s-native}}"`
+- `sangria.marshalling.json4s.jackson._` - json4s-jackson serialization
+  - `"{{site.groupId}}" %% "sangria-json4s-jackson" % "{{site.version.sangria-json4s-jackson}}"`
+- `sangria.marshalling.msgpack._` - [MessagePack](http://msgpack.org/) serialization
+  - `"{{site.groupId}}" %% "sangria-msgpack" % "{{site.version.sangria-msgpack}}"`
+- `sangria.marshalling.ion._` - [Amazon Ion](http://amznlabs.github.io/ion-docs/index.html) serialization
+  - `"{{site.groupId}}" %% "sangria-ion" % "{{site.version.sangria-ion}}"`
 
 In order to use one of these, just import it and the result of execution will be of the correct type:
 
@@ -2355,7 +2352,6 @@ class SprayJsonSupportSpec extends WordSpec
 }
 ```
 
-
 ## Middleware
 
 Sangria supports generic middleware that can be used for different purposes, like performance measurement, metrics collection, security enforcement, etc. on a field and query level.
@@ -2400,8 +2396,8 @@ It will record the execution time of all fields in a query and then report it in
 
 Middleware supports 2 types state that you can use within a middleware instance:
 
-* `QueryVal` - an instance of this type is create at the beginning of the query execution and then propagated to all other middleware methods
-* `FieldVal` - an instance of this type may be returned from `beforeField` and will be given as a argument to `afterField` and `fieldError` for the same field.
+- `QueryVal` - an instance of this type is create at the beginning of the query execution and then propagated to all other middleware methods
+- `FieldVal` - an instance of this type may be returned from `beforeField` and will be given as a argument to `afterField` and `fieldError` for the same field.
 
 These two types of state provide a way to avoid shared mutable state in case some intermediate value need to be propagated between different
 methods of middleware.
@@ -2479,19 +2475,19 @@ Now you can use it by just adding it in the list of middleware during the execut
 ```scala
 Executor.execute(schema, query, middleware = Formatted :: Nil)
 ```
- 
+
 Here is an example of execution result JSON:
 
 ```json
 {
-   "data": {
-      "human": {
-         "name": "Luke Skywalker"
-      }
-   },
-   "extensions": {
-      "formattedQuery": "{\n  human(id: \"1000\") {\n    name\n  }\n}"
-   }
+  "data": {
+    "human": {
+      "name": "Luke Skywalker"
+    }
+  },
+  "extensions": {
+    "formattedQuery": "{\n  human(id: \"1000\") {\n    name\n  }\n}"
+  }
 }
 ```
 
@@ -2559,10 +2555,10 @@ After middleware is added, you will see following JSON in the response:
       "name": "Luke Skywalker",
       "appearsIn": ["NEWHOPE", "EMPIRE", "JEDI"],
       "friends": [
-        {"name": "Han Solo"},
-        {"name": "Leia Organa"},
-        {"name": "C-3PO"},
-        {"name": "R2-D2"}
+        { "name": "Han Solo" },
+        { "name": "Leia Organa" },
+        { "name": "C-3PO" },
+        { "name": "R2-D2" }
       ]
     }
   },
@@ -2575,28 +2571,53 @@ After middleware is added, you will see following JSON in the response:
       "types": {
         "Human": {
           "friends": {
-            "count": 1, "minMs": 358, "maxMs": 358, "meanMs": 358,
-            "p75Ms": 358, "p95Ms": 358, "p99Ms": 358
+            "count": 1,
+            "minMs": 358,
+            "maxMs": 358,
+            "meanMs": 358,
+            "p75Ms": 358,
+            "p95Ms": 358,
+            "p99Ms": 358
           },
           "appearsIn": {
-            "count": 1, "minMs": 216, "maxMs": 216, "meanMs": 216,
-            "p75Ms": 216, "p95Ms": 216, "p99Ms": 216
+            "count": 1,
+            "minMs": 216,
+            "maxMs": 216,
+            "meanMs": 216,
+            "p75Ms": 216,
+            "p95Ms": 216,
+            "p99Ms": 216
           },
           "name": {
-            "count": 3, "minMs": 0, "maxMs": 0, "meanMs": 0,
-            "p75Ms": 0, "p95Ms": 0, "p99Ms": 0
+            "count": 3,
+            "minMs": 0,
+            "maxMs": 0,
+            "meanMs": 0,
+            "p75Ms": 0,
+            "p95Ms": 0,
+            "p99Ms": 0
           }
         },
         "Query": {
           "human": {
-            "count": 1, "minMs": 2, "maxMs": 2, "meanMs": 2,
-            "p75Ms": 2, "p95Ms": 2, "p99Ms": 2
+            "count": 1,
+            "minMs": 2,
+            "maxMs": 2,
+            "meanMs": 2,
+            "p75Ms": 2,
+            "p95Ms": 2,
+            "p99Ms": 2
           }
         },
         "Droid": {
           "name": {
-            "count": 2, "minMs": 0, "maxMs": 0, "meanMs": 0,
-            "p75Ms": 0, "p95Ms": 0, "p99Ms": 0
+            "count": 2,
+            "minMs": 0,
+            "maxMs": 0,
+            "meanMs": 0,
+            "p75Ms": 0,
+            "p95Ms": 0,
+            "p99Ms": 0
           }
         }
       }
@@ -2625,13 +2646,13 @@ opportunity to perform some logic and update the `Ctx` before query is executed.
 
 Out-of-the-box sangria comes with several `QueryReducer`s for common use-cases:
 
-* `QueryReducer.measureComplexity` - measures a complexity of the query
-* `QueryReducer.rejectComplexQueries` - rejects queries with complexity above provided threshold
-* `QueryReducer.collectTags` - collects `FieldTag`s based on a partial function
-* `QueryReducer.measureDepth` - measures max query depth
-* `QueryReducer.rejectMaxDepth` - rejects queries that are deeper than provided threshold
-* `QueryReducer.hasIntrospection` - verifies whether query contains an introspection fields
-* `QueryReducer.rejectIntrospection` - rejects queries that contain an introspection fields. This may be useful for production environments where introspection can potentially be abused.
+- `QueryReducer.measureComplexity` - measures a complexity of the query
+- `QueryReducer.rejectComplexQueries` - rejects queries with complexity above provided threshold
+- `QueryReducer.collectTags` - collects `FieldTag`s based on a partial function
+- `QueryReducer.measureDepth` - measures max query depth
+- `QueryReducer.rejectMaxDepth` - rejects queries that are deeper than provided threshold
+- `QueryReducer.hasIntrospection` - verifies whether query contains an introspection fields
+- `QueryReducer.rejectIntrospection` - rejects queries that contain an introspection fields. This may be useful for production environments where introspection can potentially be abused.
 
 Here is a small example of `QueryReducer.collectTags`:
 
@@ -2659,9 +2680,9 @@ that analyses query complexity in the [Query Complexity Analysis](#query-complex
 
 Sangria supports all standard GraphQL scalars like `String`, `Int`, `ID`, etc. In addition, sangria introduces the following built-in scalar types:
 
-* `Long` - a 64 bit integer value which is represented as a `Long` in Scala code
-* `BigInt` - similar to `Int` scalar values, but allows you to transfer big integer values and represents them in code as Scala's `BigInt` class
-* `BigDecimal` - similar to `Float` scalar values, but allows you to transfer big decimal values and represents them in code as Scala's `BigDecimal` class
+- `Long` - a 64 bit integer value which is represented as a `Long` in Scala code
+- `BigInt` - similar to `Int` scalar values, but allows you to transfer big integer values and represents them in code as Scala's `BigInt` class
+- `BigDecimal` - similar to `Float` scalar values, but allows you to transfer big decimal values and represents them in code as Scala's `BigDecimal` class
 
 ### Custom Scalar Types
 
@@ -2796,8 +2817,8 @@ Executor.execute(schema, queryAst,
 
 As a last step, we need to define a schema. You can do it in two different ways:
 
-* Auth can be enforced in the `resolve` function itself
-* You can use `Middleware` and `FieldTag`s to ensure that user has permissions to access fields
+- Auth can be enforced in the `resolve` function itself
+- You can use `Middleware` and `FieldTag`s to ensure that user has permissions to access fields
 
 ### Resolve-Based Auth
 
@@ -2856,10 +2877,10 @@ Here we login and add colors in the same GraphQL query. It will produce a result
 
 ```json
 {
-  "data":{
-   "login":"a4d7fc91-e490-446e-9d4c-90b5bb22e51d",
-   "withMagenta":["red","green","blue","magenta"],
-   "withOrange":["red","green","blue","magenta","orange"]
+  "data": {
+    "login": "a4d7fc91-e490-446e-9d4c-90b5bb22e51d",
+    "withMagenta": ["red", "green", "blue", "magenta"],
+    "withOrange": ["red", "green", "blue", "magenta", "orange"]
   }
 }
 ```
@@ -2868,21 +2889,25 @@ If the user does not have sufficient permissions, they will see a result like th
 
 ```json
 {
-  "data":{
-    "me":{
-      "userName":"john",
-      "permissions":null
+  "data": {
+    "me": {
+      "userName": "john",
+      "permissions": null
     },
-    "colors":["red","green","blue"]
+    "colors": ["red", "green", "blue"]
   },
-  "errors":[{
-    "message":"You do not have permission to do this operation",
-    "field":"me.permissions",
-    "locations":[{
-      "line":3,
-      "column":25
-    }]
-  }]
+  "errors": [
+    {
+      "message": "You do not have permission to do this operation",
+      "field": "me.permissions",
+      "locations": [
+        {
+          "line": 3,
+          "column": 25
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -2969,7 +2994,7 @@ There are quite a few helpers available which you may find useful in different s
 ### Introspection Result Parsing
 
 Sometimes you would like to work with the results of an introspection query. This can be necessary in some client-side tools, for instance. Instead of working
- directly with JSON (or other raw representations), you can parse it into a set of case classes that allow you to easily work with the whole schema introspection.
+directly with JSON (or other raw representations), you can parse it into a set of case classes that allow you to easily work with the whole schema introspection.
 
 You can find a parser function in `sangria.introspection.IntrospectionParser`.
 
