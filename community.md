@@ -17,7 +17,6 @@ There are several community projects and tools that use or extend Sangria, or, p
 * [Drunk](https://github.com/Jarlakxen/drunk) - A simple GraphQL client on top of [Akka HTTP](https://doc.akka.io/docs/akka-http/current/) and [Circe](https://circe.github.io/circe/).
 * [finch-sangria](https://github.com/redbubble/finch-sangria) - Simple wrappers around Sangria to support its use in [Finch](https://github.com/finagle/finch). Includes [Circe](https://github.com/circe/circe) JSON decoders that may be relevant to other frameworks.
 * [Graphcool Framework](https://www.graph.cool/) ([GitHub](https://github.com/graphcool/framework)) - Framework to develop & deploy serverless GraphQL backends
-* [Hubburu](https://www.hubburu.com/) - Usage monitoring with error tracking and performance tracing
 * [Redbubble GraphQL template](https://github.com/redbubble/rb-graphql-template) - A [Finch](https://github.com/finagle/finch)-based GraphQL stack
 * [sangria-codegen](https://github.com/mediative/sangria-codegen) - Generate API code based on a GraphQL schema and queries
 * [sbt-graphql](https://github.com/muuki88/sbt-graphql) - SBT plugin to generate and validate graphql schemas written with Sangria
