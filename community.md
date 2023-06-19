@@ -42,6 +42,8 @@ And even more great videos for you to watch! (if you are aware of other videos, 
 
 {% include video.html id="3l--XM6j-1w" title="GraphQL: IoC makes its way to HTTP … and it’s great!" name="Dustin Whitney" %}
 
+{% include video.html id="FwAITJkozr8" title="Bringing a public GraphQL API from the whiteboard to production" name="Yann Simon" %}
+
 ### Issues, Bugs, Ideas
 
 If you've got some interesting ideas for improvements or discovered some nasty bugs then feel free to use
@@ -56,8 +58,7 @@ be sure to add <span class="class-name">scala</span>, <span class="class-name">g
 
 ### Gitter
 
-For more general, lengthy discussions or pretty much anything else please join us in the 
-[gitter chat]({{site.link.gitter}}).
+For more general, lengthy discussions or pretty much anything else please join us in the [gitter chat]({{site.link.gitter}}).
 
 We no longer use the [Google Group]({{site.link.google-groups}}).
 It's kept for historical reference.

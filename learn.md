@@ -537,7 +537,7 @@ EnumType("Foo", Some("It's foo"), List(
 
 {% include ext.html type="info" title="Co-locate deriveEnumType with actual sealed trait" %}
 It is important to use `deriveEnumType` in the **same source file** where you have defined your sealed trait **after** all trait children are defined!
-Otherwise macro will not be able to find all of the enum values.  
+Otherwise macro will not be able to find all of the enum values.
 {% include cend.html %}
 
 ### Dealing With Recursive Types
@@ -1621,7 +1621,7 @@ The execution engine merges the requested field streams into a single stream whi
 All other fields (2nd level, 3rd level, etc.) have normal semantics and would be fully resolved.
 
 {% include ext.html type="info" title="Work In Progress" %}
-Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.  
+Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.
 {% include cend.html %}
 
 ## Deferred Value Resolution
@@ -2150,17 +2150,20 @@ In order to use this feature, you need to provide a type parameter to the `Input
 ```scala
 case class Article(title: String, text: Option[String])
 
-val ArticleType = InputObjectType[Article]("Article", List(
-  InputField("title", StringType),
-  InputField("text", OptionInputType(StringType))))
+val ArticleType: InputObjectType[Article] =
+  InputObjectType[Article]("Article", List(
+    InputField("title", StringType),
+    InputField("text", OptionInputType(StringType))
+  ))
 
-val arg = Argument("article", ArticleType)
+val arg: Argument[Article] =
+  Argument[Article @@ InputObjectResult]("article", ArticleType)
 ```
 
 This code will not compile unless you define an implicit instance of `FromInput` for the `Article` case class:
 
 ```scala
-implicit val manual = new FromInput[Article] {
+implicit val manual: FromInput[Article] = new FromInput[Article] {
   val marshaller = CoercedScalaResultMarshaller.default
   def fromResult(node: marshaller.Node) = {
     val ad = node.asInstanceOf[Map[String, Any]]
@@ -2187,11 +2190,12 @@ case class Article(title: String, text: Option[String])
 
 implicit val articleFormat = Json.format[Article]
 
-val ArticleType = InputObjectType[Article]("Article", List(
+val ArticleType: InputObjectType[Article] = InputObjectType[Article]("Article", List(
   InputField("title", StringType),
   InputField("text", OptionInputType(StringType))))
 
-val arg = Argument("article", ArticleType)
+val arg: Argument[Article] =
+  Argument[Article @@ InputObjectResult]("article", ArticleType)
 ```
 
 ### Query AST Marshalling

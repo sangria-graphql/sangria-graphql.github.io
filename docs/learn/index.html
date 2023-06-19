@@ -102,7 +102,7 @@
 
 <p>Here is how you can add it to your SBT project:</p>
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria"</span> <span class="o">%</span> <span class="s">"3.2.0"</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria"</span> <span class="o">%</span> <span class="s">"4.0.0"</span>
 </code></pre></div></div>
 
 <p>You can find an example application that uses akka-http with <em>sangria</em> here:</p>
@@ -612,7 +612,7 @@ The <code class="language-plaintext highlighter-rouge">@GraphQLDefault</code> an
 
 <div class="bs-callout bs-callout-info"><h4>Co-locate deriveEnumType with actual sealed trait</h4><p>
 It is important to use <code class="language-plaintext highlighter-rouge">deriveEnumType</code> in the <strong>same source file</strong> where you have defined your sealed trait <strong>after</strong> all trait children are defined!
-Otherwise macro will not be able to find all of the enum values.<br />
+Otherwise macro will not be able to find all of the enum values.
 </p></div>
 
 <h3 id="dealing-with-recursive-types">Dealing With Recursive Types</h3>
@@ -1678,7 +1678,7 @@ The execution engine merges the requested field streams into a single stream whi
 All other fields (2nd level, 3rd level, etc.) have normal semantics and would be fully resolved.</p>
 
 <div class="bs-callout bs-callout-info"><h4>Work In Progress</h4><p>
-Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.<br />
+Please note, that the semantics of subscription queries is not standardized or fully defined at the moment. It may change in future, so use this feature with caution.
 </p></div>
 
 <h2 id="deferred-value-resolution">Deferred Value Resolution</h2>
@@ -2214,16 +2214,19 @@ Sangria does not hard-code the serialization mechanism. Instead it provides two 
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">case</span> <span class="k">class</span> <span class="nc">Article</span><span class="o">(</span><span class="n">title</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span>
 
-<span class="k">val</span> <span class="nv">ArticleType</span> <span class="k">=</span> <span class="nc">InputObjectType</span><span class="o">[</span><span class="kt">Article</span><span class="o">](</span><span class="s">"Article"</span><span class="o">,</span> <span class="nc">List</span><span class="o">(</span>
-  <span class="nc">InputField</span><span class="o">(</span><span class="s">"title"</span><span class="o">,</span> <span class="nc">StringType</span><span class="o">),</span>
-  <span class="nc">InputField</span><span class="o">(</span><span class="s">"text"</span><span class="o">,</span> <span class="nc">OptionInputType</span><span class="o">(</span><span class="nc">StringType</span><span class="o">))))</span>
+<span class="k">val</span> <span class="nv">ArticleType</span><span class="k">:</span> <span class="kt">InputObjectType</span><span class="o">[</span><span class="kt">Article</span><span class="o">]</span> <span class="k">=</span>
+  <span class="nc">InputObjectType</span><span class="o">[</span><span class="kt">Article</span><span class="o">](</span><span class="s">"Article"</span><span class="o">,</span> <span class="nc">List</span><span class="o">(</span>
+    <span class="nc">InputField</span><span class="o">(</span><span class="s">"title"</span><span class="o">,</span> <span class="nc">StringType</span><span class="o">),</span>
+    <span class="nc">InputField</span><span class="o">(</span><span class="s">"text"</span><span class="o">,</span> <span class="nc">OptionInputType</span><span class="o">(</span><span class="nc">StringType</span><span class="o">))</span>
+  <span class="o">))</span>
 
-<span class="k">val</span> <span class="nv">arg</span> <span class="k">=</span> <span class="nc">Argument</span><span class="o">(</span><span class="s">"article"</span><span class="o">,</span> <span class="nc">ArticleType</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">arg</span><span class="k">:</span> <span class="kt">Argument</span><span class="o">[</span><span class="kt">Article</span><span class="o">]</span> <span class="k">=</span>
+  <span class="nc">Argument</span><span class="o">[</span><span class="kt">Article</span> <span class="kt">@@</span> <span class="kt">InputObjectResult</span><span class="o">](</span><span class="s">"article"</span><span class="o">,</span> <span class="nc">ArticleType</span><span class="o">)</span>
 </code></pre></div></div>
 
 <p>This code will not compile unless you define an implicit instance of <code class="language-plaintext highlighter-rouge">FromInput</code> for the <code class="language-plaintext highlighter-rouge">Article</code> case class:</p>
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">implicit</span> <span class="k">val</span> <span class="nv">manual</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FromInput</span><span class="o">[</span><span class="kt">Article</span><span class="o">]</span> <span class="o">{</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">implicit</span> <span class="k">val</span> <span class="nv">manual</span><span class="k">:</span> <span class="kt">FromInput</span><span class="o">[</span><span class="kt">Article</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FromInput</span><span class="o">[</span><span class="kt">Article</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">val</span> <span class="nv">marshaller</span> <span class="k">=</span> <span class="nv">CoercedScalaResultMarshaller</span><span class="o">.</span><span class="py">default</span>
   <span class="k">def</span> <span class="nf">fromResult</span><span class="o">(</span><span class="n">node</span><span class="k">:</span> <span class="kt">marshaller.Node</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
     <span class="k">val</span> <span class="nv">ad</span> <span class="k">=</span> <span class="nv">node</span><span class="o">.</span><span class="py">asInstanceOf</span><span class="o">[</span><span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Any</span><span class="o">]]</span>
@@ -2249,11 +2252,12 @@ For instance, this example should compile and work just fine without an explicit
 
 <span class="k">implicit</span> <span class="k">val</span> <span class="nv">articleFormat</span> <span class="k">=</span> <span class="nv">Json</span><span class="o">.</span><span class="py">format</span><span class="o">[</span><span class="kt">Article</span><span class="o">]</span>
 
-<span class="k">val</span> <span class="nv">ArticleType</span> <span class="k">=</span> <span class="nc">InputObjectType</span><span class="o">[</span><span class="kt">Article</span><span class="o">](</span><span class="s">"Article"</span><span class="o">,</span> <span class="nc">List</span><span class="o">(</span>
+<span class="k">val</span> <span class="nv">ArticleType</span><span class="k">:</span> <span class="kt">InputObjectType</span><span class="o">[</span><span class="kt">Article</span><span class="o">]</span> <span class="k">=</span> <span class="nc">InputObjectType</span><span class="o">[</span><span class="kt">Article</span><span class="o">](</span><span class="s">"Article"</span><span class="o">,</span> <span class="nc">List</span><span class="o">(</span>
   <span class="nc">InputField</span><span class="o">(</span><span class="s">"title"</span><span class="o">,</span> <span class="nc">StringType</span><span class="o">),</span>
   <span class="nc">InputField</span><span class="o">(</span><span class="s">"text"</span><span class="o">,</span> <span class="nc">OptionInputType</span><span class="o">(</span><span class="nc">StringType</span><span class="o">))))</span>
 
-<span class="k">val</span> <span class="nv">arg</span> <span class="k">=</span> <span class="nc">Argument</span><span class="o">(</span><span class="s">"article"</span><span class="o">,</span> <span class="nc">ArticleType</span><span class="o">)</span>
+<span class="k">val</span> <span class="nv">arg</span><span class="k">:</span> <span class="kt">Argument</span><span class="o">[</span><span class="kt">Article</span><span class="o">]</span> <span class="k">=</span>
+  <span class="nc">Argument</span><span class="o">[</span><span class="kt">Article</span> <span class="kt">@@</span> <span class="kt">InputObjectResult</span><span class="o">](</span><span class="s">"article"</span><span class="o">,</span> <span class="nc">ArticleType</span><span class="o">)</span>
 </code></pre></div></div>
 
 <h3 id="query-ast-marshalling">Query AST Marshalling</h3>
@@ -2547,7 +2551,7 @@ These are quite useful for things like debug and profiling information, for exam
 <p>With middleware, Sangria provides a very convenient way to instrument GraphQL query execution and introduce profiling logic. Out-of-the-box
 Sangria provides a simple mechanism to log slow queries and show profiling information. To use it, your need to add <code class="language-plaintext highlighter-rouge">sangria-slowlog</code> dependency:</p>
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-slowlog"</span> <span class="o">%</span> <span class="s">"2.0.0-M1"</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"org.sangria-graphql"</span> <span class="o">%%</span> <span class="s">"sangria-slowlog"</span> <span class="o">%</span> <span class="s">"3.0.0"</span>
 </code></pre></div></div>
 
 <p>Library provides a middleware that logs instrumented query information if execution exceeds specific threshold. An example:</p>
