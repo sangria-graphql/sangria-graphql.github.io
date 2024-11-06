@@ -23,6 +23,9 @@ bundle exec jekyll serve --watch
 or with docker:
 ```
 docker compose up
+
+# to force the rebuild of the docker image
+docker compose up --build
 ```
 
 
