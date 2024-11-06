@@ -3047,6 +3047,74 @@ directly with JSON (or other raw representations), you can parse it into a set o
 
 <p>Sometimes it can be very useful to know the type of query operation. For example you need it if you want to return a different response for subscription queries. <code class="language-plaintext highlighter-rouge">ast.Document</code> exposes <code class="language-plaintext highlighter-rouge">operationType</code> and <code class="language-plaintext highlighter-rouge">operation</code> for this.</p>
 
+<h2 id="performance-tips">Performance tips.</h2>
+
+<p>Sangria is being used by several companies on production since several years and capable of handling a lot of traffic.</p>
+
+<p>Sangria is indeed a fast library. If you want to take the maximum out of it, here are some guidelines and tips.</p>
+
+<h3 id="compute-the-schema-only-once">Compute the schema only once</h3>
+
+<p>Make sure that you only compute the schema once. This easiest way is to use a singleton object to define the schema:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">GraphQLSchema</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="nv">QueryType</span> <span class="k">=</span> <span class="o">???</span>
+  <span class="k">val</span> <span class="nv">MutationType</span> <span class="k">=</span> <span class="o">???</span>
+  <span class="k">val</span> <span class="nv">schema</span> <span class="k">=</span> <span class="nc">Schema</span><span class="o">(</span><span class="nc">QueryType</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="nc">MutationType</span><span class="o">))</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>If you compute the schema at each request, you will lose a lot of performances.</p>
+
+<h3 id="load-the-schema-before-the-first-request">Load the schema before the first request</h3>
+
+<p>If you are using a web server, make sure that you load the schema before the first request.
+This way, all classes will be loaded before the web server starts and the first request will not be slower than the others.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">Main</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="nv">schema</span> <span class="k">=</span> <span class="nv">GraphQLSchema</span><span class="o">.</span><span class="py">schema</span>
+
+  <span class="c1">// start the server</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="use-the-parasitic-executioncontext-expert">Use the <code class="language-plaintext highlighter-rouge">parasitic</code> ExecutionContext (expert)</h3>
+
+<p>Sangria uses <code class="language-plaintext highlighter-rouge">Future</code> to handle asynchronous operations. When you execute a query, you need to pass an <code class="language-plaintext highlighter-rouge">ExecutionContext</code>.</p>
+
+<p>One way to improve performances is to use the <code class="language-plaintext highlighter-rouge">scala.concurrent.ExecutionContext.parasitic</code> ExecutionContext.
+But be careful that this ExecutionContext will propagate everywhere, including in the <code class="language-plaintext highlighter-rouge">DeferredResolver</code> where it might not be the best option. You might be using the wrong thread pool for IO operations.</p>
+
+<p>To avoid this, you can pack the ExecutionContext in your Context and use it in the <code class="language-plaintext highlighter-rouge">DeferredResolver</code>:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">DeferredReferenceResolver</span> <span class="k">extends</span> <span class="nc">DeferredResolver</span><span class="o">[</span><span class="kt">Context</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="nf">resolve</span><span class="o">(</span>
+    <span class="n">deferred</span><span class="k">:</span> <span class="kt">Vector</span><span class="o">[</span><span class="kt">Deferred</span><span class="o">[</span><span class="kt">Any</span><span class="o">]],</span>
+    <span class="n">ctx</span><span class="k">:</span> <span class="kt">Context</span><span class="o">,</span>
+    <span class="n">queryState</span><span class="k">:</span> <span class="kt">Any</span>
+  <span class="o">)(</span><span class="k">implicit</span> <span class="n">ec</span><span class="k">:</span> <span class="kt">ExecutionContext</span><span class="o">)</span><span class="k">:</span> <span class="kt">Vector</span><span class="o">[</span><span class="kt">Future</span><span class="o">[</span><span class="kt">Any</span><span class="o">]]</span> <span class="k">=</span>
+    <span class="nf">resolveInternal</span><span class="o">(</span><span class="n">deferred</span><span class="o">,</span> <span class="n">ctx</span><span class="o">)</span>
+
+  <span class="k">private</span> <span class="k">def</span> <span class="nf">resolveInternal</span><span class="o">(</span>
+    <span class="n">deferred</span><span class="k">:</span> <span class="kt">Vector</span><span class="o">[</span><span class="kt">Deferred</span><span class="o">[</span><span class="kt">Any</span><span class="o">]],</span>
+    <span class="n">ctx</span><span class="k">:</span> <span class="kt">Context</span>
+  <span class="o">)</span><span class="k">:</span> <span class="kt">Vector</span><span class="o">[</span><span class="kt">Future</span><span class="o">[</span><span class="kt">Any</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="c1">// for IO, uses non-parasitic ExecutionContext</span>
+    <span class="k">implicit</span> <span class="k">val</span> <span class="nv">ec</span><span class="k">:</span> <span class="kt">ExecutionContext</span> <span class="o">=</span> <span class="nv">ctx</span><span class="o">.</span><span class="py">executionContext</span>
+    <span class="o">???</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nc">Object</span> <span class="nc">GraphQLSchema</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="nv">schema</span> <span class="k">=</span> <span class="nc">Schema</span><span class="o">(</span><span class="nc">QueryType</span><span class="o">,</span> <span class="n">deferredResolver</span> <span class="k">=</span> <span class="nc">DeferredReferenceResolver</span><span class="o">)</span>
+  <span class="k">def</span> <span class="nf">execute</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">Context</span><span class="o">,</span> <span class="n">query</span><span class="k">:</span> <span class="kt">Document</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Json</span><span class="o">]</span> <span class="o">{</span>
+    <span class="c1">// just for internal execution, uses parasitic ExecutionContext</span>
+    <span class="k">implicit</span> <span class="k">val</span> <span class="nv">ec</span> <span class="k">=</span> <span class="nv">scala</span><span class="o">.</span><span class="py">concurrent</span><span class="o">.</span><span class="py">ExecutionContext</span><span class="o">.</span><span class="py">parasitic</span>
+    <span class="nv">Executor</span><span class="o">.</span><span class="py">execute</span><span class="o">(</span><span class="n">schema</span><span class="o">,</span> <span class="n">query</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
     </div>
 
     <nav class="col-md-3 bs-docs-sidebar" id="sidebar"></nav>
