@@ -22,7 +22,7 @@ bundle exec jekyll serve --watch
 
 or with docker:
 ```
-docker-compose up
+docker compose up
 ```
 
 
