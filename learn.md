@@ -3005,3 +3005,74 @@ You can find a parser function in `sangria.introspection.IntrospectionParser`.
 ### Determine a Query Operation Type
 
 Sometimes it can be very useful to know the type of query operation. For example you need it if you want to return a different response for subscription queries. `ast.Document` exposes `operationType` and `operation` for this.
+
+## Performance tips.
+
+Sangria is being used by several companies on production since several years and capable of handling a lot of traffic.
+
+Sangria is indeed a fast library. If you want to take the maximum out of it, here are some guidelines and tips.
+
+### Compute the schema only once
+
+Make sure that you only compute the schema once. This easiest way is to use a singleton object to define the schema:
+
+```scala
+object GraphQLSchema {
+  val QueryType = ???
+  val MutationType = ???
+  val schema = Schema(QueryType, Some(MutationType))
+}
+```
+
+If you compute the schema at each request, you will lose a lot of performances.
+
+### Load the schema before the first request
+
+If you are using a web server, make sure that you load the schema before the first request.
+This way, all classes will be loaded before the web server starts and the first request will not be slower than the others.
+
+```scala
+object Main extends App {
+  val schema = GraphQLSchema.schema
+
+  // start the server
+}
+```
+
+### Use the `parasitic` ExecutionContext (expert)
+
+Sangria uses `Future` to handle asynchronous operations. When you execute a query, you need to pass an `ExecutionContext`.
+
+One way to improve performances is to use the `scala.concurrent.ExecutionContext.parasitic` ExecutionContext.
+But be careful that this ExecutionContext will propagate everywhere, including in the `DeferredResolver` where it might not be the best option. You might be using the wrong thread pool for IO operations.
+
+To avoid this, you can pack the ExecutionContext in your Context and use it in the `DeferredResolver`:
+
+```scala
+object DeferredReferenceResolver extends DeferredResolver[Context] {
+  def resolve(
+    deferred: Vector[Deferred[Any]],
+    ctx: Context,
+    queryState: Any
+  )(implicit ec: ExecutionContext): Vector[Future[Any]] =
+    resolveInternal(deferred, ctx)
+
+  private def resolveInternal(
+    deferred: Vector[Deferred[Any]],
+    ctx: Context
+  ): Vector[Future[Any]] = {
+    // for IO, uses non-parasitic ExecutionContext
+    implicit val ec: ExecutionContext = ctx.executionContext
+    ???
+  }
+}
+
+Object GraphQLSchema {
+  val schema = Schema(QueryType, deferredResolver = DeferredReferenceResolver)
+  def execute(ctx: Context, query: Document): Future[Json] {
+    // just for internal execution, uses parasitic ExecutionContext
+    implicit val ec = scala.concurrent.ExecutionContext.parasitic
+    Executor.execute(schema, query)
+  }
+}
+```
