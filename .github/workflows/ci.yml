@@ -1,0 +1,18 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current branch (full)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate site
+        run: docker build -t sangria-doc .
