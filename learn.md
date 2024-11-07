@@ -3006,7 +3006,7 @@ You can find a parser function in `sangria.introspection.IntrospectionParser`.
 
 Sometimes it can be very useful to know the type of query operation. For example you need it if you want to return a different response for subscription queries. `ast.Document` exposes `operationType` and `operation` for this.
 
-## Performance tips.
+## Performance tips
 
 Sangria is being used by several companies on production since several years and capable of handling a lot of traffic.
 
